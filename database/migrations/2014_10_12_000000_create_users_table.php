@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('role');
             $table->string('referral');
+            $table->boolean('first_buy_success');
             $table->rememberToken();
             $table->timestamps();
         });

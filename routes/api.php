@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\UserDetailController;
 use App\Http\Controllers\Authentication\AuthController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -24,4 +25,10 @@ Route::group([
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
+    Route::put('updateUserDetails/{id}', [UserDetailController::class, 'updateUserDetailAdmin']);
 });
+
+    Route::post('register', [AuthController::class, 'register']);
+    Route::get('alluserdetails', [UserDetailController::class, 'getUserDetails']);
+
+

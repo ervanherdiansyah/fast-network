@@ -49,6 +49,9 @@ class User extends Authenticatable implements JWTSubject
     public function userDetail(){
         return $this->hasOne(UserDetails::class,  "user_id");
     }
+    public function userWallet(){
+        return $this->hasOne(UserWallet::class,  "user_id");
+    }
 
     use Notifiable;
 
