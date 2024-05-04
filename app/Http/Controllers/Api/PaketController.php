@@ -38,6 +38,7 @@ class PaketController extends Controller
     {
         try {
             //code...
+
             Request()->validate([
                 'paket_nama' => 'required|string',
                 'max_quantity' => 'required|integer',
@@ -49,9 +50,12 @@ class PaketController extends Controller
                 'paket_kode' => 'required|string'
             ]);
 
-            $file_name = $request->image->getClientOriginalName();
-            $namaGambar = str_replace(' ', '_', $file_name);
-            $image = $request->image->storeAs('public/paket', $namaGambar);
+            $file_name = null;
+            if($request->hasFile('image')){
+                $file_name = $request->image->getClientOriginalName();
+                $namaGambar = str_replace(' ', '_', $file_name);
+                $image = $request->image->storeAs('public/paket', $namaGambar);
+            }
 
             $data = Paket::create([
                 'paket_nama' => $request->paket_nama,
@@ -59,7 +63,7 @@ class PaketController extends Controller
                 'price' => $request->price,
                 'weight' => $request->weight,
                 'description' => $request->description,
-                'image' => "paket/" . $namaGambar,
+                'image' => $file_name?"paket/".$namaGambar : null,
                 'point' => $request->point,
                 'paket_kode' => $request->paket_kode
             ]);
@@ -82,7 +86,7 @@ class PaketController extends Controller
                 'price' => 'required|integer',
                 'weight' => 'required|integer',
                 'description' => 'required|string',
-                'image' => 'required|nullable',
+                'image' => 'nullable',
                 'point' => 'required|integer',
                 'paket_kode' => 'required|string'
             ]);
@@ -121,7 +125,7 @@ class PaketController extends Controller
             return response()->json(['data' => $data, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th, 'status' => 500]);
+            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
         }
     }
 
