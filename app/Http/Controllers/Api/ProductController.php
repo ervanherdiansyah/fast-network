@@ -19,7 +19,7 @@ class ProductController extends Controller
             return response()->json(['data' => $product, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th]);
+            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
         }
     }
 
@@ -31,7 +31,7 @@ class ProductController extends Controller
             return response()->json(['data' => $product, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th]);
+            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
         }
     }
     public function createProduct(Request $request)
@@ -43,9 +43,9 @@ class ProductController extends Controller
                 'image' => 'required|nullable',
                 'stock' => 'required',
             ]);
-            $file_name = $request->gambar->getClientOriginalName();
+            $file_name = $request->image->getClientOriginalName();
             $namaGambar = str_replace(' ', '_', $file_name);
-            $image = $request->gambar->storeAs('public/product', $namaGambar);
+            $image = $request->image->storeAs('public/product', $namaGambar);
 
             $product = Product::create([
                 'product_name' => $request->product_name,
@@ -56,7 +56,7 @@ class ProductController extends Controller
             return response()->json(['data' => $product, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th]);
+            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
         }
     }
 
@@ -66,18 +66,18 @@ class ProductController extends Controller
             //code...
             Request()->validate([
                 'product_name' => 'required',
-                'image' => 'required|nullable',
+                'image' => 'nullable',
                 'stock' => 'required',
             ]);
 
             $product = Product::find($id);
             if (Request()->hasFile('gambar')) {
-                if (Storage::exists($product->gambar)) {
-                    Storage::delete($product->gambar);
+                if (Storage::exists($product->image)) {
+                    Storage::delete($product->image);
                 }
-                $file_name = $request->gambar->getClientOriginalName();
+                $file_name = $request->image->getClientOriginalName();
                 $namaGambar = str_replace(' ', '_', $file_name);
-                $image = $request->gambar->storeAs('public/gambar', $namaGambar);
+                $image = $request->image->storeAs('public/product', $namaGambar);
                 $product->update([
                     'product_name' => $request->product_name,
                     'image' => "product/" . $namaGambar,
@@ -93,7 +93,7 @@ class ProductController extends Controller
             return response()->json(['data' => $product, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th]);
+            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
         }
     }
 
@@ -106,7 +106,7 @@ class ProductController extends Controller
             return response()->json(['status' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th]);
+            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
         }
     }
 }

@@ -34,15 +34,18 @@ Route::group([
 Route::get('/produk', [ProductController::class, 'getProduct']);
 Route::post('/produk/create', [ProductController::class, 'createProduct']);
 Route::get('/produk-byid/{id}', [ProductController::class, 'getProductById']);
-Route::put('/produk/update/{id}', [ProductController::class, 'updateProduct']);
+Route::post('/produk/update/{id}', [ProductController::class, 'updateProduct']);
 Route::delete('/produk/delete/{id}', [ProductController::class, 'deleteProduct']);
 
 // Paket
 Route::get('/paket', [PaketController::class, 'getPaket']);
 Route::post('/paket/create', [PaketController::class, 'createPaket']);
 Route::get('/paket-byid/{id}', [PaketController::class, 'getPaketById']);
-Route::put('/paket/update/{id}', [PaketController::class, 'updatePaket']);
+Route::post('/paket/update/{id}', [PaketController::class, 'updatePaket']);
 Route::delete('/paket/delete/{id}', [PaketController::class, 'deletePaket']);
 
-Route::put('updateUserDetails/{id}', [UserDetailController::class, 'updateUserDetailAdmin']);
-Route::get('alluserdetails', [UserDetailController::class, 'getUserDetails']);
+Route::get('/user-detail/all', [UserDetailController::class, 'getUserDetails']);
+Route::get('/user-detail/by-id/{id}', [UserDetailController::class, 'getUserDetailById']);
+Route::post('/user-detail/create', [UserDetailController::class, 'createUserDetail']);
+Route::post('/user-detail/update/{id}', [UserDetailController::class, 'updateUserDetailAdmin']);
+Route::delete('/user-detail/delete/{id}', [UserDetailController::class, 'deleteUserDetail']);
