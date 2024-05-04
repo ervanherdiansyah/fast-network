@@ -44,14 +44,14 @@ class PaketController extends Controller
                 'price' => 'required|integer',
                 'weight' => 'required|integer',
                 'description' => 'required|string',
-                'image' => 'required|nullable',
+                'image' => 'nullable',
                 'point' => 'required|integer',
                 'paket_kode' => 'required|string'
             ]);
 
-            $file_name = $request->paket->getClientOriginalName();
+            $file_name = $request->image->getClientOriginalName();
             $namaGambar = str_replace(' ', '_', $file_name);
-            $image = $request->paket->storeAs('public/paket', $namaGambar);
+            $image = $request->image->storeAs('public/paket', $namaGambar);
 
             $data = Paket::create([
                 'paket_nama' => $request->paket_nama,
@@ -66,7 +66,7 @@ class PaketController extends Controller
             return response()->json(['data' => $data, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th, 'status' => 500]);
+            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
         }
     }
 
@@ -89,12 +89,12 @@ class PaketController extends Controller
 
             $data = Paket::find($id);
             if (Request()->hasFile('gambar')) {
-                if (Storage::exists($data->paket)) {
-                    Storage::delete($data->paket);
+                if (Storage::exists($data->image)) {
+                    Storage::delete($data->image);
                 }
-                $file_name = $request->paket->getClientOriginalName();
+                $file_name = $request->image->getClientOriginalName();
                 $namaGambar = str_replace(' ', '_', $file_name);
-                $image = $request->paket->storeAs('public/paket', $namaGambar);
+                $image = $request->image->storeAs('public/paket', $namaGambar);
                 $data->update([
                     'image' => "paket/" . $namaGambar,
                     'paket_nama' => $request->paket_nama,
