@@ -40,16 +40,21 @@ class ProductController extends Controller
             //code...
             Request()->validate([
                 'product_name' => 'required',
-                'image' => 'required|nullable',
+                'image' => 'nullable',
                 'stock' => 'required',
             ]);
-            $file_name = $request->image->getClientOriginalName();
-            $namaGambar = str_replace(' ', '_', $file_name);
-            $image = $request->image->storeAs('public/product', $namaGambar);
+
+            $file_name = null;
+            if ($request->hasFile('image')) {
+                $file_name = $request->image->getClientOriginalName();
+                $namaGambar = str_replace(' ', '_', $file_name);
+                $image = $request->image->storeAs('public/product', $namaGambar);
+            }
+
 
             $product = Product::create([
                 'product_name' => $request->product_name,
-                'image' => "product/" . $namaGambar,
+                'image' =>  $file_name ? "product/" . $namaGambar : null,
                 'stock' => $request->stock,
             ]);
 
