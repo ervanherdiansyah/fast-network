@@ -28,22 +28,22 @@ Route::group([
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
+});
 
-    Route::middleware(['role:admin'])->group(function () {
-        // Produk
-        Route::get('/produk', [ProductController::class, 'getProduct']);
-        Route::post('/produk/create', [ProductController::class, 'createProduct']);
-        Route::post('/produk-byid/{id}', [ProductController::class, 'getProductById']);
-        Route::post('/produk/update/{id}', [ProductController::class, 'updateProduct']);
-        Route::delete('/produk/delete/{id}', [ProductController::class, 'deleteProduct']);
+Route::group(function () {
+    // Produk
+    Route::get('/produk', [ProductController::class, 'getProduct']);
+    Route::post('/produk/create', [ProductController::class, 'createProduct']);
+    Route::post('/produk-byid/{id}', [ProductController::class, 'getProductById']);
+    Route::post('/produk/update/{id}', [ProductController::class, 'updateProduct']);
+    Route::delete('/produk/delete/{id}', [ProductController::class, 'deleteProduct']);
 
-        // Paket
-        Route::get('/paket', [PaketController::class, 'getPaket']);
-        Route::post('/paket/create', [PaketController::class, 'createPaket']);
-        Route::post('/paket-byid/{id}', [PaketController::class, 'getPaketById']);
-        Route::post('/paket/update/{id}', [PaketController::class, 'updatePaket']);
-        Route::delete('/paket/delete/{id}', [PaketController::class, 'deletePaket']);
-    });
+    // Paket
+    Route::get('/paket', [PaketController::class, 'getPaket']);
+    Route::post('/paket/create', [PaketController::class, 'createPaket']);
+    Route::post('/paket-byid/{id}', [PaketController::class, 'getPaketById']);
+    Route::post('/paket/update/{id}', [PaketController::class, 'updatePaket']);
+    Route::delete('/paket/delete/{id}', [PaketController::class, 'deletePaket']);
 });
 
 Route::put('updateUserDetails/{id}', [UserDetailController::class, 'updateUserDetailAdmin']);
