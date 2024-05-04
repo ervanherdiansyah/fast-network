@@ -19,9 +19,11 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
         \App\Models\User::create([
-            'name' => 'Coba User',
-            'email' => 'coba@gmail.com',
+            'name' => 'Admin',
+            'email' => 'admin@gmail.com',
             'password' => bcrypt('qweqweqwe'),
+            'referral' =>'admin101010101010',
+            'role' =>'superadmin'
         ]);
     }
 }
