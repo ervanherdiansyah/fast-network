@@ -22,6 +22,8 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'role',
+        'referral'
     ];
 
     /**
@@ -43,6 +45,10 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function userDetail(){
+        return $this->hasOne(UserDetails::class,  "user_id");
+    }
 
     use Notifiable;
 
