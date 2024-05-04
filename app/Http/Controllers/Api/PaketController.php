@@ -39,7 +39,6 @@ class PaketController extends Controller
         try {
             //code...
             Request()->validate([
-                'user_id' => 'required|integer',
                 'paket_nama' => 'required|string',
                 'max_quantity' => 'required|integer',
                 'price' => 'required|integer',
@@ -55,7 +54,6 @@ class PaketController extends Controller
             $image = $request->paket->storeAs('public/paket', $namaGambar);
 
             $data = Paket::create([
-                'user_id' => $request->user_id,
                 'paket_nama' => $request->paket_nama,
                 'max_quantity' => $request->max_quantity,
                 'price' => $request->price,
@@ -79,7 +77,6 @@ class PaketController extends Controller
         try {
             //code...
             Request()->validate([
-                'user_id' => 'required|integer',
                 'paket_nama' => 'required|string',
                 'max_quantity' => 'required|integer',
                 'price' => 'required|integer',
@@ -100,7 +97,6 @@ class PaketController extends Controller
                 $image = $request->paket->storeAs('public/paket', $namaGambar);
                 $data->update([
                     'image' => "paket/" . $namaGambar,
-                    'user_id' => $request->user_id,
                     'paket_nama' => $request->paket_nama,
                     'max_quantity' => $request->max_quantity,
                     'price' => $request->price,
@@ -112,8 +108,8 @@ class PaketController extends Controller
             } else {
                 $data->update([
                     'user_id' => $request->user_id,
-                    'nik' => $request->paket_nama,
-                    'nomor_wa' => $request->max_quantity,
+                    'paket_nama' => $request->paket_nama,
+                    'max_quantity' => $request->max_quantity,
                     'price' => $request->price,
                     'weight' => $request->weight,
                     'description' => $request->description,
