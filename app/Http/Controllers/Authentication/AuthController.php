@@ -7,6 +7,8 @@ use App\Models\UserDetails;
 use App\Models\UserWallet;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Models\UserAlamat;
+use App\Models\UserBank;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -18,7 +20,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login','register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
     }
 
     /**
@@ -27,74 +29,84 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function register(Request $request){
+    public function register(Request $request)
+    {
         try {
-            
-            // Request()->validate([
-            //     'name'=>'required',
-            //     'nik'=>'required',
-            //     'nomor_wa'=>'required',
-            //     'provinsi'=>'required',
-            //     'kota'=>'required',
-            //     'alamat'=>'required',
-            //     'nama_bank'=>'required',
-            //     'no_rek'=>'required',
-            //     'nama_kontak'=>'required',
-            //     'referral_use'=>'required',
-            //     'nama_pemilik_rekening' => 'required',
-            //     'password'=>'required|min:8|confirmed',
-            //     'email'=>'required|unique:users',
-            //     'role'=>'required'
-            // ]);
+
+            Request()->validate([
+                'name' => 'required',
+                'nik' => 'required',
+                'nomor_wa' => 'required',
+                'provinsi' => 'required',
+                'kota' => 'required',
+                'alamat' => 'required',
+                'nama_bank' => 'required',
+                'no_rek' => 'required',
+                'nama_kontak' => 'required',
+                'referral_use' => 'required',
+                'nama_pemilik_rekening' => 'required',
+                'password' => 'required|min:8|confirmed',
+                'email' => 'required|unique:users',
+                'role' => 'required'
+            ]);
 
 
             // $code = str_replace(' ', '', $request->name);
             // $randomNumber = rand(1000,9999);
 
             $user = User::create([
-                'name'=> $request->name,
-                'email'=>$request->email,
-                'password'=>bcrypt($request->password),
-                'first_buy_success'=>0,
-                'role'=>"user"
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+                'first_buy_success' => 0,
+                'role' => "user"
 
                 // 'referral ' => $randomNumber . $code
             ]);
 
             $UserDetails = UserDetails::create([
-                'user_id'=>$user->id,
-                'nik'=>$request->nik,
-                'nomor_wa'=>$request->nomor_wa,
-                'provinsi'=>$request->provinsi,
-                'kota'=>$request->kota,
-                'alamat'=>$request->alamat,
-                'nama_bank'=>$request->nama_bank,
-                'no_rek'=>$request->no_rek,
-                'no_kontak'=>$request->no_rek,
-                'nama_kontak'=>$request->nama_kontak,
-                'referral_use'=>$request->referral_use,
-                'nama_pemilik_rekening'=>$request->nama_pemilik_rekening,
-                'first_order'=>1
+                'user_id' => $user->id,
+                'nik' => $request->nik,
+                'nomor_wa' => $request->nomor_wa,
+                'no_kontak' => $request->no_rek,
+                'nama_kontak' => $request->nama_kontak,
+                'referral_use' => $request->referral_use,
+                'nama_pemilik_rekening' => $request->nama_pemilik_rekening,
+                'first_order' => 1
             ]);
 
             $UserWallet = UserWallet::create([
-                'user_id'=>$user->id,
-                'total_point'=>0,
-                'total_balance'=>0,
-                'total_referral'=>0,
-                'current_balance'=>0,
-                'current_point'=>0
+                'user_id' => $user->id,
+                'total_point' => 0,
+                'total_balance' => 0,
+                'total_referral' => 0,
+                'current_balance' => 0,
+                'current_point' => 0
             ]);
-            
-            return response()->json(['status'=>'Success']);
 
+            $bank = UserBank::create([
+                'user_id' => $user->id,
+                'nama_rekening' => $request->nama_rekening,
+                'no_rekening' => $request->no_rekening,
+                'nama_bank' => $request->nama_bank,
+            ]);
+            $bank = UserAlamat::create([
+                'user_id' => $user->id,
+                'alamat_lengkap' => $request->alamat_lengkap,
+                'provinsi' => $request->provinsi,
+                'kota' => $request->kota,
+                'kecamatan' => $request->kecamatan,
+                'kelurahan' => $request->kelurahan,
+                'kode_pos' => $request->kode_pos,
+            ]);
+
+            return response()->json(['status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error'=>$th, 'status'=>500]);
-
+            return response()->json(['Error' => $th, 'status' => 500]);
         }
     }
-     public function login()
+    public function login()
     {
         $credentials = request(['email', 'password']);
 

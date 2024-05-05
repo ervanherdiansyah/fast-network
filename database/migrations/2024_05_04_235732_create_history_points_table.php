@@ -11,17 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_details', function (Blueprint $table) {
+        Schema::create('history_points', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
             $table->foreignId("user_id")->nullable()->index();
             $table->foreign("user_id")->references("id")->on("users")->onDelete("cascade");
-            $table->string("nik")->nullable();
-            $table->string("nomor_wa")->nullable();
-            $table->string("nama_kontak")->nullable();
-            $table->string("no_kontak")->nullable();
-            $table->string("referral_use")->nullable();
-            $table->boolean("first_order")->default(true);
+            $table->foreignId("order_id")->nullable()->index();
+            $table->foreign("order_id")->references("id")->on("orders")->onDelete("cascade");
+            $table->string('point_earned');
+            $table->string('balance_earned');
+            $table->timestamps();
         });
     }
 
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_details');
+        Schema::dropIfExists('history_points');
     }
 };

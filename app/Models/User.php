@@ -46,13 +46,23 @@ class User extends Authenticatable implements JWTSubject
         'password' => 'hashed',
     ];
 
-    public function userDetail(){
+    public function userDetail()
+    {
         return $this->hasOne(UserDetails::class,  "user_id");
     }
-    public function userWallet(){
+
+    public function userWallet()
+    {
         return $this->hasOne(UserWallet::class,  "user_id");
     }
-
+    public function userBank()
+    {
+        return $this->hasMany(UserBank::class,  "user_id");
+    }
+    public function userAlamat()
+    {
+        return $this->hasMany(UserAlamat::class,  "user_id");
+    }
     use Notifiable;
 
     // Rest omitted for brevity
