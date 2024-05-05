@@ -39,15 +39,14 @@ class AuthController extends Controller
                 'nomor_wa' => 'required',
                 'provinsi' => 'required',
                 'kota' => 'required',
-                'alamat' => 'required',
+                'alamat_lengkap' => 'required',
                 'nama_bank' => 'required',
-                'no_rek' => 'required',
+                'no_rekening' => 'required',
                 'nama_kontak' => 'required',
                 'referral_use' => 'required',
-                'nama_pemilik_rekening' => 'required',
-                'password' => 'required|min:8|confirmed',
+                'nama_rekening' => 'required',
+                'password' => 'required|min:8',
                 'email' => 'required|unique:users',
-                'role' => 'required'
             ]);
 
 
@@ -71,7 +70,6 @@ class AuthController extends Controller
                 'no_kontak' => $request->no_rek,
                 'nama_kontak' => $request->nama_kontak,
                 'referral_use' => $request->referral_use,
-                'nama_pemilik_rekening' => $request->nama_pemilik_rekening,
                 'first_order' => 1
             ]);
 
@@ -92,7 +90,8 @@ class AuthController extends Controller
                 'rekening_utama' => 1
 
             ]);
-            $bank = UserAlamat::create([
+
+            $alamat = UserAlamat::create([
                 'user_id' => $user->id,
                 'alamat_lengkap' => $request->alamat_lengkap,
                 'provinsi' => $request->provinsi,
@@ -106,7 +105,7 @@ class AuthController extends Controller
             return response()->json(['status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th, 'status' => 500]);
+            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
         }
     }
     public function login()

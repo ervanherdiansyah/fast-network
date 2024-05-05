@@ -38,7 +38,7 @@ Route::group([
     Route::delete('/useralamat/delete/{id}', [AlamatController::class, 'deleteAlamat']);
 
     // User Bank Detail API
-    Route::get('userbanks', [BankController::class, 'getBankByUserID']);
+    Route::get('userbanks', [BankController ::class, 'getBankByUserID']);
     Route::post('userbanks/add', [BankController::class, 'AddBankByUserID']);
     Route::delete('userbanks/delete/{id}', [BankController::class, 'deleteBankByID']);
     Route::post('userbanks/update/{id}', [BankController::class, 'updateBankDataByID']);
