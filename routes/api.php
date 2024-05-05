@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AlamatController;
+use App\Http\Controllers\Api\BankController;
 use App\Http\Controllers\Api\PaketController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserDetailController;
@@ -35,6 +36,12 @@ Route::group([
     Route::post('/useralamat/create', [AlamatController::class, 'createAlamat']);
     Route::post('/useralamat/update/{id}', [AlamatController::class, 'updateAlamat']);
     Route::delete('/useralamat/delete/{id}', [AlamatController::class, 'deleteAlamat']);
+
+    // User Bank Detail API
+    Route::get('userbanks', [BankController::class, 'getBankByUserID']);
+    Route::post('userbanks/add', [BankController::class, 'AddBankByUserID']);
+    Route::delete('userbanks/delete/{id}', [BankController::class, 'deleteBankByID']);
+    Route::post('userbanks/update/{id}', [BankController::class, 'updateBankDataByID']);
 });
 
 // Produk
