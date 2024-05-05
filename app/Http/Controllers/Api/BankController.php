@@ -37,7 +37,7 @@ class BankController extends Controller
                 'nama_bank'=>$request->nama_bank,
                 'nama_rekening'=>$request->nama_rekening,
                 'no_rekening'=>$request->no_rekening,
-                
+                'rekening_utama'=>0
             ]);
             return response()->json(['data' => $newUserBank, 'status' => 'Success']);
         } catch (\Throwable $th) {

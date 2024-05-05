@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\BankController;
 use App\Http\Controllers\Api\PaketController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserDetailController;
@@ -28,6 +29,12 @@ Route::group([
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
+
+    // User Bank Detail API
+    Route::get('userbanks', [BankController::class, 'getBankByUserID']);
+    Route::post('userbanks/add', [BankController::class, 'AddBankByUserID']);
+    Route::delete('userbanks/delete/{id}', [BankController::class, 'deleteBankByID']);
+    Route::post('userbanks/update/{id}', [BankController::class, 'updateBankDataByID']);
 });
 
 // Produk
