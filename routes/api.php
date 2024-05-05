@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AlamatController;
 use App\Http\Controllers\Api\PaketController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\UserDetailController;
@@ -28,6 +29,12 @@ Route::group([
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
+
+    // Alamat
+    Route::get('/useralamat-by-userid', [AlamatController::class, 'getAlamatByUserId']);
+    Route::post('/useralamat/create', [AlamatController::class, 'createAlamat']);
+    Route::post('/useralamat/update/{id}', [AlamatController::class, 'updateAlamat']);
+    Route::delete('/useralamat/delete/{id}', [AlamatController::class, 'deleteAlamat']);
 });
 
 // Produk

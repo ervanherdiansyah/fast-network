@@ -89,6 +89,8 @@ class AuthController extends Controller
                 'nama_rekening' => $request->nama_rekening,
                 'no_rekening' => $request->no_rekening,
                 'nama_bank' => $request->nama_bank,
+                'rekening_utama' => 1
+
             ]);
             $bank = UserAlamat::create([
                 'user_id' => $user->id,
@@ -98,6 +100,7 @@ class AuthController extends Controller
                 'kecamatan' => $request->kecamatan,
                 'kelurahan' => $request->kelurahan,
                 'kode_pos' => $request->kode_pos,
+                'alamat_utama' => 1
             ]);
 
             return response()->json(['status' => 'Success']);
