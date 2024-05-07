@@ -66,8 +66,8 @@ Route::post('/callback', [CheckoutContoller::class, 'callback']);
 
 
 // create to database
-Route::get('/provinsi', [RajaOngkirController::class, 'getProvinces']);
-Route::get('/cities', [RajaOngkirController::class, 'getCities']);
+Route::get('/provinsi', [Controller::class, 'getProvinces']);
+Route::get('/cities', [Controller::class, 'getCities']);
 
 
 // Produk
