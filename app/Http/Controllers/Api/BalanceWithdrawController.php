@@ -3,23 +3,20 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Reward;
-use App\Models\User;
-use App\Models\UserAlamat;
 use App\Models\UserWallet;
-use App\Models\WithdrawPoint;
+use App\Models\WithdrawBalance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class PointWithdrawController extends Controller
+class BalanceWithdrawController extends Controller
 {
     //
-    public function getWithdrawPointByUser()
+    public function getWithdrawBalanceByUser()
     {
         try {
             $user_id = Auth::user()->id;
-            $point_withdraw_request = WithdrawPoint::where('user_id', $user_id);
+            $point_withdraw_request = WithdrawBalance::where('user_id', $user_id);
             return response()->json(['data' => $point_withdraw_request, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
@@ -35,7 +32,7 @@ class PointWithdrawController extends Controller
             
             //code...
             Request()->validate([
-                'reward_id' => 'required|integer',
+                'balance_withdrawed' => 'required|integer'
             ]);
 
             // user harus login
@@ -43,31 +40,32 @@ class PointWithdrawController extends Controller
             // ambil data user dengan data point di wallet
             $user_data = UserWallet::with("users")->where('user_id', $user_id)->first();
             // simpan data point user 
-            $user_available_point = $user_data->total_point;
+            $user_available_balance = $user_data->balance;
             // ambil data reward yang akan dipanggil.
-            $reward = Reward::where("id", $request->reward_id);
             
             // cek poin user dengan poin yang reward butuhkan.
-            if($user_available_point < $reward->point){
-                return response()->json(['Message' => "Point Tidak Mencukupi", 'status' => 400]);
+            if($user_available_balance < 300000){
+                return response()->json(['Message' => "Saldo Kurang dari 300.000", 'status' => 400]);
+            }
+
+            else if($user_available_balance < $request->balance_withdrawed){
+                return response()->json(['Message' => "Saldo Tidak Mencukupi", 'status' => 400]);
             }
 
             else{
 
-                $data = WithdrawPoint::create([
+                $data = WithdrawBalance::create([
                     'user_id' => $user_id,
                     'status_withdraw'=>"Pending",
-                    'reward_id'=>$request->reward_id,
-                    'amount'=>$request->point
+                    'amount_withdraw'=>$request->balance_withdrawed,
                 ]);
 
                 // $user_data->update([
-                //     'total_point' => $user_available_point - $reward->point
+                //     'total_balance' => $user_available_balance - $request->balance_withdrawed
                 // ]);
 
                 // Commit kalau Semuanya berhasil
                 DB::commit();
-                
                 return response()->json(['data' => $data, 'status' => 'Success']);
             }
 
