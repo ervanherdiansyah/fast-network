@@ -84,6 +84,7 @@ Route::get('/paket-byid/{id}', [PaketController::class, 'getPaketById']);
 Route::post('/paket/update/{id}', [PaketController::class, 'updatePaket']);
 Route::delete('/paket/delete/{id}', [PaketController::class, 'deletePaket']);
 
+//User Detail
 Route::get('/user-detail/all', [UserDetailController::class, 'getUserDetails']);
 Route::get('/user-detail/by-id/{id}', [UserDetailController::class, 'getUserDetailById']);
 Route::post('/user-detail/create', [UserDetailController::class, 'createUserDetail']);

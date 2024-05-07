@@ -1,5 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Api\AlamatController;
+use App\Http\Controllers\Api\BankController;
+use App\Http\Controllers\Api\PaketController;
+use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\UserDetailController;
+use App\Http\Controllers\Authentication\AuthAdminController;
 use Illuminate\Support\Facades\Route;
 
 /*
