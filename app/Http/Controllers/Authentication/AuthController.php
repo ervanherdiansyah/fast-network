@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\UserAlamat;
 use App\Models\UserBank;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -31,6 +32,8 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+
+        DB::beginTransaction();
         try {
 
             Request()->validate([
@@ -102,10 +105,11 @@ class AuthController extends Controller
                 'kode_pos' => $request->kode_pos,
                 'alamat_utama' => 1
             ]);
-
+            DB::commit();
             return response()->json(['status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
+            DB::rollback();
             return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
         }
     }
