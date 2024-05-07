@@ -45,25 +45,29 @@ class CheckoutContoller extends Controller
 
             $affliator = UserWallet::where('user_id', $userReferal->id)->first();
             $affliator->total_balance += 300000;
+            $affliator->current_balance += 300000;
             $affliator->save();
 
             $affliasi = UserWallet::where('user_id', Auth::user()->id)->first();
             $affliasi->total_point += 15;
+            $affliasi->current_point += 15;
             $affliasi->save();
 
             $user->update([
                 'first_order' => 0,
                 'first_buy_success' => 1
             ]);
-            // $user->save();
         } else {
             $affliator = UserWallet::where('user_id', $userReferal->id)->first();
             $affliator->total_balance += 100000 * $orders->paket->value;
+            $affliator->current_balance += 100000 * $orders->paket->value;
             $affliator->total_point += 5 * $orders->paket->value;
+            $affliator->current_point += 5 * $orders->paket->value;
             $affliator->save();
 
             $affliasi = UserWallet::where('user_id', Auth::user()->id)->first();
             $affliasi->total_point += $orders->paket->point;
+            $affliasi->current_point += $orders->paket->point;
             $affliasi->save();
         }
 
