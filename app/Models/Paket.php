@@ -11,4 +11,9 @@ class Paket extends Model
     protected $guarded = [
         'id',
     ];
+
+    public function paket()
+    {
+        return $this->hasMany(order::class,  "paket_id");
+    }
 }
