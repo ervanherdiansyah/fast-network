@@ -22,8 +22,9 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
             'password' => bcrypt('qweqweqwe'),
-            'referral' =>'admin101010101010',
-            'role' =>'superadmin'
+            'referral' => 'admin101010101010',
+            'role' => 'superadmin',
+            'first_buy_success' => '0'
         ]);
     }
 }

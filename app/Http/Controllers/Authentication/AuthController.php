@@ -60,8 +60,9 @@ class AuthController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
+                'role' => "user",
+                'first_order' => 1,
                 'first_buy_success' => 0,
-                'role' => "user"
 
                 // 'referral ' => $randomNumber . $code
             ]);
@@ -73,7 +74,7 @@ class AuthController extends Controller
                 'no_kontak' => $request->no_rek,
                 'nama_kontak' => $request->nama_kontak,
                 'referral_use' => $request->referral_use,
-                'first_order' => 1
+
             ]);
 
             $UserWallet = UserWallet::create([

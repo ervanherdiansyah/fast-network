@@ -31,6 +31,18 @@ class AlamatController extends Controller
         }
     }
 
+    public function getAlamatUtamaByUserId()
+    {
+        try {
+            $user_id = Auth::user()->id;
+            $alamat = UserAlamat::where('user_id', $user_id)->where('alamat_utama', true)->first();
+            return response()->json(['data' => $alamat, 'status' => 'Success']);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+        }
+    }
+
     public function createAlamat(Request $request)
     {
         try {

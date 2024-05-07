@@ -23,7 +23,9 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'password',
         'role',
-        'referral'
+        'referral',
+        'first_buy_success',
+        'first_order',
     ];
 
     /**
@@ -62,6 +64,11 @@ class User extends Authenticatable implements JWTSubject
     public function userAlamat()
     {
         return $this->hasMany(UserAlamat::class,  "user_id");
+    }
+
+    public function order()
+    {
+        return $this->hasMany(order::class,  "user_id");
     }
     use Notifiable;
 

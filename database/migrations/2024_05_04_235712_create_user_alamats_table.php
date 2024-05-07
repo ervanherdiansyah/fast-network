@@ -16,8 +16,10 @@ return new class extends Migration
             $table->foreignId("user_id")->nullable()->index();
             $table->foreign("user_id")->references("id")->on("users")->onDelete("cascade");
             $table->string('alamat_lengkap');
-            $table->string('provinsi');
-            $table->string('kota');
+            $table->foreignId('provinsi_id');
+            $table->foreign('provinsi_id')->references('id')->on('provinces');
+            $table->foreignId('kota_id');
+            $table->foreign('kota_id')->references('id')->on('cities');
             $table->string('kecamatan');
             $table->string('kelurahan');
             $table->string('kode_pos');

@@ -2,8 +2,11 @@
 
 use App\Http\Controllers\Api\AlamatController;
 use App\Http\Controllers\Api\BankController;
+use App\Http\Controllers\Api\CheckoutContoller;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaketController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\RajaOngkirController;
 use App\Http\Controllers\Api\UserDetailController;
 use App\Http\Controllers\Authentication\AuthController;
 use App\Http\Controllers\Controller;
@@ -38,11 +41,34 @@ Route::group([
     Route::delete('/useralamat/delete/{id}', [AlamatController::class, 'deleteAlamat']);
 
     // User Bank Detail API
-    Route::get('userbanks', [BankController ::class, 'getBankByUserID']);
+    Route::get('userbanks', [BankController::class, 'getBankByUserID']);
     Route::post('userbanks/add', [BankController::class, 'AddBankByUserID']);
     Route::delete('userbanks/delete/{id}', [BankController::class, 'deleteBankByID']);
     Route::post('userbanks/update/{id}', [BankController::class, 'updateBankDataByID']);
+
+    // test middleware member affliasi
+    Route::middleware(['check.role:user'])->group(function () {
+
+        //test Order
+        Route::get('/get-order', [OrderController::class, 'getOrderByUserIdOnOrder']);
+        Route::post('/order', [OrderController::class, 'addToOrder']);
+
+        //Ongkir
+        Route::post('/rajaongkir', [RajaOngkirController::class, 'getOngkir']);
+
+        //Checkout
+        Route::post('/checkout', [CheckoutContoller::class, 'checkout']);
+    });
 });
+
+//callback payment gateway
+Route::post('/callback', [CheckoutContoller::class, 'callback']);
+
+
+// create to database
+Route::get('/provinsi', [RajaOngkirController::class, 'getProvinces']);
+Route::get('/cities', [RajaOngkirController::class, 'getCities']);
+
 
 // Produk
 Route::get('/produk', [ProductController::class, 'getProduct']);
