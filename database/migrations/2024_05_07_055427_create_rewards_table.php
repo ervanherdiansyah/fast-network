@@ -11,19 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pakets', function (Blueprint $table) {
+        Schema::create('rewards', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string("paket_nama");
-            $table->integer("max_quantity");
-            $table->integer("price");
-            $table->integer("weight");
-            $table->string("description");
-            $table->string("image");
             $table->integer("point");
-            $table->string("paket_kode");
-            $table->integer("value");
-
+            $table->string("reward_name");
         });
     }
 
@@ -32,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pakets');
+        Schema::dropIfExists('rewards');
     }
 };
