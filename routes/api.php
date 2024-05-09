@@ -47,7 +47,7 @@ Route::group([
     Route::post('userbanks/update/{id}', [BankController::class, 'updateBankDataByID']);
 
     // test middleware member affliasi
-    Route::middleware(['check.role:user'])->group(function () {
+    Route::middleware(['check.role:mitra'])->group(function () {
 
         //test Order
         Route::get('/get-order', [OrderController::class, 'getOrderByUserIdOnOrder']);
