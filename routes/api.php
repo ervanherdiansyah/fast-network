@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProvinsiController;
 use App\Http\Controllers\Api\RajaOngkirController;
 use App\Http\Controllers\Api\UserDetailController;
+use App\Http\Controllers\Api\UserWalletController;
 use App\Http\Controllers\Authentication\AuthController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -70,9 +71,9 @@ Route::group([
 
         //User Detail
         Route::get('/user-detail/all', [UserDetailController::class, 'getUserDetails']);
-        Route::get('/user-detail/by-id/{id}', [UserDetailController::class, 'getUserDetailById']);
+        Route::get('/user-detail/by-id', [UserDetailController::class, 'getUserDetailById']);
         Route::post('/user-detail/create', [UserDetailController::class, 'createUserDetail']);
-        Route::post('/user-detail/update/{id}', [UserDetailController::class, 'updateUserDetail']);
+        Route::post('/user-detail/update', [UserDetailController::class, 'updateUserDetail']);
 
         // Pencairan Balance
         // Ambil Seluruh Permintaan Pencairan Balance Yang Pernah user lakukan
@@ -85,6 +86,9 @@ Route::group([
         Route::get('/user-pointwithdrawhistory', [PointWithdrawController::class, 'getWithdrawPointByUser']);
         // Buat Permintaan Pencairan Balance Yang Baru untuk User
         Route::get('/user-withdrawpoint/new', [PointWithdrawController::class, 'createPointWithdrawRequest']);
+
+        // Get Wallet Information
+        Route::get('/user-wallet', [UserWalletController::class, 'getUserWallet']);
 
 
 
@@ -105,9 +109,6 @@ Route::get('/province', [ProvinsiController::class, 'getAllProvinsi']);
 Route::get('/province/by-id/{id}', [ProvinsiController::class, 'getProvinsiById']);
 
 
-
-
-// Route Request Pencairan Poin dan Balance
 
 
 // // Produk
