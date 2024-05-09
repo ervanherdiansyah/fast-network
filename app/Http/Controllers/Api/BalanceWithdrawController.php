@@ -14,6 +14,8 @@ class BalanceWithdrawController extends Controller
     //
     public function getWithdrawBalanceByUser()
     {
+
+        // ambil permintaan withdraw balance yang pernah user
         try {
             $user_id = Auth::user()->id;
             $point_withdraw_request = WithdrawBalance::where('user_id', $user_id);
@@ -24,7 +26,7 @@ class BalanceWithdrawController extends Controller
         }
     }
 
-    public function createWithDrawRequest(Request $request)
+    public function createBalanceWithdrawRequest(Request $request)
     {   
         // begin transaction
         DB::beginTransaction();

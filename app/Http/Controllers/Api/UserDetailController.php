@@ -61,7 +61,7 @@ class UserDetailController extends Controller
         }
     }
 
-    public function updateUserDetailAdmin(Request $request, $id)
+    public function updateUserDetail(Request $request, $id)
     {
 
         try {

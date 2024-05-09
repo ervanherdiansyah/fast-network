@@ -1,11 +1,15 @@
 <?php
 
 use App\Http\Controllers\Api\AlamatController;
+use App\Http\Controllers\Api\BalanceWithdrawController;
 use App\Http\Controllers\Api\BankController;
 use App\Http\Controllers\Api\CheckoutContoller;
+use App\Http\Controllers\Api\CitiesController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaketController;
+use App\Http\Controllers\Api\PointWithdrawController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ProvinsiController;
 use App\Http\Controllers\Api\RajaOngkirController;
 use App\Http\Controllers\Api\UserDetailController;
 use App\Http\Controllers\Authentication\AuthController;
@@ -34,17 +38,6 @@ Route::group([
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
 
-    // Alamat
-    Route::get('/useralamat-by-userid', [AlamatController::class, 'getAlamatByUserId']);
-    Route::post('/useralamat/create', [AlamatController::class, 'createAlamat']);
-    Route::post('/useralamat/update/{id}', [AlamatController::class, 'updateAlamat']);
-    Route::delete('/useralamat/delete/{id}', [AlamatController::class, 'deleteAlamat']);
-
-    // User Bank Detail API
-    Route::get('userbanks', [BankController::class, 'getBankByUserID']);
-    Route::post('userbanks/add', [BankController::class, 'AddBankByUserID']);
-    Route::delete('userbanks/delete/{id}', [BankController::class, 'deleteBankByID']);
-    Route::post('userbanks/update/{id}', [BankController::class, 'updateBankDataByID']);
 
     // test middleware member affliasi
     Route::middleware(['check.role:mitra'])->group(function () {
@@ -58,6 +51,43 @@ Route::group([
 
         //Checkout
         Route::post('/checkout', [CheckoutContoller::class, 'checkout']);
+
+        // Alamat
+        Route::get('/useralamat-by-userid', [AlamatController::class, 'getAlamatByUserId']);
+        Route::post('/useralamat/create', [AlamatController::class, 'createAlamat']);
+        Route::post('/useralamat/update/{id}', [AlamatController::class, 'updateAlamat']);
+        Route::delete('/useralamat/delete/{id}', [AlamatController::class, 'deleteAlamat']);
+
+        // User Bank Detail API
+        Route::get('userbanks', [BankController::class, 'getBankByUserID']);
+        Route::post('userbanks/add', [BankController::class, 'AddBankByUserID']);
+        Route::delete('userbanks/delete/{id}', [BankController::class, 'deleteBankByID']);
+        Route::post('userbanks/update/{id}', [BankController::class, 'updateBankDataByID']);
+
+        // Produk
+        Route::get('/produk', [ProductController::class, 'getProduct']);
+        Route::get('/produk-byid/{id}', [ProductController::class, 'getProductById']);
+
+        //User Detail
+        Route::get('/user-detail/all', [UserDetailController::class, 'getUserDetails']);
+        Route::get('/user-detail/by-id/{id}', [UserDetailController::class, 'getUserDetailById']);
+        Route::post('/user-detail/create', [UserDetailController::class, 'createUserDetail']);
+        Route::post('/user-detail/update/{id}', [UserDetailController::class, 'updateUserDetail']);
+
+        // Pencairan Balance
+        // Ambil Seluruh Permintaan Pencairan Balance Yang Pernah user lakukan
+        Route::get('/user-balancewithdrawhistory', [BalanceWithdrawController::class, 'getWithdrawBalanceByUser']);
+        // Buat Permintaan Pencairan Balance Yang Baru untuk User
+        Route::get('/user-withdrawbalance/new', [BalanceWithdrawController::class, 'createBalanceWithdrawRequest']);
+
+        // Pencairan Poin
+        // Ambil Seluruh Permintaan Pencairan Balance Yang Pernah user lakukan
+        Route::get('/user-pointwithdrawhistory', [PointWithdrawController::class, 'getWithdrawPointByUser']);
+        // Buat Permintaan Pencairan Balance Yang Baru untuk User
+        Route::get('/user-withdrawpoint/new', [PointWithdrawController::class, 'createPointWithdrawRequest']);
+
+
+
     });
 });
 
@@ -65,28 +95,39 @@ Route::group([
 Route::post('/callback', [CheckoutContoller::class, 'callback']);
 
 
-// create to database
-Route::get('/provinsi', [Controller::class, 'getProvinces']);
-Route::get('/cities', [Controller::class, 'getCities']);
+// Get Cities 
+Route::get('/cities', [CitiesController::class, 'getAllCities']);
+Route::get('/cities/by-id/{id}', [CitiesController::class, 'getCitiesById']);
+Route::get('/cities/by-province-id', [CitiesController::class, 'getcitiesByIdProvinsi']);
+
+// Get Provinsi
+Route::get('/province', [ProvinsiController::class, 'getAllProvinsi']);
+Route::get('/province/by-id/{id}', [ProvinsiController::class, 'getProvinsiById']);
 
 
-// Produk
-Route::get('/produk', [ProductController::class, 'getProduct']);
-Route::post('/produk/create', [ProductController::class, 'createProduct']);
-Route::get('/produk-byid/{id}', [ProductController::class, 'getProductById']);
-Route::post('/produk/update/{id}', [ProductController::class, 'updateProduct']);
-Route::delete('/produk/delete/{id}', [ProductController::class, 'deleteProduct']);
+
+
+// Route Request Pencairan Poin dan Balance
+
+
+// // Produk
+// Route::get('/produk', [ProductController::class, 'getProduct']);
+// Route::post('/produk/create', [ProductController::class, 'createProduct']);
+// Route::get('/produk-byid/{id}', [ProductController::class, 'getProductById']);
+// Route::post('/produk/update/{id}', [ProductController::class, 'updateProduct']);
+// Route::delete('/produk/delete/{id}', [ProductController::class, 'deleteProduct']);
+
 
 // Paket
-Route::get('/paket', [PaketController::class, 'getPaket']);
-Route::post('/paket/create', [PaketController::class, 'createPaket']);
-Route::get('/paket-byid/{id}', [PaketController::class, 'getPaketById']);
-Route::post('/paket/update/{id}', [PaketController::class, 'updatePaket']);
-Route::delete('/paket/delete/{id}', [PaketController::class, 'deletePaket']);
+// Route::get('/paket', [PaketController::class, 'getPaket']);
+// Route::post('/paket/create', [PaketController::class, 'createPaket']);
+// Route::get('/paket-byid/{id}', [PaketController::class, 'getPaketById']);
+// Route::post('/paket/update/{id}', [PaketController::class, 'updatePaket']);
+// Route::delete('/paket/delete/{id}', [PaketController::class, 'deletePaket']);
 
-//User Detail
-Route::get('/user-detail/all', [UserDetailController::class, 'getUserDetails']);
-Route::get('/user-detail/by-id/{id}', [UserDetailController::class, 'getUserDetailById']);
-Route::post('/user-detail/create', [UserDetailController::class, 'createUserDetail']);
-Route::post('/user-detail/update/{id}', [UserDetailController::class, 'updateUserDetailAdmin']);
-Route::delete('/user-detail/delete/{id}', [UserDetailController::class, 'deleteUserDetail']);
+// //User Detail
+// Route::get('/user-detail/all', [UserDetailController::class, 'getUserDetails']);
+// Route::get('/user-detail/by-id/{id}', [UserDetailController::class, 'getUserDetailById']);
+// Route::post('/user-detail/create', [UserDetailController::class, 'createUserDetail']);
+// Route::post('/user-detail/update/{id}', [UserDetailController::class, 'updateUserDetailAdmin']);
+// Route::delete('/user-detail/delete/{id}', [UserDetailController::class, 'deleteUserDetail']);

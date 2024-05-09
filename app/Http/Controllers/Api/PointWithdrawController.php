@@ -27,7 +27,7 @@ class PointWithdrawController extends Controller
         }
     }
 
-    public function createWithDrawRequest(Request $request)
+    public function createPointWithDrawRequest(Request $request)
     {   
         // begin transaction
         DB::beginTransaction();
@@ -60,7 +60,8 @@ class PointWithdrawController extends Controller
                     'reward_id'=>$request->reward_id,
                     'amount'=>$request->point
                 ]);
-
+                
+                // ini mah dikurangi nya nanti kalau sudah di acc oleh admin di dashboard
                 // $user_data->update([
                 //     'total_point' => $user_available_point - $reward->point
                 // ]);
