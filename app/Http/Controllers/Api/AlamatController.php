@@ -49,8 +49,8 @@ class AlamatController extends Controller
             //code...
             Request()->validate([
                 'alamat_lengkap' => 'required',
-                'provinsi' => 'required',
-                'kota' => 'required',
+                'provinsi_id' => 'required|integer',
+                'kota' => 'required|integer',
                 'kecamatan' => 'required',
                 'kelurahan' => 'required',
                 'kode_pos' => 'required',
@@ -59,8 +59,8 @@ class AlamatController extends Controller
             $alamat = UserAlamat::create([
                 'user_id' => Auth::user()->id,
                 'alamat_lengkap' => $request->alamat_lengkap,
-                'provinsi' => $request->provinsi,
-                'kota' => $request->kota,
+                'provinsi' => $request->provinsi_id,
+                'kota' => $request->kota_id,
                 'kecamatan' => $request->kecamatan,
                 'kelurahan' => $request->kelurahan,
                 'kode_pos' => $request->kode_pos,
@@ -80,8 +80,8 @@ class AlamatController extends Controller
             //code...
             Request()->validate([
                 'alamat_lengkap' => 'required',
-                'provinsi' => 'required',
-                'kota' => 'required',
+                'provinsi_id' => 'required|integer',
+                'kota_id' => 'required|integer',
                 'kecamatan' => 'required',
                 'kelurahan' => 'required',
                 'kode_pos' => 'required',
@@ -90,8 +90,8 @@ class AlamatController extends Controller
             $data = UserAlamat::where('id', $id)->update([
                 'user_id' => Auth::user()->id,
                 'alamat_lengkap' => $request->alamat_lengkap,
-                'provinsi' => $request->provinsi,
-                'kota' => $request->kota,
+                'provinsi' => $request->provinsi_id,
+                'kota' => $request->kota_id,
                 'kecamatan' => $request->kecamatan,
                 'kelurahan' => $request->kelurahan,
                 'kode_pos' => $request->kode_pos,

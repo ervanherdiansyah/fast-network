@@ -41,28 +41,18 @@ class UserDetailController extends Controller
                 'user_id' => 'required',
                 'nik' => 'required',
                 'nomor_wa' => 'required',
-                'provinsi' => 'required',
-                'kota' => 'required',
-                'alamat' => 'required',
-                'nama_bank' => 'required',
-                'no_rek' => 'required',
                 'nama_kontak' => 'required',
-                'referral_use' => 'required',
-                'first_order' => 'required'
+                'no_kontak' => 'required',
+                'referral_use' => 'required'
             ]);
 
             $data = UserDetails::create([
                 'user_id' => $request->user_id,
                 'nik' => $request->nik,
                 'nomor_wa' => $request->nomor_wa,
-                'provinsi' => $request->provinsi,
-                'kota' => $request->kota,
-                'alamat' => $request->alamat,
-                'nama_bank' => $request->nama_bank,
-                'no_rek' => $request->no_rek,
                 'nama_kontak' => $request->nama_kontak,
-                'referral_use' => $request->referral_use,
-                'first_order' => 1
+                'no_kontak' => $request->no_kontak,
+                'referral_use' => $request->referral_use
             ]);
             return response()->json(['data' => $data, 'status' => 'Success']);
         } catch (\Throwable $th) {
@@ -80,29 +70,20 @@ class UserDetailController extends Controller
                 'user_id' => 'required',
                 'nik' => 'required',
                 'nomor_wa' => 'required',
-                'provinsi' => 'required',
-                'kota' => 'required',
-                'alamat' => 'required',
-                'nama_bank' => 'required',
-                'no_rek' => 'required',
                 'nama_kontak' => 'required',
-                'referral_use' => 'required',
-                'first_order' => 'required'
+                'no_kontak' => 'required',
+                'referral_use' => 'required'
             ]);
 
             $data = UserDetails::where('id', $id)->update([
                 'user_id' => $request->user_id,
                 'nik' => $request->nik,
                 'nomor_wa' => $request->nomor_wa,
-                'provinsi' => $request->provinsi,
-                'kota' => $request->kota,
-                'alamat' => $request->alamat,
-                'nama_bank' => $request->nama_bank,
-                'no_rek' => $request->no_rek,
                 'nama_kontak' => $request->nama_kontak,
-                'referral_use' => $request->referral_use,
-                'first_order' => 1
+                'no_kontak' => $request->no_kontak,
+                'referral_use' => $request->referral_use
             ]);
+
             return response()->json(['data' => $data, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
