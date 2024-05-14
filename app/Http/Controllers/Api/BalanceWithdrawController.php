@@ -18,7 +18,7 @@ class BalanceWithdrawController extends Controller
         // ambil permintaan withdraw balance yang pernah user
         try {
             $user_id = Auth::user()->id;
-            $point_withdraw_request = WithdrawBalance::where('user_id', $user_id);
+            $point_withdraw_request = WithdrawBalance::where('user_id', $user_id)->get();
             return response()->json(['data' => $point_withdraw_request, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
@@ -42,8 +42,15 @@ class BalanceWithdrawController extends Controller
             // ambil data user dengan data point di wallet
             $user_data = UserWallet::with("users")->where('user_id', $user_id)->first();
             // simpan data point user 
-            $user_available_balance = $user_data->balance;
+            $user_available_balance = $user_data->current_balance;
             // ambil data reward yang akan dipanggil.
+
+            // cek apakah user masih memiliki withdraw balance yang status nya pending, jika ada maka user tidak bisa membuat withdraw
+            // request yang baru
+            $user_previous_balance_withdraw_request_pending = WithdrawBalance::where('user_id', $user_id)->where('status_withdraw', 'Pending')->first();
+            if($user_previous_balance_withdraw_request_pending){
+                return response()->json(['Message' => "Anda Masih Memiliki Withdraw Balance Dengan Status Pending", 'status' => 400]);
+            }
             
             // cek poin user dengan poin yang reward butuhkan.
             if($user_available_balance < 300000){
@@ -52,6 +59,10 @@ class BalanceWithdrawController extends Controller
 
             else if($user_available_balance < $request->balance_withdrawed){
                 return response()->json(['Message' => "Saldo Tidak Mencukupi", 'status' => 400]);
+            }
+
+            else if($request->balance_withdrawed < 300000){
+                return response()->json(['Message' => "Miniwal Withdraw adalah 300.000", 'status' => 400]);
             }
 
             else{

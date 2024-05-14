@@ -38,14 +38,23 @@ class PointWithdrawController extends Controller
                 'reward_id' => 'required|integer',
             ]);
 
+            
+
             // user harus login
             $user_id = Auth::user()->id;
             // ambil data user dengan data point di wallet
             $user_data = UserWallet::with("users")->where('user_id', $user_id)->first();
             // simpan data point user 
-            $user_available_point = $user_data->total_point;
+            $user_available_point = $user_data->current_point;
             // ambil data reward yang akan dipanggil.
             $reward = Reward::where("id", $request->reward_id)->first();
+
+            // cek apakah user masih memiliki withdraw point yang status nya pending, jika ada maka user tidak bisa membuat withdraw
+            // request yang baru
+            $user_previous_point_withdraw_request_pending = WithdrawPoint::where('user_id', $user_id)->where('status_withdraw', 'Pending')->first();
+            if($user_previous_point_withdraw_request_pending){
+                return response()->json(['Message' => "Anda Masih Memiliki Withdraw Poin Dengan Status Pending", 'status' => 400]);
+            }
             
             // cek poin user dengan poin yang reward butuhkan.
             if($user_available_point < $reward->point){
