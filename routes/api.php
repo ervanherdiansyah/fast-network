@@ -99,7 +99,7 @@ Route::group([
     });
 });
 
-Route::middleware(['check.role:admin'])->group(function () {
+Route::middleware(['role:superadmin'])->group(function () {
     // Produk Admin
     Route::get('/produk', [ProductController::class, 'getProduct']);
     Route::post('/produk/create', [ProductController::class, 'createProduct']);
