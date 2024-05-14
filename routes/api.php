@@ -83,13 +83,13 @@ Route::group([
         // Ambil Seluruh Permintaan Pencairan Balance Yang Pernah user lakukan
         Route::get('/user-balancewithdrawhistory', [BalanceWithdrawController::class, 'getWithdrawBalanceByUser']);
         // Buat Permintaan Pencairan Balance Yang Baru untuk User
-        Route::get('/user-withdrawbalance/new', [BalanceWithdrawController::class, 'createBalanceWithdrawRequest']);
+        Route::post('/user-withdrawbalance/new', [BalanceWithdrawController::class, 'createBalanceWithdrawRequest']);
 
         // Pencairan Poin
         // Ambil Seluruh Permintaan Pencairan Balance Yang Pernah user lakukan
         Route::get('/user-pointwithdrawhistory', [PointWithdrawController::class, 'getWithdrawPointByUser']);
         // Buat Permintaan Pencairan Balance Yang Baru untuk User
-        Route::get('/user-withdrawpoint/new', [PointWithdrawController::class, 'createPointWithdrawRequest']);
+        Route::post('/user-withdrawpoint/new', [PointWithdrawController::class, 'createPointWithdrawRequest']);
 
         // Get Wallet Information
         Route::get('/user-wallet', [UserWalletController::class, 'getUserWallet']);

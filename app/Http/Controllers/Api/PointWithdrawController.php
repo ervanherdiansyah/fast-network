@@ -58,7 +58,7 @@ class PointWithdrawController extends Controller
                     'user_id' => $user_id,
                     'status_withdraw'=>"Pending",
                     'reward_id'=>$request->reward_id,
-                    'amount'=>$request->point
+                    'amount'=>$reward->point
                 ]);
                 
                 // ini mah dikurangi nya nanti kalau sudah di acc oleh admin di dashboard
