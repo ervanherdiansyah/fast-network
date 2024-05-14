@@ -99,6 +99,23 @@ Route::group([
     });
 });
 
+Route::middleware(['check.role:admin'])->group(function () {
+    // Produk Admin
+    Route::get('/produk', [ProductController::class, 'getProduct']);
+    Route::post('/produk/create', [ProductController::class, 'createProduct']);
+    Route::get('/produk-byid/{id}', [ProductController::class, 'getProductById']);
+    Route::post('/produk/update/{id}', [ProductController::class, 'updateProduct']);
+    Route::delete('/produk/delete/{id}', [ProductController::class, 'deleteProduct']);
+
+    // Paket Admin
+    Route::get('/paket', [PaketController::class, 'getPaket']);
+    Route::post('/paket/create', [PaketController::class, 'createPaket']);
+    Route::get('/paket-byid/{id}', [PaketController::class, 'getPaketById']);
+    Route::post('/paket/update/{id}', [PaketController::class, 'updatePaket']);
+    Route::delete('/paket/delete/{id}', [PaketController::class, 'deletePaket']);
+});
+
+
 //callback payment gateway
 Route::post('/callback', [CheckoutContoller::class, 'callback']);
 
@@ -115,7 +132,7 @@ Route::get('/province/by-id/{id}', [ProvinsiController::class, 'getProvinsiById'
 
 
 
-// // Produk
+// Produk
 // Route::get('/produk', [ProductController::class, 'getProduct']);
 // Route::post('/produk/create', [ProductController::class, 'createProduct']);
 // Route::get('/produk-byid/{id}', [ProductController::class, 'getProductById']);
