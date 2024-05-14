@@ -19,7 +19,7 @@ class PointWithdrawController extends Controller
     {
         try {
             $user_id = Auth::user()->id;
-            $point_withdraw_request = WithdrawPoint::where('user_id', $user_id);
+            $point_withdraw_request = WithdrawPoint::where('user_id', $user_id)->get();
             return response()->json(['data' => $point_withdraw_request, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
@@ -45,7 +45,7 @@ class PointWithdrawController extends Controller
             // simpan data point user 
             $user_available_point = $user_data->total_point;
             // ambil data reward yang akan dipanggil.
-            $reward = Reward::where("id", $request->reward_id);
+            $reward = Reward::where("id", $request->reward_id)->first();
             
             // cek poin user dengan poin yang reward butuhkan.
             if($user_available_point < $reward->point){
