@@ -66,7 +66,7 @@ class UserDetailController extends Controller
 
     public function updateUserDetail(Request $request)
     {
-        $user_id = Auth::user()->id;
+        
 
         try {
             //code...
@@ -76,8 +76,11 @@ class UserDetailController extends Controller
                 'nama_kontak' => 'required',
                 'no_kontak' => 'required',
             ]);
-
-            $data = UserDetails::where('id', $user_id)->update([
+            
+            $user_id = Auth::user()->id;
+            $data = UserDetails::where('id', $user_id);
+            
+            $data->update([
                 'nik' => $request->nik,
                 'nomor_wa' => $request->nomor_wa,
                 'nama_kontak' => $request->nama_kontak,
