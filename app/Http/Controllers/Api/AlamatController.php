@@ -87,6 +87,8 @@ class AlamatController extends Controller
                 'kode_pos' => 'required',
                 'alamat_utama' => 'integer'
             ]);
+            
+            $data = UserAlamat::where('id', $id)->first();
 
             if($request->alamat_utama == 1){
                 $previous_alamat_utama = UserAlamat::find(Auth::user()->id)->where('alamat_utama', true)->first();
@@ -94,7 +96,7 @@ class AlamatController extends Controller
                     'alamat_utama' => false
                 ]);
 
-                $data = UserAlamat::where('id', $id)->first()->update([
+                $data->update([
                     'alamat_lengkap' => $request->alamat_lengkap,
                     'provinsi_id' => $request->provinsi_id,
                     'kota_id' => $request->kota_id,
@@ -106,9 +108,9 @@ class AlamatController extends Controller
 
                 return response()->json(['data' => $data, 'status' => 'Success']);
             }
+            
 
-            $data = UserAlamat::where('id', $id)->first()->update([
-                'user_id' => Auth::user()->id,
+            $data->update([
                 'alamat_lengkap' => $request->alamat_lengkap,
                 'provinsi_id' => $request->provinsi_id,
                 'kota_id' => $request->kota_id,
