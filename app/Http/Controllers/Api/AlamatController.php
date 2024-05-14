@@ -138,8 +138,14 @@ class AlamatController extends Controller
         try {
 
             $alamatById = UserAlamat::where('id', $id)->first();
+            $user_id = Auth::user()->id;
+
+            if($user_id != $alamatById->user_id){
+                return response()->json(['message'=>'Tidak Bisa Menghapus Data Orang Lain', 'status' => '401']);
+            }
+
             if ($alamatById->alamat_utama == 1) {
-                return response()->json(['Authorized' => 'Tidak bisa dihapus karena alamat utama', 'status' => 401]);
+                return response()->json(['Unauthorized' => 'Tidak bisa dihapus karena alamat utama', 'status' => 401]);
             } else {
                 UserAlamat::where('id', $id)->first()->delete();
                 return response()->json(['status' => 'Success']);
