@@ -76,8 +76,8 @@ class ProductController extends Controller
             ]);
 
             $product = Product::find($id);
-            if (Request()->hasFile('gambar')) {
-                if (Storage::exists($product->image)) {
+            if (Request()->hasFile('image') && Request()->file('image')->isValid()) {
+                if (!empty($product->image) && Storage::exists($product->image)) {
                     Storage::delete($product->image);
                 }
                 $file_name = $request->image->getClientOriginalName();
