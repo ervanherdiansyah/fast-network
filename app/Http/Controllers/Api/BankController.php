@@ -58,6 +58,11 @@ class BankController extends Controller
             ]);
 
             $bankDetail = UserBank::find($id);
+            $user_id = Auth::user()->id;
+
+            if($user_id != $bankDetail->user_id){
+                return response()->json(['message'=>'Tidak Bisa Mengubah Data Orang Lain', 'status' => '401']);
+            }
 
             if($request->rekening_utama == 1){
                 $previous_main_bank = UserBank::find(Auth::user()->id)->where('rekening_utama', true)->first();
@@ -94,6 +99,11 @@ class BankController extends Controller
         try {
             //code...
             $bankToDelete = UserBank::where('id', $id)->first();
+            $user_id = Auth::user()->id;
+            if($user_id != $bankToDelete->user_id){
+                return response()->json(['message'=>'Tidak Bisa Menghapus Data Orang Lain', 'status' => '401']);
+            }
+
             if($bankToDelete->rekening_utama == 1){
                 return response()->json(['Unauthorized' => 'Tidak bisa dihapus karena akun utama', 'status' => 401]);
             }
