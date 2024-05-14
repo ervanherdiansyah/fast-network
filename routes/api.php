@@ -74,9 +74,12 @@ Route::group([
         Route::get('/paket-byid/{id}', [PaketController::class, 'getPaketById']);
 
         //User Detail
-        Route::get('/user-detail/all', [UserDetailController::class, 'getUserDetails']);
+        // Route::get('/user-detail/all', [UserDetailController::class, 'getUserDetails']);
+
         Route::get('/user-detail/by-id', [UserDetailController::class, 'getUserDetailById']);
-        Route::post('/user-detail/create', [UserDetailController::class, 'createUserDetail']);
+
+        // Route::post('/user-detail/create', [UserDetailController::class, 'createUserDetail']);
+
         Route::post('/user-detail/update', [UserDetailController::class, 'updateUserDetail']);
 
         // Pencairan Balance
