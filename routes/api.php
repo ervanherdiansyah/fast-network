@@ -69,6 +69,10 @@ Route::group([
         Route::get('/produk', [ProductController::class, 'getProduct']);
         Route::get('/produk-byid/{id}', [ProductController::class, 'getProductById']);
 
+        // Paket
+        Route::get('/paket', [PaketController::class, 'getPaket']);
+        Route::get('/paket-byid/{id}', [PaketController::class, 'getPaketById']);
+
         //User Detail
         Route::get('/user-detail/all', [UserDetailController::class, 'getUserDetails']);
         Route::get('/user-detail/by-id', [UserDetailController::class, 'getUserDetailById']);
