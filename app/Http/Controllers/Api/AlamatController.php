@@ -94,7 +94,7 @@ class AlamatController extends Controller
                     'alamat_utama' => false
                 ]);
 
-                $data = UserAlamat::where('id', $id)->update([
+                $data = UserAlamat::where('id', $id)->first()->update([
                     'alamat_lengkap' => $request->alamat_lengkap,
                     'provinsi_id' => $request->provinsi_id,
                     'kota_id' => $request->kota_id,
@@ -107,7 +107,7 @@ class AlamatController extends Controller
                 return response()->json(['data' => $data, 'status' => 'Success']);
             }
 
-            $data = UserAlamat::where('id', $id)->update([
+            $data = UserAlamat::where('id', $id)->first()->update([
                 'user_id' => Auth::user()->id,
                 'alamat_lengkap' => $request->alamat_lengkap,
                 'provinsi_id' => $request->provinsi_id,
