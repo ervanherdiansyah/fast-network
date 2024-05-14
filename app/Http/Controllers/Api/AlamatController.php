@@ -87,8 +87,14 @@ class AlamatController extends Controller
                 'kode_pos' => 'required',
                 'alamat_utama' => 'integer'
             ]);
-            
+
             $data = UserAlamat::where('id', $id)->first();
+            $user_id = Auth::user()->id;
+
+            if($user_id != $data->user_id){
+                return response()->json(['message'=>'Tidak Bisa Mengubah Data Orang Lain', 'status' => '401']);
+            }
+
 
             if($request->alamat_utama == 1){
                 $previous_alamat_utama = UserAlamat::find(Auth::user()->id)->where('alamat_utama', true)->first();
