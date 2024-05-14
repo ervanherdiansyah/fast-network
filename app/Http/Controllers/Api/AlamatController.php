@@ -85,7 +85,27 @@ class AlamatController extends Controller
                 'kecamatan' => 'required',
                 'kelurahan' => 'required',
                 'kode_pos' => 'required',
+                'alamat_utama' => 'integer'
             ]);
+
+            if($request->alamat_utama == 1){
+                $previous_alamat_utama = UserAlamat::find(Auth::user()->id)->where('alamat_utama', true)->first();
+                $previous_alamat_utama->update([
+                    'alamat_utama' => false
+                ]);
+
+                $data = UserAlamat::where('id', $id)->update([
+                    'alamat_lengkap' => $request->alamat_lengkap,
+                    'provinsi' => $request->provinsi_id,
+                    'kota' => $request->kota_id,
+                    'kecamatan' => $request->kecamatan,
+                    'kelurahan' => $request->kelurahan,
+                    'kode_pos' => $request->kode_pos,
+                    'alamat_utama' => true
+                ]);
+
+                return response()->json(['data' => $data, 'status' => 'Success']);
+            }
 
             $data = UserAlamat::where('id', $id)->update([
                 'user_id' => Auth::user()->id,
@@ -96,7 +116,9 @@ class AlamatController extends Controller
                 'kelurahan' => $request->kelurahan,
                 'kode_pos' => $request->kode_pos,
             ]);
+            
             return response()->json(['data' => $data, 'status' => 'Success']);
+
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
