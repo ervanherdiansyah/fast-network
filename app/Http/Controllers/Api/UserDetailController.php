@@ -28,7 +28,7 @@ class UserDetailController extends Controller
 
         try {
             //code...
-            $userDetailById = UserDetails::where('id', $user_id)->first();
+            $userDetailById = UserDetails::where('user_id', $user_id)->first();
             return response()->json(['data' => $userDetailById, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
@@ -76,9 +76,9 @@ class UserDetailController extends Controller
                 'nama_kontak' => 'required',
                 'no_kontak' => 'required',
             ]);
-            
+
             $user_id = Auth::user()->id;
-            $data = UserDetails::where('id', $user_id);
+            $data = UserDetails::where('user_id', $user_id)->first();
             
             $data->update([
                 'nik' => $request->nik,
