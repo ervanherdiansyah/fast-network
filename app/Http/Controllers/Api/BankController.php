@@ -54,9 +54,26 @@ class BankController extends Controller
                 'nama_bank' => 'required',
                 'nama_rekening' => 'required',
                 'no_rekening' => 'required',
+                'akun_utama' => 'integer'
             ]);
 
             $bankDetail = UserBank::find($id);
+
+            if($request->akun_utama == 1){
+                $previous_main_bank = UserBank::find(Auth::user()->id)->where('akun_utama', true)->first();
+                $previous_main_bank->update([
+                    'akun_utama' => false
+                ]);
+
+                $bankDetail->update([
+                    'nama_bank' => $request->nama_bank,
+                    'nama_rekening' => $request->nama_rekening,
+                    'no_rekening' => $request->no_rekening,
+                    'akun_utama' => true
+                ]);
+                
+                return response()->json(['data' => $bankDetail, 'status' => 'Success']);
+            }
            
             $bankDetail->update([
                 'nama_bank' => $request->nama_bank,
