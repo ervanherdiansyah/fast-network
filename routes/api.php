@@ -96,27 +96,25 @@ Route::group([
 
         // Get Wallet Information
         Route::get('/user-wallet', [UserWalletController::class, 'getUserWallet']);
-
-
-
     });
 });
 
-Route::middleware(['role:superadmin'])->group(function () {
-    // Produk Admin
-    Route::get('/produk', [ProductController::class, 'getProduct']);
-    Route::post('/produk/create', [ProductController::class, 'createProduct']);
-    Route::get('/produk-byid/{id}', [ProductController::class, 'getProductById']);
-    Route::post('/produk/update/{id}', [ProductController::class, 'updateProduct']);
-    Route::delete('/produk/delete/{id}', [ProductController::class, 'deleteProduct']);
+// Produk Admin
+Route::get('/product', [ProductController::class, 'getProduct']);
+Route::post('/product/create', [ProductController::class, 'createProduct']);
+Route::get('/product-byid/{id}', [ProductController::class, 'getProductById']);
+Route::post('/product/update/{id}', [ProductController::class, 'updateProduct']);
+Route::delete('/product/delete/{id}', [ProductController::class, 'deleteProduct']);
 
-    // Paket Admin
-    Route::get('/paket', [PaketController::class, 'getPaket']);
-    Route::post('/paket/create', [PaketController::class, 'createPaket']);
-    Route::get('/paket-byid/{id}', [PaketController::class, 'getPaketById']);
-    Route::post('/paket/update/{id}', [PaketController::class, 'updatePaket']);
-    Route::delete('/paket/delete/{id}', [PaketController::class, 'deletePaket']);
-});
+// Paket Admin
+Route::get('/package', [PaketController::class, 'getPaket']);
+Route::post('/package/create', [PaketController::class, 'createPaket']);
+Route::get('/package-byid/{id}', [PaketController::class, 'getPaketById']);
+Route::post('/package/update/{id}', [PaketController::class, 'updatePaket']);
+Route::delete('/package/delete/{id}', [PaketController::class, 'deletePaket']);
+
+// Route::middleware(['role:superadmin'])->group(function () {
+// });
 
 
 //callback payment gateway

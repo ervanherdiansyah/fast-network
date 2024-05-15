@@ -47,7 +47,8 @@ class PaketController extends Controller
                 'description' => 'required|string',
                 'image' => 'nullable',
                 'point' => 'required|integer',
-                'paket_kode' => 'required|string'
+                'paket_kode' => 'required|string',
+                'value' => 'required',
             ]);
 
             $file_name = null;
@@ -65,7 +66,8 @@ class PaketController extends Controller
                 'description' => $request->description,
                 'image' => $file_name ? "paket/" . $namaGambar : null,
                 'point' => $request->point,
-                'paket_kode' => $request->paket_kode
+                'paket_kode' => $request->paket_kode,
+                'value' => $request->value,
             ]);
             return response()->json(['data' => $data, 'status' => 'Success']);
         } catch (\Throwable $th) {
@@ -88,7 +90,8 @@ class PaketController extends Controller
                 'description' => 'required|string',
                 'image' => 'nullable',
                 'point' => 'required|integer',
-                'paket_kode' => 'required|string'
+                'paket_kode' => 'required|string',
+                'value' => 'required',
             ]);
 
             $data = Paket::find($id);
