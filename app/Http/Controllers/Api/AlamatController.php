@@ -16,7 +16,7 @@ class AlamatController extends Controller
             return response()->json(['data' => $alamat, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
         }
     }
     public function getAlamatByUserId()
@@ -27,7 +27,7 @@ class AlamatController extends Controller
             return response()->json(['data' => $alamat, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
         }
     }
 
@@ -39,7 +39,7 @@ class AlamatController extends Controller
             return response()->json(['data' => $alamat, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
         }
     }
 
@@ -70,7 +70,7 @@ class AlamatController extends Controller
             return response()->json(['data' => $alamat, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
         }
     }
     public function updateAlamat(Request $request, $id)
@@ -129,7 +129,7 @@ class AlamatController extends Controller
 
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
         }
     }
 
@@ -141,17 +141,17 @@ class AlamatController extends Controller
             $user_id = Auth::user()->id;
 
             if($user_id != $alamatById->user_id){
-                return response()->json(['message'=>'Tidak Bisa Menghapus Data Orang Lain', 'status' => '401']);
+                return response()->json(['message'=>'Tidak Bisa Menghapus Data Orang Lain', 'status' => 401]);
             }
 
             if ($alamatById->alamat_utama == 1) {
-                return response()->json(['Unauthorized' => 'Tidak bisa dihapus karena alamat utama', 'status' => 401]);
+                return response()->json(['message' => 'Tidak bisa dihapus karena alamat utama', 'status' => 401]);
             } else {
                 UserAlamat::where('id', $id)->first()->delete();
                 return response()->json(['status' => 'Success']);
             }
         } catch (\Throwable $th) {
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
         }
     }
 }
