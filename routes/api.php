@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AlamatController;
 use App\Http\Controllers\Api\BalanceWithdrawController;
 use App\Http\Controllers\Api\BankController;
 use App\Http\Controllers\Api\CheckoutContoller;
+use App\Http\Controllers\Api\CheckReferral;
 use App\Http\Controllers\Api\CitiesController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaketController;
@@ -132,7 +133,8 @@ Route::get('/cities/by-province-id', [CitiesController::class, 'getcitiesByIdPro
 Route::get('/province', [ProvinsiController::class, 'getAllProvinsi']);
 Route::get('/province/by-id/{id}', [ProvinsiController::class, 'getProvinsiById']);
 
-
+// Cek Referral Use
+Route::get('/checkReferralUse', [CheckReferral::class, 'userReferral']);
 
 
 // Produk
