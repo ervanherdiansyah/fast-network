@@ -105,6 +105,16 @@ class AuthController extends Controller
                 'kode_pos' => $request->kode_pos,
                 'alamat_utama' => 1
             ]);
+
+            $user_affiliate = User::where('referral', $request->referral_use)->first();
+            $user_wallet_referral = UserWallet::where('user_id', $user_affiliate->id)->first();
+
+            $user_wallet_referral->update([
+                'total_referral' => $user_wallet_referral->total_referral + 1
+            ]);
+
+
+
             DB::commit();
             return response()->json(['status' => 'Success']);
         } catch (\Throwable $th) {
