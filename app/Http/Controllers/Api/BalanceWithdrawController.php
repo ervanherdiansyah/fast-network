@@ -22,7 +22,7 @@ class BalanceWithdrawController extends Controller
             return response()->json(['data' => $point_withdraw_request, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
         }
     }
 
@@ -49,20 +49,20 @@ class BalanceWithdrawController extends Controller
             // request yang baru
             $user_previous_balance_withdraw_request_pending = WithdrawBalance::where('user_id', $user_id)->where('status_withdraw', 'Pending')->first();
             if($user_previous_balance_withdraw_request_pending){
-                return response()->json(['Message' => "Anda Masih Memiliki Withdraw Balance Dengan Status Pending", 'status' => 400]);
+                return response()->json(['message' => "Anda Masih Memiliki Withdraw Balance Dengan Status Pending", 'status' => 400]);
             }
             
             // cek poin user dengan poin yang reward butuhkan.
             if($user_available_balance < 300000){
-                return response()->json(['Message' => "Saldo Kurang dari 300.000", 'status' => 400]);
+                return response()->json(['message' => "Saldo Kurang dari 300.000", 'status' => 400]);
             }
 
             else if($user_available_balance < $request->balance_withdrawed){
-                return response()->json(['Message' => "Saldo Tidak Mencukupi", 'status' => 400]);
+                return response()->json(['message' => "Saldo Tidak Mencukupi", 'status' => 400]);
             }
 
             else if($request->balance_withdrawed < 300000){
-                return response()->json(['Message' => "Miniwal Withdraw adalah 300.000", 'status' => 400]);
+                return response()->json(['message' => "Miniwal Withdraw adalah 300.000", 'status' => 400]);
             }
 
             else{
@@ -86,7 +86,7 @@ class BalanceWithdrawController extends Controller
             //throw $th;
             // rollback kalau ada error di salah satu transaksi database.
             DB::rollback();
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
         }
     }
 }
