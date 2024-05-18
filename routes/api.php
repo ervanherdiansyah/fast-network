@@ -46,6 +46,7 @@ Route::group([
 
         //test Order
         Route::get('/get-order', [OrderController::class, 'getOrderByUserIdOnOrder']);
+        Route::get('/get-allorder', [OrderController::class, 'getAllOrderByUser']);
         Route::post('/order', [OrderController::class, 'addToOrder']);
 
         //Ongkir

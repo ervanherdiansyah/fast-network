@@ -36,10 +36,10 @@ class OrderController extends Controller
         }
     }
 
-    public function getOrderByUserId()
+    public function getAllOrderByUser()
     {
         try {
-            $orders = Order::with('orderDetail.products', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Paid')->latest()->get();
+            $orders = Order::with('orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Paid')->latest()->paginate(10);
 
             return response()->json(['data' => $orders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
@@ -50,7 +50,7 @@ class OrderController extends Controller
     public function getOrderByUserIdOnOrder()
     {
         try {
-            $orders = Order::with('orderDetail.products', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Pending')->latest()->first();
+            $orders = Order::with('orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Pending')->latest()->first();
 
             return response()->json(['data' => $orders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
