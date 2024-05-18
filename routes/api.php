@@ -41,13 +41,14 @@ Route::group([
     Route::post('me', [AuthController::class, 'me']);
 
 
-    // test middleware member affliasi
+    //middleware member affliasi
     Route::middleware(['check.role:mitra'])->group(function () {
 
-        //test Order
+        //Order
         Route::get('/get-order', [OrderController::class, 'getOrderByUserIdOnOrder']);
         Route::get('/get-allorder', [OrderController::class, 'getAllOrderByUser']);
         Route::post('/order', [OrderController::class, 'addToOrder']);
+        Route::get('/get-order-byuseronafiliasi', [OrderController::class, 'getOrderByUserOnAfiliasi']);
 
         //Ongkir
         Route::post('/rajaongkir', [RajaOngkirController::class, 'getOngkir']);

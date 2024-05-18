@@ -60,7 +60,7 @@ class AuthController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
-                'role' => "user",
+                'role' => "mitra",
                 'first_order' => 1,
                 'first_buy_success' => 0,
 
