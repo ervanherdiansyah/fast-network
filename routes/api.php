@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\BankController;
 use App\Http\Controllers\Api\CheckoutContoller;
 use App\Http\Controllers\Api\CheckReferral;
 use App\Http\Controllers\Api\CitiesController;
+use App\Http\Controllers\Api\CourierController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaketController;
 use App\Http\Controllers\Api\PointWithdrawController;
@@ -129,6 +130,10 @@ Route::post('/callback', [CheckoutContoller::class, 'callback']);
 Route::get('/cities', [CitiesController::class, 'getAllCities']);
 Route::get('/cities/by-id/{id}', [CitiesController::class, 'getCitiesById']);
 Route::get('/cities/by-province-id', [CitiesController::class, 'getcitiesByIdProvinsi']);
+
+//Get Courier
+Route::get('/courier', [CourierController::class, 'getAllCourier']);
+
 
 // Get Provinsi
 Route::get('/province', [ProvinsiController::class, 'getAllProvinsi']);
