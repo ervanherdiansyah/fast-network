@@ -169,4 +169,24 @@ class OrderController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
+    public function getSumOrderOnAfiliasiByUser()
+    {
+        try {
+            //code...
+            $referralCode = User::where('id', Auth::user()->id)->first();
+
+            $orders = Order::join('users', 'orders.user_id', '=', 'users.id')
+                ->join('user_details', 'users.id', '=', 'user_details.user_id')
+                ->where('user_details.referral_use', $referralCode->referral)
+                ->select('orders.user_id', DB::raw('SUM(orders.total_harga) as total_harga'))
+                ->groupBy('orders.user_id')
+                ->with('users.userDetail')
+                ->get();
+            return response()->json(['data' => $orders, 'message' => 'success'], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
 }
