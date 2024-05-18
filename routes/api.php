@@ -132,7 +132,7 @@ Route::get('/province', [ProvinsiController::class, 'getAllProvinsi']);
 Route::get('/province/by-id/{id}', [ProvinsiController::class, 'getProvinsiById']);
 
 // Cek Referral Use
-Route::get('/checkReferralUse', [CheckReferral::class, 'userReferral']);
+Route::post('/check-referral-user', [CheckReferral::class, 'userReferral']);
 
 
 // Produk
