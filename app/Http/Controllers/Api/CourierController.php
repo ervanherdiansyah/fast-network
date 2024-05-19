@@ -14,7 +14,7 @@ class CourierController extends Controller
             $Courier = Courier::get();
             return response()->json(['data' => $Courier, 'message' => 'success'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
     public function getCourierById($id)
@@ -23,7 +23,7 @@ class CourierController extends Controller
             $Courier = Courier::where('id', $id)->first();
             return response()->json(['data' => $Courier, 'message' => 'success'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -41,7 +41,7 @@ class CourierController extends Controller
             return response()->json(['data' => $Courier, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['message' => $th->getMessage()], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -59,7 +59,7 @@ class CourierController extends Controller
             return response()->json(['data' => $Courier, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['message' => $th->getMessage()], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -68,7 +68,7 @@ class CourierController extends Controller
         try {
             Courier::where('id', $id)->first()->delete();
         } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 }

@@ -14,7 +14,7 @@ class ProvinsiController extends Controller
             $provinsi = Province::get();
             return response()->json(['data' => $provinsi, 'message' => 'success'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
     public function getProvinsiById($id)
@@ -23,7 +23,7 @@ class ProvinsiController extends Controller
             $provinsi = Province::where('id', $id)->first();
             return response()->json(['data' => $provinsi, 'message' => 'success'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 }

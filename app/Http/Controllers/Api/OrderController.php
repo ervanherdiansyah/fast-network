@@ -22,7 +22,7 @@ class OrderController extends Controller
 
             return response()->json(['data' => $orders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to retrieve orders'], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -33,7 +33,7 @@ class OrderController extends Controller
 
             return response()->json(['data' => $orders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to retrieve orders'], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -44,7 +44,7 @@ class OrderController extends Controller
 
             return response()->json(['data' => $orders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to retrieve orders'], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -55,7 +55,7 @@ class OrderController extends Controller
 
             return response()->json(['data' => $orders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -135,7 +135,7 @@ class OrderController extends Controller
             // Rollback transaksi jika terjadi kesalahan
             DB::rollback();
 
-            return response()->json(['message' => 'Failed to add products to order'], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -154,7 +154,7 @@ class OrderController extends Controller
             return response()->json(['data' => $orders, 'message' => 'success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['message' => $th->getMessage()], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -174,7 +174,7 @@ class OrderController extends Controller
             return response()->json(['data' => $orders, 'message' => 'success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['message' => $th->getMessage()], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 }

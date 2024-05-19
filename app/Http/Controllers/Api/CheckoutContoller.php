@@ -110,7 +110,7 @@ class CheckoutContoller extends Controller
             ], 'status' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['message' => $th->getMessage(), 'status' => 'Error'], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 

@@ -33,12 +33,12 @@ class RajaOngkirController extends Controller
 
                 $shippingFees = json_decode($response->getBody(), true);
             } catch (\Exception $e) {
-                return response()->json(['message' => $e->getMessage(), 'status' => 'Error'], 500);
+                return response()->json(['message' => 'Internal Server Error'], 500);
             }
             return response()->json(['data' => $shippingFees, 'status' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['message' => $th->getMessage(), 'status' => 'Error'], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 }
