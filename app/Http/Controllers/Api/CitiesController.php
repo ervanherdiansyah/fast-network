@@ -14,7 +14,7 @@ class CitiesController extends Controller
             $cities = City::get();
             return response()->json(['data' => $cities, 'message' => 'success'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage(), 'status' => 'Error'], 500);
+            return response()->json(['message' => $th->getMessage()], 500);
         }
     }
     public function getCitiesById($id)
@@ -23,7 +23,7 @@ class CitiesController extends Controller
             $cities = City::where('id', $id)->first();
             return response()->json(['data' => $cities, 'message' => 'success'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage(), 'status' => 'Error'], 500);
+            return response()->json(['message' => $th->getMessage()], 500);
         }
     }
     public function getcitiesByIdProvinsi(Request $request, $provinsi_id)
@@ -32,7 +32,7 @@ class CitiesController extends Controller
             $cities = City::where('province_id', $provinsi_id)->first();
             return response()->json(['data' => $cities, 'message' => 'success'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage(), 'status' => 'Error'], 500);
+            return response()->json(['message' => $th->getMessage()], 500);
         }
     }
 }
