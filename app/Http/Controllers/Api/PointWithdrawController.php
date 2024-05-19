@@ -20,10 +20,10 @@ class PointWithdrawController extends Controller
         try {
             $user_id = Auth::user()->id;
             $point_withdraw_request = WithdrawPoint::where('user_id', $user_id)->get();
-            return response()->json(['data' => $point_withdraw_request, 'status' => 'Success']);
+            return response()->json(['data' => $point_withdraw_request, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -53,12 +53,12 @@ class PointWithdrawController extends Controller
             // request yang baru
             $user_previous_point_withdraw_request_pending = WithdrawPoint::where('user_id', $user_id)->where('status_withdraw', 'Pending')->first();
             if($user_previous_point_withdraw_request_pending){
-                return response()->json(['Message' => "Anda Masih Memiliki Withdraw Poin Dengan Status Pending", 'status' => 400]);
+                return response()->json(['message' => "Anda Masih Memiliki Withdraw Poin Dengan Status Pending"], 401);
             }
             
             // cek poin user dengan poin yang reward butuhkan.
             if($user_available_point < $reward->point){
-                return response()->json(['Message' => "Point Tidak Mencukupi", 'status' => 400]);
+                return response()->json(['message' => "Point Tidak Mencukupi"], 401);
             }
 
             else{
@@ -78,14 +78,14 @@ class PointWithdrawController extends Controller
                 // Commit kalau Semuanya berhasil
                 DB::commit();
                 
-                return response()->json(['data' => $data, 'status' => 'Success']);
+                return response()->json(['data' => $data, 'message' => 'Success'], 200);
             }
 
         } catch (\Throwable $th) {
             //throw $th;
             // rollback kalau ada error di salah satu transaksi database.
             DB::rollback();
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 401);
         }
     }
 }
