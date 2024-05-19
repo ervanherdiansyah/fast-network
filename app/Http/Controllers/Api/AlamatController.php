@@ -13,10 +13,10 @@ class AlamatController extends Controller
     {
         try {
             $alamat = UserAlamat::get();
-            return response()->json(['data' => $alamat, 'status' => 'Success']);
+            return response()->json(['data' => $alamat, 'message' => 'success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
     public function getAlamatByUserId()
@@ -24,10 +24,10 @@ class AlamatController extends Controller
         try {
             $user_id = Auth::user()->id;
             $alamat = UserAlamat::where('user_id', $user_id)->get();
-            return response()->json(['data' => $alamat, 'status' => 'Success']);
+            return response()->json(['data' => $alamat, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -36,10 +36,10 @@ class AlamatController extends Controller
         try {
             $user_id = Auth::user()->id;
             $alamat = UserAlamat::where('user_id', $user_id)->where('alamat_utama', true)->first();
-            return response()->json(['data' => $alamat, 'status' => 'Success']);
+            return response()->json(['data' => $alamat, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -67,10 +67,10 @@ class AlamatController extends Controller
                 'alamat_utama' => 0,
             ]);
 
-            return response()->json(['data' => $alamat, 'status' => 'Success']);
+            return response()->json(['data' => $alamat, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
     public function updateAlamat(Request $request, $id)
@@ -92,7 +92,7 @@ class AlamatController extends Controller
             $user_id = Auth::user()->id;
 
             if($user_id != $data->user_id){
-                return response()->json(['message'=>'Tidak Bisa Mengubah Data Orang Lain', 'status' => '401']);
+                return response()->json(['message'=>'Tidak Bisa Mengubah Data Orang Lain'], 401);
             }
 
 
@@ -112,7 +112,7 @@ class AlamatController extends Controller
                     'alamat_utama' => true
                 ]);
 
-                return response()->json(['data' => $data, 'status' => 'Success']);
+                return response()->json(['data' => $data, 'message' => 'Success'], 200);
             }
             
 
@@ -125,11 +125,11 @@ class AlamatController extends Controller
                 'kode_pos' => $request->kode_pos,
             ]);
             
-            return response()->json(['data' => $data, 'status' => 'Success']);
+            return response()->json(['data' => $data, 'message' => 'Success'], 200);
 
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -141,17 +141,17 @@ class AlamatController extends Controller
             $user_id = Auth::user()->id;
 
             if($user_id != $alamatById->user_id){
-                return response()->json(['message'=>'Tidak Bisa Menghapus Data Orang Lain', 'status' => 401]);
+                return response()->json(['message'=>'Tidak Bisa Menghapus Data Orang Lain'], 401);
             }
 
             if ($alamatById->alamat_utama == 1) {
-                return response()->json(['message' => 'Tidak bisa dihapus karena alamat utama', 'status' => 401]);
+                return response()->json(['message' => 'Tidak bisa dihapus karena alamat utama'], 401);
             } else {
                 UserAlamat::where('id', $id)->first()->delete();
-                return response()->json(['status' => 'Success']);
+                return response()->json(['message' => 'Success'], 200);
             }
         } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 }
