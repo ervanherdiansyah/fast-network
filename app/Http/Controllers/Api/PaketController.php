@@ -47,11 +47,12 @@ class PaketController extends Controller
                 'description' => 'required|string',
                 'image' => 'nullable',
                 'point' => 'required|integer',
-                'paket_kode' => 'required|string'
+                'paket_kode' => 'required|string',
+                'value' => 'required',
             ]);
 
             $file_name = null;
-            if($request->hasFile('image')){
+            if ($request->hasFile('image')) {
                 $file_name = $request->image->getClientOriginalName();
                 $namaGambar = str_replace(' ', '_', $file_name);
                 $image = $request->image->storeAs('public/paket', $namaGambar);
@@ -63,9 +64,10 @@ class PaketController extends Controller
                 'price' => $request->price,
                 'weight' => $request->weight,
                 'description' => $request->description,
-                'image' => $file_name?"paket/".$namaGambar : null,
+                'image' => $file_name ? "paket/" . $namaGambar : null,
                 'point' => $request->point,
-                'paket_kode' => $request->paket_kode
+                'paket_kode' => $request->paket_kode,
+                'value' => $request->value,
             ]);
             return response()->json(['data' => $data, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
@@ -88,17 +90,19 @@ class PaketController extends Controller
                 'description' => 'required|string',
                 'image' => 'nullable',
                 'point' => 'required|integer',
-                'paket_kode' => 'required|string'
+                'paket_kode' => 'required|string',
+                'value' => 'required',
             ]);
 
             $data = Paket::find($id);
-            if (Request()->hasFile('gambar')) {
-                if (Storage::exists($data->image)) {
+            if (Request()->hasFile('image') && Request()->file('image')->isValid()) {
+                if (!empty($data->image) && Storage::exists($data->image)) {
                     Storage::delete($data->image);
                 }
                 $file_name = $request->image->getClientOriginalName();
                 $namaGambar = str_replace(' ', '_', $file_name);
                 $image = $request->image->storeAs('public/paket', $namaGambar);
+
                 $data->update([
                     'image' => "paket/" . $namaGambar,
                     'paket_nama' => $request->paket_nama,
@@ -107,7 +111,9 @@ class PaketController extends Controller
                     'weight' => $request->weight,
                     'description' => $request->description,
                     'point' => $request->point,
-                    'paket_kode' => $request->paket_kode
+                    'paket_kode' => $request->paket_kode,
+                    'value' => $request->value,
+
                 ]);
             } else {
                 $data->update([
@@ -118,7 +124,9 @@ class PaketController extends Controller
                     'weight' => $request->weight,
                     'description' => $request->description,
                     'point' => $request->point,
-                    'paket_kode' => $request->paket_kode
+                    'paket_kode' => $request->paket_kode,
+                    'value' => $request->value,
+
                 ]);
             };
 

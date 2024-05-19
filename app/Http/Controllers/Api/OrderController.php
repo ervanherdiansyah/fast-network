@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Paket;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,7 +22,7 @@ class OrderController extends Controller
 
             return response()->json(['data' => $orders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to retrieve orders', 'status' => 'Error'], 500);
+            return response()->json(['message' => 'Failed to retrieve orders'], 500);
         }
     }
 
@@ -32,68 +33,56 @@ class OrderController extends Controller
 
             return response()->json(['data' => $orders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to retrieve orders', 'status' => 'Error'], 500);
+            return response()->json(['message' => 'Failed to retrieve orders'], 500);
         }
     }
 
-    public function getOrderByUserId()
+    public function getAllOrderByUser()
     {
         try {
-            $orders = Order::with('orderDetail.products', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Paid')->latest()->get();
+            $orders = Order::with('orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Paid')->latest()->paginate(10);
 
             return response()->json(['data' => $orders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to retrieve orders', 'status' => 'Error'], 500);
+            return response()->json(['message' => 'Failed to retrieve orders'], 500);
         }
     }
 
     public function getOrderByUserIdOnOrder()
     {
         try {
-            $orders = Order::with('orderDetail.products', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Pending')->latest()->first();
+            $orders = Order::with('orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Pending')->latest()->first();
 
             return response()->json(['data' => $orders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage(), 'status' => 'Error'], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
     public function addToOrder(Request $request)
     {
-        // Validasi input
-        // $validator = Validator::make($request->all(), [
-        //     'products' => 'required|array', // Array produk yang akan ditambahkan
-        //     'products.*.id' => 'required|integer|exists:products,id', // ID produk harus ada dalam tabel produk
-        //     'products.*.quantity' => 'required|integer|min:1', // Jumlah produk minimal 1
-        // ]);
-
-        // Cek apakah validasi gagal
-        // if ($validator->fails()) {
-        //     return response()->json(['error' => $validator->errors()->first()], 400);
-        // }
-
-        // Ambil paket
-        $paketId = $request->input('paketId');
-        $paket = Paket::findOrFail($paketId);
-        $maxQuantity = $paket->max_quantity;
-        $paketCode = $paket->paket_kode;
-        $hargaPaket = $paket->price;
-
-
-        $jsonData = $request->all();
-
-        // Inisialisasi variabel untuk menyimpan jumlah total produk
-        $totalQuantity = 0;
-
-        // Iterasi melalui array produk
-        foreach ($jsonData['products'] as $product) {
-            // Tambahkan jumlah produk ke totalQuantity
-            $totalQuantity += $product['quantity'];
-        }
         // Mulai transaksi database
         DB::beginTransaction();
 
         try {
+            // Ambil paket
+            $paketId = $request->input('paketId');
+            $paket = Paket::findOrFail($paketId);
+            $maxQuantity = $paket->max_quantity;
+            $paketCode = $paket->paket_kode;
+            $hargaPaket = $paket->price;
+
+
+            $jsonData = $request->all();
+
+            // Inisialisasi variabel untuk menyimpan jumlah total produk
+            $totalQuantity = 0;
+
+            // Iterasi melalui array produk
+            foreach ($jsonData['products'] as $product) {
+                // Tambahkan jumlah produk ke totalQuantity
+                $totalQuantity += $product['quantity'];
+            }
 
             // Buat order baru
             $order = new Order();
@@ -115,16 +104,19 @@ class OrderController extends Controller
 
                 if (!$requestedProduct || $requestedQuantity > $requestedProduct->stock) {
                     DB::rollback();
-                    return response()->json(['error' => 'Requested quantity exceeds available stock'], 400);
+                    return response()->json(['message' => 'Requested quantity exceeds available stock'], 400);
+                } elseif ($requestedQuantity > 5) {
+                    DB::rollback();
+                    return response()->json(['message' => 'Request quantity does not exceed 5'], 400);
                 }
 
                 // Cek apakah jumlah produk yang diminta lebih dari max quantity
                 if ($totalQuantity > $maxQuantity) {
                     DB::rollback();
-                    return response()->json(['error' => 'Requested quantity exceeds maximum quantity allowed'], 400);
+                    return response()->json(['message' => 'Requested quantity exceeds maximum quantity allowed'], 400);
                 } elseif ($totalQuantity < $maxQuantity) {
                     DB::rollback();
-                    return response()->json(['error' => 'Requested quantity exceeds minumum quantity allowed'], 400);
+                    return response()->json(['message' => 'Requested quantity exceeds minumum quantity allowed'], 400);
                 }
 
                 // Buat detail order untuk produk ini
@@ -138,12 +130,51 @@ class OrderController extends Controller
             // Commit transaksi
             DB::commit();
 
-            return response()->json(['message' => 'Products added to order successfully'], 200);
+            return response()->json(['data' => ['order' => $order, 'orderDetail' => $orderDetail], 'message' => 'Products added to order successfully'], 200);
         } catch (\Exception $e) {
             // Rollback transaksi jika terjadi kesalahan
             DB::rollback();
 
-            return response()->json(['error' => 'Failed to add products to order'], 500);
+            return response()->json(['message' => 'Failed to add products to order'], 500);
+        }
+    }
+
+    public function getOrderByUserOnAfiliasi()
+    {
+        try {
+            $referralCode = User::where('id', Auth::user()->id)->first();
+
+            $orders = Order::join('users', 'orders.user_id', '=', 'users.id')
+                ->join('user_details', 'users.id', '=', 'user_details.user_id')
+                ->where('user_details.referral_use', $referralCode->referral)
+                ->select('orders.*', 'users.name as user_name', 'user_details.referral_use')
+                ->with('users.userDetail', 'orderDetail.product')
+                ->get();
+
+            return response()->json(['data' => $orders, 'message' => 'success'], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function getSumOrderOnAfiliasiByUser()
+    {
+        try {
+            //code...
+            $referralCode = User::where('id', Auth::user()->id)->first();
+
+            $orders = Order::join('users', 'orders.user_id', '=', 'users.id')
+                ->join('user_details', 'users.id', '=', 'user_details.user_id')
+                ->where('user_details.referral_use', $referralCode->referral)
+                ->select('orders.user_id', DB::raw('SUM(orders.total_harga) as total_harga'))
+                ->groupBy('orders.user_id')
+                ->with('users.userDetail')
+                ->get();
+            return response()->json(['data' => $orders, 'message' => 'success'], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['message' => $th->getMessage()], 500);
         }
     }
 }
