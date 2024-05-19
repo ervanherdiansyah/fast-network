@@ -116,11 +116,11 @@ class AuthController extends Controller
 
 
             DB::commit();
-            return response()->json(['status' => 'Success']);
+            return response()->json(['message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
     public function login()
@@ -128,7 +128,7 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
 
         if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Unauthorized | Invalid Credentials'], 401);
         }
 
         return $this->respondWithToken($token);
@@ -153,7 +153,7 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'Successfully logged out'], 200);
     }
 
     /**
