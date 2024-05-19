@@ -29,10 +29,10 @@ class UserDetailController extends Controller
         try {
             //code...
             $userDetailById = UserDetails::where('user_id', $user_id)->first();
-            return response()->json(['data' => $userDetailById, 'status' => 'Success']);
+            return response()->json(['data' => $userDetailById, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -87,10 +87,10 @@ class UserDetailController extends Controller
                 'no_kontak' => $request->no_kontak,
             ]);
 
-            return response()->json(['data' => $data, 'status' => 'Success']);
+            return response()->json(['data' => $data, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
