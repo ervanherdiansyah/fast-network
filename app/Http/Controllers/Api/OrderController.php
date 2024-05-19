@@ -22,7 +22,7 @@ class OrderController extends Controller
 
             return response()->json(['data' => $orders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to retrieve orders', 'status' => 'Error'], 500);
+            return response()->json(['message' => 'Failed to retrieve orders'], 500);
         }
     }
 
@@ -33,7 +33,7 @@ class OrderController extends Controller
 
             return response()->json(['data' => $orders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to retrieve orders', 'status' => 'Error'], 500);
+            return response()->json(['message' => 'Failed to retrieve orders'], 500);
         }
     }
 
@@ -44,7 +44,7 @@ class OrderController extends Controller
 
             return response()->json(['data' => $orders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Failed to retrieve orders', 'status' => 'Error'], 500);
+            return response()->json(['message' => 'Failed to retrieve orders'], 500);
         }
     }
 
@@ -55,46 +55,34 @@ class OrderController extends Controller
 
             return response()->json(['data' => $orders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage(), 'status' => 'Error'], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
     public function addToOrder(Request $request)
     {
-        // Validasi input
-        // $validator = Validator::make($request->all(), [
-        //     'products' => 'required|array', // Array produk yang akan ditambahkan
-        //     'products.*.id' => 'required|integer|exists:products,id', // ID produk harus ada dalam tabel produk
-        //     'products.*.quantity' => 'required|integer|min:1', // Jumlah produk minimal 1
-        // ]);
-
-        // Cek apakah validasi gagal
-        // if ($validator->fails()) {
-        //     return response()->json(['error' => $validator->errors()->first()], 400);
-        // }
-
-        // Ambil paket
-        $paketId = $request->input('paketId');
-        $paket = Paket::findOrFail($paketId);
-        $maxQuantity = $paket->max_quantity;
-        $paketCode = $paket->paket_kode;
-        $hargaPaket = $paket->price;
-
-
-        $jsonData = $request->all();
-
-        // Inisialisasi variabel untuk menyimpan jumlah total produk
-        $totalQuantity = 0;
-
-        // Iterasi melalui array produk
-        foreach ($jsonData['products'] as $product) {
-            // Tambahkan jumlah produk ke totalQuantity
-            $totalQuantity += $product['quantity'];
-        }
         // Mulai transaksi database
         DB::beginTransaction();
 
         try {
+            // Ambil paket
+            $paketId = $request->input('paketId');
+            $paket = Paket::findOrFail($paketId);
+            $maxQuantity = $paket->max_quantity;
+            $paketCode = $paket->paket_kode;
+            $hargaPaket = $paket->price;
+
+
+            $jsonData = $request->all();
+
+            // Inisialisasi variabel untuk menyimpan jumlah total produk
+            $totalQuantity = 0;
+
+            // Iterasi melalui array produk
+            foreach ($jsonData['products'] as $product) {
+                // Tambahkan jumlah produk ke totalQuantity
+                $totalQuantity += $product['quantity'];
+            }
 
             // Buat order baru
             $order = new Order();
@@ -142,7 +130,7 @@ class OrderController extends Controller
             // Commit transaksi
             DB::commit();
 
-            return response()->json(['message' => 'Products added to order successfully'], 200);
+            return response()->json(['data' => ['order' => $order, 'orderDetail' => $orderDetail], 'message' => 'Products added to order successfully'], 200);
         } catch (\Exception $e) {
             // Rollback transaksi jika terjadi kesalahan
             DB::rollback();

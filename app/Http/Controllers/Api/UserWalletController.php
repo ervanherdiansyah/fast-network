@@ -10,16 +10,17 @@ use Illuminate\Support\Facades\Auth;
 class UserWalletController extends Controller
 {
     //
-    public function getUserWallet(){
+    public function getUserWallet()
+    {
         // user harus login
         $user_id = Auth::user()->id;
         // ambil permintaan withdraw balance yang pernah user
         try {
             $user_wallet_information = UserWallet::where('user_id', $user_id)->first();
-            return response()->json(['data' => $user_wallet_information, 'status' => 'Success']);
+            return response()->json(['data' => $user_wallet_information, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => $th->getMessage()], 500);
         }
-    } 
+    }
 }
