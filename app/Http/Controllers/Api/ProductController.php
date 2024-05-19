@@ -16,10 +16,10 @@ class ProductController extends Controller
         try {
             //code...
             $product = Product::get();
-            return response()->json(['data' => $product, 'status' => 'Success']);
+            return response()->json(['data' => $product, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -31,7 +31,7 @@ class ProductController extends Controller
             return response()->json(['data' => $product, 'status' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
     public function createProduct(Request $request)
@@ -58,10 +58,10 @@ class ProductController extends Controller
                 'stock' => $request->stock,
             ]);
 
-            return response()->json(['data' => $product, 'status' => 'Success']);
+            return response()->json(['data' => $product, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -95,10 +95,10 @@ class ProductController extends Controller
                 ]);
             }
 
-            return response()->json(['data' => $product, 'status' => 'Success']);
+            return response()->json(['data' => $product, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -108,10 +108,10 @@ class ProductController extends Controller
 
             Product::where('id', $id)->first()->delete();
 
-            return response()->json(['status' => 'Success'], 200);
+            return response()->json(['message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 }
