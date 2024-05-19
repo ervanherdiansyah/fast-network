@@ -19,10 +19,10 @@ class BalanceWithdrawController extends Controller
         try {
             $user_id = Auth::user()->id;
             $point_withdraw_request = WithdrawBalance::where('user_id', $user_id)->get();
-            return response()->json(['data' => $point_withdraw_request, 'status' => 'Success']);
+            return response()->json(['data' => $point_withdraw_request, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -49,20 +49,20 @@ class BalanceWithdrawController extends Controller
             // request yang baru
             $user_previous_balance_withdraw_request_pending = WithdrawBalance::where('user_id', $user_id)->where('status_withdraw', 'Pending')->first();
             if($user_previous_balance_withdraw_request_pending){
-                return response()->json(['message' => "Anda Masih Memiliki Withdraw Balance Dengan Status Pending", 'status' => 400]);
+                return response()->json(['message' => "Anda Masih Memiliki Withdraw Balance Dengan Status Pending"], 401);
             }
             
             // cek poin user dengan poin yang reward butuhkan.
             if($user_available_balance < 300000){
-                return response()->json(['message' => "Saldo Kurang dari 300.000", 'status' => 400]);
+                return response()->json(['message' => "Saldo Kurang dari 300.000"], 401);
             }
 
             else if($user_available_balance < $request->balance_withdrawed){
-                return response()->json(['message' => "Saldo Tidak Mencukupi", 'status' => 400]);
+                return response()->json(['message' => "Saldo Tidak Mencukupi"], 401);
             }
 
             else if($request->balance_withdrawed < 300000){
-                return response()->json(['message' => "Miniwal Withdraw adalah 300.000", 'status' => 400]);
+                return response()->json(['message' => "Miniwal Withdraw adalah 300.000"], 401);
             }
 
             else{
@@ -79,14 +79,14 @@ class BalanceWithdrawController extends Controller
 
                 // Commit kalau Semuanya berhasil
                 DB::commit();
-                return response()->json(['data' => $data, 'status' => 'Success']);
+                return response()->json(['data' => $data, 'message' => 'Success'], 200);
             }
 
         } catch (\Throwable $th) {
             //throw $th;
             // rollback kalau ada error di salah satu transaksi database.
             DB::rollback();
-            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 }
