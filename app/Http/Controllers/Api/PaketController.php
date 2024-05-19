@@ -15,10 +15,10 @@ class PaketController extends Controller
         try {
             //code...
             $paketDetail = Paket::get();
-            return response()->json(['data' => $paketDetail, 'status' => 'Success']);
+            return response()->json(['data' => $paketDetail, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -27,10 +27,10 @@ class PaketController extends Controller
         try {
             //code...
             $paketDetailById = Paket::where('id', $id)->first();
-            return response()->json(['data' => $paketDetailById, 'status' => 'Success']);
+            return response()->json(['data' => $paketDetailById, 'message' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -67,10 +67,10 @@ class PaketController extends Controller
                 'point' => $request->point,
                 'paket_kode' => $request->paket_kode
             ]);
-            return response()->json(['data' => $data, 'status' => 'Success']);
+            return response()->json(['data' => $data, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -122,10 +122,10 @@ class PaketController extends Controller
                 ]);
             };
 
-            return response()->json(['data' => $data, 'status' => 'Success']);
+            return response()->json(['data' => $data, 'message' => 'Success']);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
         }
     }
 
@@ -134,10 +134,10 @@ class PaketController extends Controller
         try {
             //code...
             $deletePaket = Paket::where('id', $id)->first()->delete();
-            return response()->json(['status' => 'Success']);
+            return response()->json(['message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 }
