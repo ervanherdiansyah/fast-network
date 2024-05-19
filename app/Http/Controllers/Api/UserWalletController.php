@@ -20,7 +20,7 @@ class UserWalletController extends Controller
             return response()->json(['data' => $user_wallet_information, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['message' => $th->getMessage()], 500);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 }
