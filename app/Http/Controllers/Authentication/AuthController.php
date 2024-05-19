@@ -46,6 +46,7 @@ class AuthController extends Controller
                 'nama_bank' => 'required',
                 'no_rekening' => 'required',
                 'nama_kontak' => 'required',
+                'no_kontak' => 'required',
                 'referral_use' => 'required',
                 'nama_rekening' => 'required',
                 'password' => 'required|min:8',
@@ -71,7 +72,7 @@ class AuthController extends Controller
                 'user_id' => $user->id,
                 'nik' => $request->nik,
                 'nomor_wa' => $request->nomor_wa,
-                'no_kontak' => $request->no_rek,
+                'no_kontak' => $request->no_kontak,
                 'nama_kontak' => $request->nama_kontak,
                 'referral_use' => $request->referral_use,
 
