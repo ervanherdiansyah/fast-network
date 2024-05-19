@@ -15,7 +15,7 @@ class CheckReferral extends Controller
             return response()->json(['data' => $user_referral, 'message' => 'success'], 200);
         }
         catch(\Throwable $th){
-            return response()->json(['message' => $th->getMessage(), 'status' => 500]);
+            return response()->json(['message' => 'Internal Server Error'], 500);
         }
 
     }
