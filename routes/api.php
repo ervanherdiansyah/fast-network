@@ -129,7 +129,7 @@ Route::post('/callback', [CheckoutContoller::class, 'callback']);
 // Get Cities 
 Route::get('/cities', [CitiesController::class, 'getAllCities']);
 Route::get('/cities/by-id/{id}', [CitiesController::class, 'getCitiesById']);
-Route::get('/cities/by-province-id/{id}', [CitiesController::class, 'getcitiesByIdProvinsi']);
+Route::get('/cities/by-province-id/{provinsi_id}', [CitiesController::class, 'getcitiesByIdProvinsi']);
 
 //Get Courier
 Route::get('/courier', [CourierController::class, 'getAllCourier']);
