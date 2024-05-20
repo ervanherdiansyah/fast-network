@@ -29,7 +29,7 @@ class CitiesController extends Controller
     public function getcitiesByIdProvinsi(Request $request, $provinsi_id)
     {
         try {
-            $cities = City::where('province_id', $provinsi_id)->first();
+            $cities = City::where('province_id', $provinsi_id);
             return response()->json(['data' => $cities, 'message' => 'success'], 200);
         } catch (\Throwable $th) {
             return response()->json(['message' =>'Internal Server Error'], 500);
