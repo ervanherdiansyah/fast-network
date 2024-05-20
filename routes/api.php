@@ -119,15 +119,15 @@ Route::group([
 });
 
 // Produk Admin
-Route::get('/get-product', [ProductController::class, 'getProduct']);
-Route::get('/product', [ProductController::class, 'getFilterPaket']);
+Route::get('/product', [ProductController::class, 'getProduct']);
 Route::post('/product/create', [ProductController::class, 'createProduct']);
 Route::get('/product-byid/{id}', [ProductController::class, 'getProductById']);
 Route::post('/product/update/{id}', [ProductController::class, 'updateProduct']);
 Route::delete('/product/delete/{id}', [ProductController::class, 'deleteProduct']);
 
 // Paket Admin
-Route::get('/package', [PaketController::class, 'getPaket']);
+Route::get('/get-package', [PaketController::class, 'getPaket']);
+Route::get('/package', [PaketController::class, 'getFilterPaket']);
 Route::post('/package/create', [PaketController::class, 'createPaket']);
 Route::get('/package-byid/{id}', [PaketController::class, 'getPaketById']);
 Route::post('/package/update/{id}', [PaketController::class, 'updatePaket']);
