@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\UserWalletController;
 use App\Http\Controllers\Authentication\AuthController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -43,7 +44,7 @@ Route::group([
 
 
     //middleware member affliasi
-    Route::middleware(['check.role:mitra'])->group(function () {
+    Route::middleware(['checkTokenExpiration', 'check.role:mitra'])->group(function () {
 
         //Order
         Route::get('/get-order', [OrderController::class, 'getOrderByUserIdOnOrder']);
@@ -101,6 +102,19 @@ Route::group([
 
         // Get Wallet Information
         Route::get('/user-wallet', [UserWalletController::class, 'getUserWallet']);
+    });
+
+    Route::middleware(['checkTokenExpiration'])->get('/check-token-expiration', function (Request $request) {
+        // Mendapatkan waktu kedaluwarsa dari atribut request
+        $expires_at = $request->attributes->get('expires_at');
+
+        // Konversi waktu ke zona waktu Asia/Jakarta
+        $expires_at_indonesia = Carbon::parse($expires_at)->timezone('Asia/Jakarta')->toDateTimeString();
+
+        return response()->json([
+            'message' => 'Token is valid',
+            'expires_at' => $expires_at_indonesia
+        ]);
     });
 });
 
