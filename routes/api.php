@@ -119,7 +119,8 @@ Route::group([
 });
 
 // Produk Admin
-Route::get('/product', [ProductController::class, 'getProduct']);
+Route::get('/get-product', [ProductController::class, 'getProduct']);
+Route::get('/product', [ProductController::class, 'getFilterPaket']);
 Route::post('/product/create', [ProductController::class, 'createProduct']);
 Route::get('/product-byid/{id}', [ProductController::class, 'getProductById']);
 Route::post('/product/update/{id}', [ProductController::class, 'updateProduct']);
