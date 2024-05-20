@@ -130,8 +130,12 @@ class CheckoutContoller extends Controller
                     $user = User::with('userDetail')->where('id', Auth::user()->id)->first();
                     $userReferal = User::where('referral', $user->userDetail->referral_use)->first();
 
-                    if ($user->first_order == true) {
+                    $paket_terjual = Paket::where('id', $orders->paket_id)->first();
+                    $paket_terjual->update([
+                        'jumlah_terjual' => $paket_terjual->jumlah_terjual + 1,
+                    ]);
 
+                    if ($user->first_order == true) {
                         $affliator = UserWallet::where('user_id', $userReferal->id)->first();
                         $affliator->total_balance += 300000;
                         $affliator->current_balance += 300000;
