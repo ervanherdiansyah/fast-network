@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class PaketController extends Controller
 {
@@ -23,17 +24,26 @@ class PaketController extends Controller
         }
     }
 
-    public function getFilterPaket()
+    public function getFilterPaket(Request $request)
     {
         try {
             //code...
-            $userAuth = User::where('id', Auth::user()->id)->first();
-            if ($userAuth->first_buy_success == true) {
-                $paketDetail = Paket::get();
+            if (!$request->hasHeader('Authorization') || !preg_match('/Bearer\s(\S+)/', $request->header('Authorization'))) {
+                $paketDetail = Paket::where('is_visible', true)->first();
                 return response()->json(['data' => $paketDetail, 'message' => 'Success'], 200);
-            } else {
-                $paketDetail = Paket::where('is_visible', true)->get();
-                return response()->json(['data' => $paketDetail, 'message' => 'Success'], 200);
+            }
+
+            $user = JWTAuth::parseToken()->authenticate();
+
+            if ($user) {
+                $userAuth = User::where('id', Auth::user()->id)->first();
+                if ($userAuth->first_buy_success == true) {
+                    $paketDetail = Paket::get();
+                    return response()->json(['data' => $paketDetail, 'message' => 'Success'], 200);
+                } elseif ($userAuth->first_buy_success == false) {
+                    $paketDetail = Paket::where('is_visible', true)->first();
+                    return response()->json(['data' => $paketDetail, 'message' => 'Success'], 200);
+                }
             }
         } catch (\Throwable $th) {
             //throw $th;
