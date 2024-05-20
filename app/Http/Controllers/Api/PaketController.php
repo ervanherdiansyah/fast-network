@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Paket;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class PaketController extends Controller
@@ -13,9 +15,26 @@ class PaketController extends Controller
     public function getPaket()
     {
         try {
-            //code...
             $paketDetail = Paket::get();
             return response()->json(['data' => $paketDetail, 'message' => 'Success'], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
+    }
+
+    public function getFilterPaket()
+    {
+        try {
+            //code...
+            $userAuth = User::where('id', Auth::user()->id)->first();
+            if ($userAuth->first_buy_success == true) {
+                $paketDetail = Paket::get();
+                return response()->json(['data' => $paketDetail, 'message' => 'Success'], 200);
+            } else {
+                $paketDetail = Paket::where('is_visible', true)->get();
+                return response()->json(['data' => $paketDetail, 'message' => 'Success'], 200);
+            }
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json(['message' => 'Internal Server Error'], 500);

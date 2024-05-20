@@ -46,6 +46,7 @@ class AuthController extends Controller
                 'nama_bank' => 'required',
                 'no_rekening' => 'required',
                 'nama_kontak' => 'required',
+                'no_kontak' => 'required',
                 'referral_use' => 'required',
                 'nama_rekening' => 'required',
                 'password' => 'required|min:8',
@@ -71,7 +72,7 @@ class AuthController extends Controller
                 'user_id' => $user->id,
                 'nik' => $request->nik,
                 'nomor_wa' => $request->nomor_wa,
-                'no_kontak' => $request->no_rek,
+                'no_kontak' => $request->no_kontak,
                 'nama_kontak' => $request->nama_kontak,
                 'referral_use' => $request->referral_use,
 
@@ -113,14 +114,25 @@ class AuthController extends Controller
                 'total_referral' => $user_wallet_referral->total_referral + 1
             ]);
 
+            // Coba login dan buat token JWT
+            $credentials = ['email' => $user->email, 'password' => $request->password];
 
+            if (!$token = auth()->attempt($credentials)) {
+                return response()->json(['message' => 'Unauthorized | Invalid Credentials'], 401);
+            }
 
             DB::commit();
-            return response()->json(['message' => 'Success'], 200);
+            return response()->json([
+                'token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => auth()->factory()->getTTL(),
+                'message' => 'Success Register'
+            ], 200);
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();
-            return response()->json(['message' => 'Internal Server Error'], 500);
+            // return response()->json(['message' => 'Internal Server Error'], 500);
+            return response()->json(['message' => $th->getMessage()], 500);
         }
     }
     public function login()
@@ -176,9 +188,9 @@ class AuthController extends Controller
     protected function respondWithToken($token)
     {
         return response()->json([
-            'access_token' => $token,
+            'token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60
+            'expires_in' => auth()->factory()->getTTL()
         ]);
     }
 }

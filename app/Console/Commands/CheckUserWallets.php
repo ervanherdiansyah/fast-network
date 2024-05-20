@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Courier;
+use App\Models\Reward;
 use App\Models\User;
 use Illuminate\Console\Command;
 
@@ -27,8 +28,9 @@ class CheckUserWallets extends Command
      */
     public function handle()
     {
-        Courier::create([
-            'courier_name' => 'test'
+        Reward::create([
+            'point' => '100',
+            'reward_name' => 'test',
         ]);
     }
 }
