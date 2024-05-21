@@ -54,7 +54,29 @@ class AlamatController extends Controller
                 'kecamatan' => 'required',
                 'kelurahan' => 'required',
                 'kode_pos' => 'required',
+                'alamat_utama' => 'integer|nullable'
             ]);
+
+            if($request->alamat_utama){
+                $user_id = Auth::user()->id;
+                $previous_alamat_utama = UserAlamat::find(Auth::user()->id)->where('alamat_utama', true)->first();
+                $previous_alamat_utama->update([
+                    'alamat_utama' => false
+                ]);
+
+                $alamat = UserAlamat::create([
+                    'user_id' => Auth::user()->id,
+                    'alamat_lengkap' => $request->alamat_lengkap,
+                    'provinsi_id' => $request->provinsi_id,
+                    'kota_id' => $request->kota_id,
+                    'kecamatan' => $request->kecamatan,
+                    'kelurahan' => $request->kelurahan,
+                    'kode_pos' => $request->kode_pos,
+                    'alamat_utama' => 1,
+                ]);
+
+                return response()->json(['data' => $alamat, 'message' => 'Success'], 200);
+            }
 
             $alamat = UserAlamat::create([
                 'user_id' => Auth::user()->id,
