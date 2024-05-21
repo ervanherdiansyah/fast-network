@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Storage;
 
 class UserDetailController extends Controller
 {
@@ -65,6 +66,7 @@ class UserDetailController extends Controller
             Request()->validate([
                 'nik' => 'required',
                 'nomor_wa' => 'required',
+                'foto_profil' => 'nullable',
                 'nama_kontak' => 'required',
                 'no_kontak' => 'required',
                 'name' => 'required|string',
@@ -83,10 +85,30 @@ class UserDetailController extends Controller
                 'no_kontak' => $request->no_kontak,
             ]);
 
-            $user->update([
-                'name'=>$request->name,
-                'email'=>$request->email
-            ]);
+            $file_name = null;
+            if (Request()->hasFile('foto_profil') && Request()->file('foto_profil')->isValid()) {
+                if (!empty($user->foto_profil) && Storage::exists($user->foto_profil)) {
+                    Storage::delete($user->foto_profil);
+                }
+                $file_name = $request->foto_profil->getClientOriginalName();
+                $namaGambar = str_replace(' ', '_', $file_name);
+                $image = $request->foto_profil->storeAs('public/foto_profil', $namaGambar);
+
+                $user->update([
+                    'name'=>$request->name,
+                    'foto_profil'=> $file_name ? "gambar_informasi_banner/" . $namaGambar : null,
+                    'email'=>$request->email
+                ]);
+            }
+            else{
+                $user->update([
+                    'name'=>$request->name,
+                    'email'=>$request->email
+                ]);
+            }
+            
+            
+
             DB::commit();
             return response()->json(['data' => $data, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {

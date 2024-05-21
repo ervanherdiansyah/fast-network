@@ -42,6 +42,7 @@ class AuthController extends Controller
             Request()->validate([
                 'name' => 'required',
                 'nik' => 'required',
+                'foto_profil' => 'nullable',
                 'nomor_wa' => 'required',
                 'provinsi_id' => 'required|integer',
                 'kota_id' => 'required|integer',
@@ -60,9 +61,17 @@ class AuthController extends Controller
             // $code = str_replace(' ', '', $request->name);
             // $randomNumber = rand(1000,9999);
 
+            $file_name = null;
+            if ($request->hasFile('foto_profil')) {
+                $file_name = $request->foto_profil->getClientOriginalName();
+                $namaGambar = str_replace(' ', '_', $file_name);
+                $image = $request->foto_profil->storeAs('public/fotoprofil', $namaGambar);
+            }
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
+                'foto_profil' => $file_name ? "fotoprofil/" . $namaGambar : null,
                 'password' => bcrypt($request->password),
                 'role' => "mitra",
                 'first_order' => 1,
