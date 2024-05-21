@@ -8,6 +8,7 @@ use App\Models\UserDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UserDetailController extends Controller
 {
@@ -92,6 +93,40 @@ class UserDetailController extends Controller
             //throw $th;
             DB::rollback();
             return response()->json(['message' => 'Internal Server Error'], 500);
+        }
+    }
+
+    public function updateUserPassword(Request $request){
+
+        Request()->validate([
+            'current_password'=>'required|string',
+            'new_password'=>'required|string',
+            'confirmation_password'=>'required|string'
+        ]);
+
+        $user_id = Auth::user()->id;
+        $user_data = User::where('id', $user_id)->first();
+
+        
+        $database_current_password = $user_data->password();
+        $current_password = $request->current_password;
+        $new_password = $request->new_password;
+        $confirmation_password = $request->confirmation_password;
+
+        if(Hash::check($database_current_password, $current_password)){
+            if(Hash::check($new_password, $confirmation_password)){
+                $user_data->update([
+                    'password'->bcrypt($new_password)
+                ]);
+                
+                return response()->json(['message'=>'Password Berhasil Diganti'], 200);
+            }
+            else{
+                return response()->json(['message'=>'Password Tidak Cocok'], 401);
+            }
+        }
+        else{
+            return response()->json(['message'=>'Password Lama Salah'], 401);
         }
     }
 
