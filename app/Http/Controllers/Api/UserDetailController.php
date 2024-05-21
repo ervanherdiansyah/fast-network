@@ -102,8 +102,6 @@ class UserDetailController extends Controller
                 'email' => $request->email
             ]);
 
-
-
             DB::commit();
             return response()->json(['data' => $data, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
