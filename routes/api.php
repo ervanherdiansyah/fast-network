@@ -62,13 +62,15 @@ Route::group([
         Route::post('/checkout', [CheckoutContoller::class, 'checkout']);
 
         // Alamat
-        Route::get('/useralamat-by-userid', [AlamatController::class, 'getAlamatByUserId']);
+        Route::get('/useralamat-by-user', [AlamatController::class, 'getAlamatByUserId']);
+        Route::get('/useralamatutama-by-user', [AlamatController::class, 'getAlamatUtamaByUserId']);
         Route::post('/useralamat/create', [AlamatController::class, 'createAlamat']);
         Route::post('/useralamat/update/{id}', [AlamatController::class, 'updateAlamat']);
         Route::delete('/useralamat/delete/{id}', [AlamatController::class, 'deleteAlamat']);
 
         // User Bank Detail API
         Route::get('userbanks', [BankController::class, 'getBankByUserID']);
+        Route::get('userbankutama', [BankController::class, 'getBankUtamaByUserID']);
         Route::post('userbanks/add', [BankController::class, 'AddBankByUserID']);
         Route::delete('userbanks/delete/{id}', [BankController::class, 'deleteBankByID']);
         Route::post('userbanks/update/{id}', [BankController::class, 'updateBankDataByID']);
@@ -89,6 +91,10 @@ Route::group([
         // Route::post('/user-detail/create', [UserDetailController::class, 'createUserDetail']);
 
         Route::post('/user-detail/update', [UserDetailController::class, 'updateUserDetail']);
+
+        //Use Referral By User
+        Route::get('/use-referral/byuser', [UserDetailController::class, 'getUseReferralByUser']);
+
 
         // Pencairan Balance
         // Ambil Seluruh Permintaan Pencairan Balance Yang Pernah user lakukan
