@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\CheckoutContoller;
 use App\Http\Controllers\Api\CheckReferral;
 use App\Http\Controllers\Api\CitiesController;
 use App\Http\Controllers\Api\CourierController;
+use App\Http\Controllers\Api\GambarBannerController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaketController;
 use App\Http\Controllers\Api\PointWithdrawController;
@@ -132,6 +133,13 @@ Route::post('/package/create', [PaketController::class, 'createPaket']);
 Route::get('/package-byid/{id}', [PaketController::class, 'getPaketById']);
 Route::post('/package/update/{id}', [PaketController::class, 'updatePaket']);
 Route::delete('/package/delete/{id}', [PaketController::class, 'deletePaket']);
+
+// Gambar Banner
+Route::get('/gambar-banner', [GambarBannerController::class, 'getAllBannerImages']);
+Route::post('/gambar-banner/create', [GambarBannerController::class, 'createNewBannerImage']);
+Route::get('/gambar-banner-byid/{id}', [GambarBannerController::class, 'getBannerImagesBy']);
+Route::post('/gambar-banner/update/{id}', [GambarBannerController::class, 'updateBannerImage']);
+Route::delete('/gambar-banner/delete/{id}', [GambarBannerController::class, 'deleteGambarBanner']);
 
 // Route::middleware(['role:superadmin'])->group(function () {
 // });

@@ -28,23 +28,25 @@ class PaketController extends Controller
     {
         try {
             //code...
-            if (!$request->hasHeader('Authorization') || !preg_match('/Bearer\s(\S+)/', $request->header('Authorization'))) {
-                $paketDetail = Paket::where('is_visible', true)->first();
-                return response()->json(['data' => $paketDetail, 'message' => 'Success'], 200);
-            }
+            // if (!$request->hasHeader('Authorization') || !preg_match('/Bearer\s(\S+)/', $request->header('Authorization'))) {
+            //     $paketDetail = Paket::where('is_visible', true)->first();
+            //     return response()->json(['data' => $paketDetail, 'message' => 'Success'], 200);
+            // }
 
-            $user = JWTAuth::parseToken()->authenticate();
+            // $user = JWTAuth::parseToken()->authenticate();
 
-            if ($user) {
-                $userAuth = User::where('id', Auth::user()->id)->first();
-                if ($userAuth->first_buy_success == true) {
-                    $paketDetail = Paket::get();
-                    return response()->json(['data' => $paketDetail, 'message' => 'Success'], 200);
-                } elseif ($userAuth->first_buy_success == false) {
-                    $paketDetail = Paket::where('is_visible', true)->first();
-                    return response()->json(['data' => $paketDetail, 'message' => 'Success'], 200);
-                }
-            }
+            // if ($user) {
+            //     $userAuth = User::where('id', Auth::user()->id)->first();
+            //     if ($userAuth->first_buy_success == true) {
+            //         $paketDetail = Paket::get();
+            //         return response()->json(['data' => $paketDetail, 'message' => 'Success'], 200);
+            //     } elseif ($userAuth->first_buy_success == false) {
+            //         $paketDetail = Paket::where('is_visible', true)->first();
+            //         return response()->json(['data' => $paketDetail, 'message' => 'Success'], 200);
+            //     }
+            // }
+            $paketDetail = Paket::get();
+            return response()->json(['data' => $paketDetail, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json(['message' => 'Internal Server Error'], 500);
