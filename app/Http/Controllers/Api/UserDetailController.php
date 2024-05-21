@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UserDetailController extends Controller
 {
@@ -59,14 +60,19 @@ class UserDetailController extends Controller
 
         try {
             //code...
+            DB::beginTransaction();
             Request()->validate([
                 'nik' => 'required',
                 'nomor_wa' => 'required',
                 'nama_kontak' => 'required',
                 'no_kontak' => 'required',
+                'name' => 'required|string',
+                'email' => 'required|string'
             ]);
 
+            
             $user_id = Auth::user()->id;
+            $user = User::where('id', $user_id)->first();
             $data = UserDetails::where('user_id', $user_id)->first();
 
             $data->update([
@@ -76,9 +82,15 @@ class UserDetailController extends Controller
                 'no_kontak' => $request->no_kontak,
             ]);
 
+            $user->update([
+                'name'=>$request->name,
+                'email'=>$request->email
+            ]);
+            DB::commit();
             return response()->json(['data' => $data, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
+            DB::rollback();
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
