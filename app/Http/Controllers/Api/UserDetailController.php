@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\UserDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,6 +31,19 @@ class UserDetailController extends Controller
             //code...
             $userDetailById = UserDetails::where('user_id', $user_id)->first();
             return response()->json(['data' => $userDetailById, 'message' => 'Success'], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
+    }
+    public function getUseReferralByUser()
+    {
+
+        try {
+            //code...
+            $user_id = User::with('users')->where('id', Auth::user()->id)->first();
+            $useReferralByUser = UserDetails::where('referral_use', $user_id->referral)->get();
+            return response()->json(['data' => $useReferralByUser, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json(['message' => 'Internal Server Error'], 500);
@@ -66,7 +80,7 @@ class UserDetailController extends Controller
 
     public function updateUserDetail(Request $request)
     {
-        
+
 
         try {
             //code...
@@ -79,7 +93,7 @@ class UserDetailController extends Controller
 
             $user_id = Auth::user()->id;
             $data = UserDetails::where('user_id', $user_id)->first();
-            
+
             $data->update([
                 'nik' => $request->nik,
                 'nomor_wa' => $request->nomor_wa,

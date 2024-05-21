@@ -89,6 +89,10 @@ Route::group([
 
         Route::post('/user-detail/update', [UserDetailController::class, 'updateUserDetail']);
 
+        //Use Referral By User
+        Route::get('/use-referral/byuser', [UserDetailController::class, 'getUseReferralByUser']);
+
+
         // Pencairan Balance
         // Ambil Seluruh Permintaan Pencairan Balance Yang Pernah user lakukan
         Route::get('/user-balancewithdrawhistory', [BalanceWithdrawController::class, 'getWithdrawBalanceByUser']);
