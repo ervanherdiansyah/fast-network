@@ -28,7 +28,7 @@ class RajaOngkirController extends Controller
                     'origin' => env('RAJAONGKIR_ORIGIN'),
                     'destination' => $userAlamat->kota_id,
                     'weight' => $userOrder->paket->weight,
-                    'courier' => strtolower($request->courier),
+                    'courier' => $request->code_courier,
                 ]);
 
                 $shippingFees = json_decode($response->getBody(), true);
