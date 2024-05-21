@@ -100,6 +100,7 @@ class UserDetailController extends Controller
                     'email'=>$request->email
                 ]);
             }
+            
             else{
                 $user->update([
                     'name'=>$request->name,
