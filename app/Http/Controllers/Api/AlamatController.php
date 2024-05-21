@@ -23,7 +23,7 @@ class AlamatController extends Controller
     {
         try {
             $user_id = Auth::user()->id;
-            $alamat = UserAlamat::where('user_id', $user_id)->get();
+            $alamat = UserAlamat::with('users')->where('user_id', $user_id)->get();
             return response()->json(['data' => $alamat, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
@@ -35,7 +35,7 @@ class AlamatController extends Controller
     {
         try {
             $user_id = Auth::user()->id;
-            $alamat = UserAlamat::where('user_id', $user_id)->where('alamat_utama', true)->first();
+            $alamat = UserAlamat::with('users')->where('user_id', $user_id)->where('alamat_utama', true)->first();
             return response()->json(['data' => $alamat, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
@@ -91,12 +91,12 @@ class AlamatController extends Controller
             $data = UserAlamat::where('id', $id)->first();
             $user_id = Auth::user()->id;
 
-            if($user_id != $data->user_id){
-                return response()->json(['message'=>'Tidak Bisa Mengubah Data Orang Lain'], 401);
+            if ($user_id != $data->user_id) {
+                return response()->json(['message' => 'Tidak Bisa Mengubah Data Orang Lain'], 401);
             }
 
 
-            if($request->alamat_utama == 1){
+            if ($request->alamat_utama == 1) {
                 $previous_alamat_utama = UserAlamat::find(Auth::user()->id)->where('alamat_utama', true)->first();
                 $previous_alamat_utama->update([
                     'alamat_utama' => false
@@ -114,7 +114,7 @@ class AlamatController extends Controller
 
                 return response()->json(['data' => $data, 'message' => 'Success'], 200);
             }
-            
+
 
             $data->update([
                 'alamat_lengkap' => $request->alamat_lengkap,
@@ -124,9 +124,8 @@ class AlamatController extends Controller
                 'kelurahan' => $request->kelurahan,
                 'kode_pos' => $request->kode_pos,
             ]);
-            
-            return response()->json(['data' => $data, 'message' => 'Success'], 200);
 
+            return response()->json(['data' => $data, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json(['message' => 'Internal Server Error'], 500);
@@ -140,8 +139,8 @@ class AlamatController extends Controller
             $alamatById = UserAlamat::where('id', $id)->first();
             $user_id = Auth::user()->id;
 
-            if($user_id != $alamatById->user_id){
-                return response()->json(['message'=>'Tidak Bisa Menghapus Data Orang Lain'], 401);
+            if ($user_id != $alamatById->user_id) {
+                return response()->json(['message' => 'Tidak Bisa Menghapus Data Orang Lain'], 401);
             }
 
             if ($alamatById->alamat_utama == 1) {
