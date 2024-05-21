@@ -57,7 +57,7 @@ class AlamatController extends Controller
                 'alamat_utama' => 'integer|nullable'
             ]);
 
-            if($request->alamat_utama){
+            if($request->alamat_utama == 1){
                 $user_id = Auth::user()->id;
                 $previous_alamat_utama = UserAlamat::find(Auth::user()->id)->where('alamat_utama', true)->first();
                 $previous_alamat_utama->update([
