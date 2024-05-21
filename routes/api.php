@@ -40,7 +40,7 @@ Route::group([
 ], function ($router) {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
-    Route::post('logout', [AuthController::class,'logout'])->middleware('checkTokenExpiration');
+    Route::post('logout', [AuthController::class, 'logout'])->middleware('checkTokenExpiration');
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
 
@@ -94,6 +94,10 @@ Route::group([
 
         //Use Referral By User
         Route::get('/use-referral/byuser', [UserDetailController::class, 'getUseReferralByUser']);
+
+        //Change Password
+        Route::post('/update-password', [UserDetailController::class, 'updatepassword']);
+
 
 
         // Pencairan Balance

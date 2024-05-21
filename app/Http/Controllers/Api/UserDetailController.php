@@ -9,7 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Storage;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class UserDetailController extends Controller
 {
@@ -33,7 +34,7 @@ class UserDetailController extends Controller
         try {
             //code...
             $userDetailById = UserDetails::with('users')->where('user_id', $user_id)->first();
-        
+
             return response()->json(['data' => $userDetailById, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
@@ -73,7 +74,7 @@ class UserDetailController extends Controller
                 'email' => 'required|string'
             ]);
 
-            
+
             $user_id = Auth::user()->id;
             $user = User::where('id', $user_id)->first();
             $data = UserDetails::where('user_id', $user_id)->first();
@@ -96,12 +97,12 @@ class UserDetailController extends Controller
             };
 
             $user->update([
-                'name'=>$request->name,
-                'foto_profil'=> $file_name ? "foto_profil/" . $namaGambar : null,
-                'email'=>$request->email
+                'name' => $request->name,
+                'foto_profil' => $file_name ? "foto_profil/" . $namaGambar : null,
+                'email' => $request->email
             ]);
-            
-            
+
+
 
             DB::commit();
             return response()->json(['data' => $data, 'message' => 'Success'], 200);
@@ -112,37 +113,24 @@ class UserDetailController extends Controller
         }
     }
 
-    public function updateUserPassword(Request $request){
-
-        Request()->validate([
-            'current_password'=>'required|string',
-            'new_password'=>'required|string',
-            'confirmation_password'=>'required|string'
-        ]);
-
-        $user_id = Auth::user()->id;
-        $user_data = User::where('id', $user_id)->first();
-
-        
-        $database_current_password = $user_data->password();
-        $current_password = $request->current_password;
-        $new_password = $request->new_password;
-        $confirmation_password = $request->confirmation_password;
-
-        if(Hash::check($database_current_password, $current_password)){
-            if(Hash::check($new_password, $confirmation_password)){
-                $user_data->update([
-                    'password'->bcrypt($new_password)
-                ]);
-                
-                return response()->json(['message'=>'Password Berhasil Diganti'], 200);
+    public function updatepassword(Request $request)
+    {
+        try {
+            //code...
+            $request->validate([
+                'current_password' => ['required'],
+                'password' => ['required', 'confirmed'],
+            ]);
+            if (Hash::check($request->current_password, auth()->user()->password)) {
+                auth()->user()->update(['password' => Hash::make($request->password)]);
+                return response()->json(['message' => 'Success Change Password'], 200);
             }
-            else{
-                return response()->json(['message'=>'Password Tidak Cocok'], 401);
-            }
-        }
-        else{
-            return response()->json(['message'=>'Password Lama Salah'], 401);
+            throw ValidationException::withMessages([
+                'current_password' => 'your current password does not mact with our record',
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['message' => $th->getMessage()], 500);
         }
     }
 
