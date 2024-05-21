@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\CheckReferral;
 use App\Http\Controllers\Api\CitiesController;
 use App\Http\Controllers\Api\CourierController;
 use App\Http\Controllers\Api\GambarBannerController;
+use App\Http\Controllers\Api\GambarInformasiBannerController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaketController;
 use App\Http\Controllers\Api\PointWithdrawController;
@@ -145,8 +146,15 @@ Route::get('/gambar-banner-byid/{id}', [GambarBannerController::class, 'getBanne
 Route::post('/gambar-banner/update/{id}', [GambarBannerController::class, 'updateBannerImage']);
 Route::delete('/gambar-banner/delete/{id}', [GambarBannerController::class, 'deleteGambarBanner']);
 
+// Gambar Informasi Banner
+Route::get('/gambar-informasi-banner', [GambarInformasiBannerController::class, 'getAllBannerInformationImages']);
+Route::post('/gambar-informasi-banner/create', [GambarInformasiBannerController::class, 'createNewBannerInformationImage']);
+Route::get('/gambar-informasi-banner-byid/{id}', [GambarInformasiBannerController::class, 'getBannerInformationImagesByID']);
+Route::post('/gambar-informasi-banner/update/{id}', [GambarInformasiBannerController::class, 'updateBannerInformationImage']);
+Route::delete('/gambar-informasi-banner/delete/{id}', [GambarInformasiBannerController::class, 'deleteGambarBanner']);
+
 // Route::middleware(['role:superadmin'])->group(function () {
-// });
+// });getBannerInformationImagesByID
 
 
 //callback payment gateway
