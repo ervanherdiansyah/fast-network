@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\UserDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -28,7 +29,8 @@ class UserDetailController extends Controller
 
         try {
             //code...
-            $userDetailById = UserDetails::where('user_id', $user_id)->first();
+            $userDetailById = UserDetails::with('users')->where('user_id', $user_id)->first();
+        
             return response()->json(['data' => $userDetailById, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
@@ -36,33 +38,7 @@ class UserDetailController extends Controller
         }
     }
 
-    // public function createUserDetail(Request $request)
-    // {
-    //     try {
-    //         //code...
-    //         Request()->validate([
-    //             'user_id' => 'required',
-    //             'nik' => 'required',
-    //             'nomor_wa' => 'required',
-    //             'nama_kontak' => 'required',
-    //             'no_kontak' => 'required',
-    //             'referral_use' => 'required'
-    //         ]);
 
-    //         $data = UserDetails::create([
-    //             'user_id' => $request->user_id,
-    //             'nik' => $request->nik,
-    //             'nomor_wa' => $request->nomor_wa,
-    //             'nama_kontak' => $request->nama_kontak,
-    //             'no_kontak' => $request->no_kontak,
-    //             'referral_use' => $request->referral_use
-    //         ]);
-    //         return response()->json(['data' => $data, 'status' => 'Success']);
-    //     } catch (\Throwable $th) {
-    //         //throw $th;
-    //         return response()->json(['Error' => $th->getMessage(), 'status' => 500]);
-    //     }
-    // }
 
     public function updateUserDetail(Request $request)
     {
