@@ -130,6 +130,7 @@ Route::group([
     });
 });
 
+
 // Produk Admin
 Route::get('/product', [ProductController::class, 'getProduct']);
 Route::post('/product/create', [ProductController::class, 'createProduct']);
