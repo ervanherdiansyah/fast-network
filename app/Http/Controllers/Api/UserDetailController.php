@@ -93,20 +93,13 @@ class UserDetailController extends Controller
                 $file_name = $request->foto_profil->getClientOriginalName();
                 $namaGambar = str_replace(' ', '_', $file_name);
                 $image = $request->foto_profil->storeAs('public/foto_profil', $namaGambar);
+            };
 
-                $user->update([
-                    'name'=>$request->name,
-                    'foto_profil'=> $file_name ? "gambar_informasi_banner/" . $namaGambar : null,
-                    'email'=>$request->email
-                ]);
-            }
-            
-            else{
-                $user->update([
-                    'name'=>$request->name,
-                    'email'=>$request->email
-                ]);
-            }
+            $user->update([
+                'name'=>$request->name,
+                'foto_profil'=> $file_name ? "gambar_informasi_banner/" . $namaGambar : null,
+                'email'=>$request->email
+            ]);
             
             
 
