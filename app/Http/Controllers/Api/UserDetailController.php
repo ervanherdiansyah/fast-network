@@ -97,7 +97,7 @@ class UserDetailController extends Controller
 
             $user->update([
                 'name'=>$request->name,
-                'foto_profil'=> $file_name ? "gambar_informasi_banner/" . $namaGambar : null,
+                'foto_profil'=> $file_name ? "foto_profil/" . $namaGambar : null,
                 'email'=>$request->email
             ]);
             
