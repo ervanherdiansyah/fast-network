@@ -18,7 +18,9 @@ use App\Http\Controllers\Api\ProvinsiController;
 use App\Http\Controllers\Api\RajaOngkirController;
 use App\Http\Controllers\Api\UserDetailController;
 use App\Http\Controllers\Api\UserKomisiHistory;
+use App\Http\Controllers\Api\UserKomisiHistoryController;
 use App\Http\Controllers\Api\UserPoinHistory;
+use App\Http\Controllers\Api\UserPoinHistoryController;
 use App\Http\Controllers\Api\UserWalletController;
 use App\Http\Controllers\Authentication\AuthController;
 use App\Http\Controllers\Controller;
@@ -117,8 +119,8 @@ Route::group([
         Route::post('/user-withdrawpoint/new', [PointWithdrawController::class, 'createPointWithdrawRequest']);
 
         // HISTORI BALANCE DAN POIN
-        Route::get('/user-komisi-history',[UserKomisiHistory::class, 'getKomisiHistory']);
-        Route::get('/user-poin-history', [UserPoinHistory::class, 'getPointHistory']);
+        Route::get('/user-komisi-history',[UserKomisiHistoryController::class, 'getKomisiHistory']);
+        Route::get('/user-poin-history', [UserPoinHistoryController::class, 'getPointHistory']);
 
         // Get Wallet Information
         Route::get('/user-wallet', [UserWalletController::class, 'getUserWallet']);

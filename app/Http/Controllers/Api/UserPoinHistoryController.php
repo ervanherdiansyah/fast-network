@@ -13,11 +13,8 @@ class UserPoinHistoryController extends Controller
     public function getPointHistory(Request $request){
         try{
             $user_id = Auth::user()->id;
-            $userPoinHistoryAsAfiliator = UserPoinHistory::where('affiliate_id', $user_id)->get();
-            $userPoinHistoryAsUser = UserPoinHistory::where('user_id', $user_id)->get();
-             // Merge the two collections
-            $mergedUserPoinHistory = $userPoinHistoryAsAfiliator->merge($userPoinHistoryAsUser);
-            return response()->json(['data' => $mergedUserPoinHistory, 'message' => 'Success'], 200); 
+            $userPoinHistoryAsUser = UserPoinHistory::where('user_id', $user_id);
+            return response()->json(['data' => $userPoinHistoryAsUser, 'message' => 'Success'], 200); 
         }
         catch(\Throwable $th){
             return response()->json(['message' => 'Internal Server Error'], 500);

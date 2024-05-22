@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\AffiliatorPoinHistory;
 use App\Models\Order;
 use App\Models\Paket;
 use App\Models\User;
@@ -241,20 +242,18 @@ class CheckoutContoller extends Controller
                         // IF TRANSAKSI PERTAMA TRUE
                         // History Uang Yang Didapat via Komisi Referral.
 
-                        // GET History Komisi Menggunakan affiliate_id !!!
+                        // GET History Komisi Menggunakan affiliator_id !!!
                         $komisi_history_affiliator = UserKomisiHistory::create([
-                            'user_id' => Auth::user()->id,
-                            'affiliate_id' => $userReferal->id,
+                            'affiliator_id' => $userReferal->id,
                             'keterangan' => 'Kode Referal',
                             'info_transaksi' => $user->name,
                             'jumlah_komisi' => 300000
                         ]);
 
                         // Komisi Poin Si Pembeli
-                        // GET History Poin ada dua, satu Get By user_id dan kedua get by affiliate_id kemudian disatukan
+                        // GET History Poin ada dua, satu userPoinHistory satu AffiliatorPoinHistory
                         $komisi_poin_user = UserPoinHistory::create([
                             'user_id' => Auth::user()->id,
-                            'affiliate_id' => $userReferal->id,
                             'keterangan' => 'Transaksi Produk',
                             'info_transaksi' => 'Transaksi',
                             'jumlah_poin' => 15
@@ -283,33 +282,32 @@ class CheckoutContoller extends Controller
                         $affliator->save();
 
                         // History Uang Yang Didapat via Komisi Referral.
-                        // GET History Komisi Menggunakan affiliate_id !!!
+                        
+                        // GET History Komisi Menggunakan affiliator_id !!!
                         $komisi_history = UserKomisiHistory::create([
-                            'user_id' => Auth::user()->id,
-                            'affiliate_id' => $userReferal->id,
+                            'affiliator_id' => $userReferal->id,
                             'keterangan' => 'Repeat Order',
                             'info_transaksi' => $user->name,
                             'jumlah_komisi' => 100000 * $orders->paket->value
                         ]);
 
                         // History Poin Yang Didapat 
-                        // GET History Poin ada dua, satu Get By user_id dan kedua get by affiliate_id kemudian disatukan
+                        // GET History Poin ada dua, satu Get By user_id dan kedua get by affiliate_id kemudian disatukan\
+
                         // Poin Yang Didapat User Ketika Repeat Order
-                        $poin_history = UserPoinHistory::create([
+                        $user_poin_history = UserPoinHistory::create([
                             'user_id' => Auth::user()->id,
-                            'affiliate_id' => $userReferal->id,
                             'keterangan' => 'Transaksi Produk',
                             'info_transaksi' => 'Transaksi',
                             'jumlah_poin' => $orders->paket->point
                         ]);
 
                         // Poin yang Didapat Affiliator Ketika User Repeat Order
-                        $poin_history2 = UserPoinHistory::create([
-                            'user_id' => Auth::user()->id,
-                            'affiliate_id' => $userReferal->id,
+                        $affiliator_poin_history = AffiliatorPoinHistory::create([
+                            'affiliator_id' => $userReferal->id,
                             'keterangan' => 'Repeat Order Afiliasi',
                             'info_transaksi' => $user->name,
-                            'jumlah_poin' => 5
+                            'jumlah_poin' => 5 * $orders->paket->value
                         ]);
 
                         $affliasi = UserWallet::where('user_id', Auth::user()->id)->first();
