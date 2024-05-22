@@ -99,6 +99,9 @@ Route::group([
         //Change Password
         Route::post('/update-password', [UserDetailController::class, 'updatepassword']);
 
+        //Confirmation Password
+        Route::post('/confirmation-password', [UserDetailController::class, 'confirmationpassword']);
+
 
 
         // Pencairan Balance
