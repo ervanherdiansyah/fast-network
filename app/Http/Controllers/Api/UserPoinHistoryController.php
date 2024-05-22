@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserPoinHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class UserPoinHistory extends Controller
+class UserPoinHistoryController extends Controller
 {
     //
     public function getPointHistory(Request $request){
