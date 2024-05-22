@@ -102,8 +102,6 @@ Route::group([
         //Confirmation Password
         Route::post('/confirmation-password', [UserDetailController::class, 'confirmationpassword']);
 
-
-
         // Pencairan Balance
         // Ambil Seluruh Permintaan Pencairan Balance Yang Pernah user lakukan
         Route::get('/user-balancewithdrawhistory', [BalanceWithdrawController::class, 'getWithdrawBalanceByUser']);
