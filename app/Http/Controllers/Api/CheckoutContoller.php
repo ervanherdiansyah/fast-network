@@ -23,7 +23,11 @@ class CheckoutContoller extends Controller
             // $item_details = [];
             if ($request->jenis_order == 'dikirim') {
                 $orders = Order::with('orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Pending')->latest()->first();
-
+                $orders->update([
+                    'shipping_courier'=>$request->courier_name,
+                    'estimasi_tiba'=>$request->estimasi,
+                    'alamat_id'=>$request->alamat_id
+                ]);
                 $totalHarga = $orders->paket->price + $request->harga_ongkir;
                 // return response()->json($totalHarga);
                 $item_details[] = [
@@ -113,7 +117,9 @@ class CheckoutContoller extends Controller
                 ], 'status' => 'Success'], 200);
             } elseif ($request->jenis_order == 'diambil') {
                 $orders = Order::with('orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Pending')->latest()->first();
-
+                $orders->update([
+                    'alamat_id'=>$request->alamat_id
+                ]);
                 $totalHarga = $orders->paket->price;
 
                 $item_details[] = [
