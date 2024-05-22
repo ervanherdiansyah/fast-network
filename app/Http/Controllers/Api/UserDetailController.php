@@ -132,6 +132,27 @@ class UserDetailController extends Controller
         }
     }
 
+    public function confirmationpassword(Request $request)
+    {
+        try {
+            //code...
+            $request->validate([
+                'password_confirmation' => ['required'],
+            ]);
+            if (Hash::check($request->password_confirmation, auth()->user()->password)) {
+                return response()->json(['message' => 'your Password Confirmation is correct.'], 200);
+            } else {
+                return response()->json(['message' => 'your Password Confirmation does not mact with our record'], 400);
+            }
+            // throw ValidationException::withMessages([
+            //     'current_password' => 'your current password does not mact with our record',
+            // ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+
     // public function deleteUserDetail($id)
     // {
     //     try {

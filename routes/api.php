@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\GambarBannerController;
 use App\Http\Controllers\Api\GambarInformasiBannerController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaketController;
+use App\Http\Controllers\Api\PilihanPencairanController;
 use App\Http\Controllers\Api\PointWithdrawController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProvinsiController;
@@ -98,7 +99,8 @@ Route::group([
         //Change Password
         Route::post('/update-password', [UserDetailController::class, 'updatepassword']);
 
-
+        //Confirmation Password
+        Route::post('/confirmation-password', [UserDetailController::class, 'confirmationpassword']);
 
         // Pencairan Balance
         // Ambil Seluruh Permintaan Pencairan Balance Yang Pernah user lakukan
@@ -183,6 +185,12 @@ Route::get('/province/by-id/{id}', [ProvinsiController::class, 'getProvinsiById'
 
 // Cek Referral Use
 Route::post('/check-referral-user', [CheckReferral::class, 'userReferral']);
+
+// Pilihan Cepat Pencairan Admin
+Route::get('/pilihancepat', [PilihanPencairanController::class, 'getPilihanCepatPencairan']);
+Route::post('/pilihancepat/create', [PilihanPencairanController::class, 'createPilihanCepatPencairan']);
+Route::post('/pilihancepat/update/{id}', [PilihanPencairanController::class, 'updatePilihanCepatPencairan']);
+Route::delete('/pilihancepat/delete/{id}', [PilihanPencairanController::class, 'deletePilihanCepatPencairan']);
 
 
 // Produk
