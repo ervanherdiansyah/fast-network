@@ -18,7 +18,7 @@ class OrderController extends Controller
     public function getAllOrder()
     {
         try {
-            $orders = Order::paginate(10);
+            $orders = Order::where('users.userAlamat')->paginate(10);
 
             return response()->json(['data' => $orders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
