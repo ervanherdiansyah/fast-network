@@ -9,4 +9,5 @@ class AffiliatorPoinHistory extends Model
 {
     use HasFactory;
     protected $table = 'affiliator_poin_history';
+    protected $guarded = [];
 }
