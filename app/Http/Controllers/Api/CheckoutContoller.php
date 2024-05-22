@@ -287,7 +287,7 @@ class CheckoutContoller extends Controller
                         ]);
 
                         // History Poin Yang Didapat 
-
+                        // GET History Poin ada dua, satu Get By user_id dan kedua get by affiliate_id kemudian disatukan
                         // Poin Yang Didapat User Ketika Repeat Order
                         $poin_history = UserPoinHistory::create([
                             'user_id' => Auth::user()->id,
@@ -302,7 +302,7 @@ class CheckoutContoller extends Controller
                             'user_id' => Auth::user()->id,
                             'affiliate_id' => $userReferal->id,
                             'keterangan' => 'Repeat Order Afiliasi',
-                            'info_transaksi' => 'Transaksi',
+                            'info_transaksi' => $user->name,
                             'jumlah_poin' => 5
                         ]);
 
