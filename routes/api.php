@@ -17,6 +17,8 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProvinsiController;
 use App\Http\Controllers\Api\RajaOngkirController;
 use App\Http\Controllers\Api\UserDetailController;
+use App\Http\Controllers\Api\UserKomisiHistory;
+use App\Http\Controllers\Api\UserPoinHistory;
 use App\Http\Controllers\Api\UserWalletController;
 use App\Http\Controllers\Authentication\AuthController;
 use App\Http\Controllers\Controller;
@@ -113,6 +115,10 @@ Route::group([
         Route::get('/user-pointwithdrawhistory', [PointWithdrawController::class, 'getWithdrawPointByUser']);
         // Buat Permintaan Pencairan Balance Yang Baru untuk User
         Route::post('/user-withdrawpoint/new', [PointWithdrawController::class, 'createPointWithdrawRequest']);
+
+        // HISTORI BALANCE DAN POIN
+        Route::get('/user-komisi-history',[UserKomisiHistory::class, 'getKomisiHistory']);
+        Route::get('/user-poin-history', [UserPoinHistory::class, 'getPointHistory']);
 
         // Get Wallet Information
         Route::get('/user-wallet', [UserWalletController::class, 'getUserWallet']);
