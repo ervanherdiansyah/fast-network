@@ -12,7 +12,7 @@ class AlamatController extends Controller
     public function getAlamat()
     {
         try {
-            $alamat = UserAlamat::get();
+            $alamat = UserAlamat::with('users', 'provinsi', 'kota')->get();
             return response()->json(['data' => $alamat, 'message' => 'success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
@@ -23,7 +23,7 @@ class AlamatController extends Controller
     {
         try {
             $user_id = Auth::user()->id;
-            $alamat = UserAlamat::with('users')->where('user_id', $user_id)->get();
+            $alamat = UserAlamat::with('users', 'provinsi', 'kota')->where('user_id', $user_id)->get();
             return response()->json(['data' => $alamat, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
@@ -35,7 +35,7 @@ class AlamatController extends Controller
     {
         try {
             $user_id = Auth::user()->id;
-            $alamat = UserAlamat::with('users')->where('user_id', $user_id)->where('alamat_utama', true)->first();
+            $alamat = UserAlamat::with('users', 'provinsi', 'kota')->where('user_id', $user_id)->where('alamat_utama', true)->first();
             return response()->json(['data' => $alamat, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;

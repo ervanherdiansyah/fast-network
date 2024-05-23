@@ -108,7 +108,9 @@ class AuthController extends Controller
                 'kecamatan' => $request->kecamatan,
                 'kelurahan' => $request->kelurahan,
                 'kode_pos' => $request->kode_pos,
-                'alamat_utama' => 1
+                'alamat_utama' => 1,
+                'nama' => $request->name,
+                'no_wa' => $request->nomor_wa,
             ]);
 
             $user_affiliate = User::where('referral', $request->referral_use)->first();
@@ -166,13 +168,12 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function logout()
-    {   
-        try{
+    {
+        try {
             JWTAuth::invalidate(JWTAuth::getToken());
             // auth()->logout();
             return response()->json(['message' => 'Successfully logged out'], 200);
-        }
-        catch (TokenExpiredException $e) {
+        } catch (TokenExpiredException $e) {
             return response()->json(['message' => 'Token has expired'], 401);
         } catch (TokenInvalidException $e) {
             return response()->json(['message' => 'Token is invalid'], 401);
