@@ -36,6 +36,10 @@ class PointWithdrawController extends Controller
             //code...
             Request()->validate([
                 'reward_id' => 'required|integer',
+                'nama_pemilik_rekening' => 'required|string',
+                'nama_bank' => 'required|string',
+                'no_rekening' => 'required|string',
+                'id_alamat' => 'required|integer',
             ]);
 
             
@@ -67,7 +71,11 @@ class PointWithdrawController extends Controller
                     'user_id' => $user_id,
                     'status_withdraw'=>"Pending",
                     'reward_id'=>$request->reward_id,
-                    'amount'=>$reward->point
+                    'amount'=>$reward->point,
+                    'nama_pemilik_rekening'=>$request->nama_pemilik_rekening,
+                    'nama_bank'=>$request->nama_bank,
+                    'no_rekening'=>$request->no_rekening,
+                    'id_alamat'=>$request->id_alamat,
                 ]);
                 
                 // ini mah dikurangi nya nanti kalau sudah di acc oleh admin di dashboard
