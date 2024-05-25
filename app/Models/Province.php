@@ -9,4 +9,9 @@ class Province extends Model
 {
     use HasFactory;
     protected $guarded = [];
+
+    public function userAlamat()
+    {
+        return $this->hasMany(UserAlamat::class,  "provinsi_id");
+    }
 }

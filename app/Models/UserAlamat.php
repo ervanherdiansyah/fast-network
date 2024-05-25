@@ -21,4 +21,14 @@ class UserAlamat extends Model
     {
         return $this->hasMany(Order::class, "alamat_id");
     }
+
+    public function provinsi()
+    {
+        return $this->belongsTo(Province::class,  "provinsi_id");
+    }
+
+    public function kota()
+    {
+        return $this->belongsTo(City::class,  "kota_id");
+    }
 }

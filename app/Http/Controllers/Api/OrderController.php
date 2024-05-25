@@ -40,9 +40,37 @@ class OrderController extends Controller
     public function getAllOrderByUser()
     {
         try {
-            $orders = Order::with('orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Paid')->latest()->paginate(10);
+            $orders = Order::with('orderDetail.product', 'users', 'paket', 'userAlamat')->where('user_id', Auth::user()->id)->where('status', 'Paid')->latest()->paginate(10);
 
-            return response()->json(['data' => $orders, 'status' => 'Success'], 200);
+            // Format ulang data pesanan
+            $formattedOrders = $orders->map(function ($order) {
+                $products = $order->orderDetail->map(function ($detail) {
+                    return $detail->product->product_name . ' ' . $detail->quantity;
+                })->implode(', ');
+
+                return [
+                    'id' => $order->id,
+                    'created_at' => $order->created_at,
+                    'updated_at' => $order->updated_at,
+                    'user_id' => $order->user_id,
+                    'paket_id' => $order->paket_id,
+                    'order_code' => $order->order_code,
+                    'order_date' => $order->order_date,
+                    'status' => $order->status,
+                    'shipping_status' => $order->shipping_status,
+                    'shipping_courier' => $order->shipping_courier,
+                    'total_harga' => $order->total_harga,
+                    'alamat_id' => $order->alamat_id,
+                    'no_resi' => $order->no_resi,
+                    'estimasi_tiba' => $order->estimasi_tiba,
+                    'product' => $products,
+                    'users' => $order->users,
+                    'paket' => $order->paket,
+                    'userAlamat' => $order->userAlamat
+                ];
+            });
+
+            return response()->json(['data' => $formattedOrders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
@@ -51,9 +79,36 @@ class OrderController extends Controller
     public function getOrderByUserIdOnOrder()
     {
         try {
-            $orders = Order::with('orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Pending')->latest()->first();
+            $orders = Order::with('orderDetail.product', 'users', 'paket', 'userAlamat')->where('user_id', Auth::user()->id)->where('status', 'Pending')->latest()->first();
 
-            return response()->json(['data' => $orders, 'status' => 'Success'], 200);
+            $formattedOrders = $orders->map(function ($order) {
+                $products = $order->orderDetail->map(function ($detail) {
+                    return $detail->product->product_name . ' ' . $detail->quantity;
+                })->implode(', ');
+
+                return [
+                    'id' => $order->id,
+                    'created_at' => $order->created_at,
+                    'updated_at' => $order->updated_at,
+                    'user_id' => $order->user_id,
+                    'paket_id' => $order->paket_id,
+                    'order_code' => $order->order_code,
+                    'order_date' => $order->order_date,
+                    'status' => $order->status,
+                    'shipping_status' => $order->shipping_status,
+                    'shipping_courier' => $order->shipping_courier,
+                    'total_harga' => $order->total_harga,
+                    'alamat_id' => $order->alamat_id,
+                    'no_resi' => $order->no_resi,
+                    'estimasi_tiba' => $order->estimasi_tiba,
+                    'product' => $products,
+                    'users' => $order->users,
+                    'paket' => $order->paket,
+                    'userAlamat' => $order->userAlamat
+                ];
+            });
+
+            return response()->json(['data' => $formattedOrders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Internal Server Error'], 500);
         }

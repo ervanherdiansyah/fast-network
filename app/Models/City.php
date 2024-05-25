@@ -9,4 +9,8 @@ class City extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    public function userAlamat()
+    {
+        return $this->hasMany(UserAlamat::class,  "kota_id");
+    }
 }

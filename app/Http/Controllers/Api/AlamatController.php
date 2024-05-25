@@ -12,7 +12,7 @@ class AlamatController extends Controller
     public function getAlamat()
     {
         try {
-            $alamat = UserAlamat::get();
+            $alamat = UserAlamat::with('users', 'provinsi', 'kota')->get();
             return response()->json(['data' => $alamat, 'message' => 'success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
@@ -23,7 +23,7 @@ class AlamatController extends Controller
     {
         try {
             $user_id = Auth::user()->id;
-            $alamat = UserAlamat::with('users')->where('user_id', $user_id)->get();
+            $alamat = UserAlamat::with('users', 'provinsi', 'kota')->where('user_id', $user_id)->get();
             return response()->json(['data' => $alamat, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
@@ -35,7 +35,7 @@ class AlamatController extends Controller
     {
         try {
             $user_id = Auth::user()->id;
-            $alamat = UserAlamat::with('users')->where('user_id', $user_id)->where('alamat_utama', true)->first();
+            $alamat = UserAlamat::with('users', 'provinsi', 'kota')->where('user_id', $user_id)->where('alamat_utama', true)->first();
             return response()->json(['data' => $alamat, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
@@ -54,33 +54,15 @@ class AlamatController extends Controller
                 'kecamatan' => 'required',
                 'kelurahan' => 'required',
                 'kode_pos' => 'required',
-                'alamat_utama' => 'integer|nullable'
+                'nama' => 'required',
+                'no_wa' => 'required',
             ]);
-
-            if($request->alamat_utama == 1){
-                $user_id = Auth::user()->id;
-                $previous_alamat_utama = UserAlamat::find(Auth::user()->id)->where('alamat_utama', true)->first();
-                $previous_alamat_utama->update([
-                    'alamat_utama' => false
-                ]);
-
-                $alamat = UserAlamat::create([
-                    'user_id' => Auth::user()->id,
-                    'alamat_lengkap' => $request->alamat_lengkap,
-                    'provinsi_id' => $request->provinsi_id,
-                    'kota_id' => $request->kota_id,
-                    'kecamatan' => $request->kecamatan,
-                    'kelurahan' => $request->kelurahan,
-                    'kode_pos' => $request->kode_pos,
-                    'alamat_utama' => 1,
-                ]);
-
-                return response()->json(['data' => $alamat, 'message' => 'Success'], 200);
-            }
 
             $alamat = UserAlamat::create([
                 'user_id' => Auth::user()->id,
                 'alamat_lengkap' => $request->alamat_lengkap,
+                'nama' => $request->nama,
+                'no_wa' => $request->no_wa,
                 'provinsi_id' => $request->provinsi_id,
                 'kota_id' => $request->kota_id,
                 'kecamatan' => $request->kecamatan,
@@ -110,8 +92,8 @@ class AlamatController extends Controller
                 'alamat_utama' => 'integer'
             ]);
 
-            $data = UserAlamat::where('id', $id)->first();
             $user_id = Auth::user()->id;
+            $data = UserAlamat::where('id', $id)->where('user_id', $user_id)->first();
 
             if ($user_id != $data->user_id) {
                 return response()->json(['message' => 'Tidak Bisa Mengubah Data Orang Lain'], 401);
@@ -125,6 +107,8 @@ class AlamatController extends Controller
                 ]);
 
                 $data->update([
+                    'nama' => $request->nama,
+                    'no_wa' => $request->no_wa,
                     'alamat_lengkap' => $request->alamat_lengkap,
                     'provinsi_id' => $request->provinsi_id,
                     'kota_id' => $request->kota_id,
@@ -136,7 +120,6 @@ class AlamatController extends Controller
 
                 return response()->json(['data' => $data, 'message' => 'Success'], 200);
             }
-
 
             $data->update([
                 'alamat_lengkap' => $request->alamat_lengkap,
