@@ -232,4 +232,26 @@ class OrderController extends Controller
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
+
+    public function getSumAOrderOnAfiliasiAllUser()
+    {
+        try {
+            //code...
+            $referralCode = User::where('id', Auth::user()->id)->first();
+
+            $subTotals = Order::join('users', 'orders.user_id', '=', 'users.id')
+                ->join('user_details', 'users.id', '=', 'user_details.user_id')
+                ->where('user_details.referral_use', $referralCode->referral)
+                ->select('orders.user_id', DB::raw('SUM(orders.total_harga) as subtotal'))
+                ->groupBy('orders.user_id')
+                ->with('users.userDetail')
+                ->get();
+
+            $overallSum = $subTotals->sum('subtotal');
+            return response()->json(['data' => $overallSum, 'message' => 'success'], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
+    }
 }
