@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\CitiesController;
 use App\Http\Controllers\Api\CourierController;
 use App\Http\Controllers\Api\GambarBannerController;
 use App\Http\Controllers\Api\GambarInformasiBannerController;
+use App\Http\Controllers\Api\InfoBonusController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaketController;
 use App\Http\Controllers\Api\PilihanPencairanController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProvinsiController;
 use App\Http\Controllers\Api\RajaOngkirController;
 use App\Http\Controllers\Api\RewardController;
+use App\Http\Controllers\Api\TargetBonusController;
 use App\Http\Controllers\Api\UserDetailController;
 use App\Http\Controllers\Api\UserWalletController;
 use App\Http\Controllers\Authentication\AuthController;
@@ -179,7 +181,15 @@ Route::get('/cities/by-province-id/{provinsi_id}', [CitiesController::class, 'ge
 
 //Get Courier
 Route::get('/courier', [CourierController::class, 'getAllCourier']);
+
+//Reward
 Route::get('/reward', [RewardController::class, 'getReward']);
+
+//Info Bonus
+Route::get('/info-bonus', [InfoBonusController::class, 'getInfoBonus']);
+
+//Target Bonus
+Route::get('/target-bonus', [TargetBonusController::class, 'getTargetBonus']);
 
 
 // Get Provinsi
