@@ -34,7 +34,10 @@ class BalanceWithdrawController extends Controller
             
             //code...
             Request()->validate([
-                'balance_withdrawed' => 'required|integer'
+                'balance_withdrawed' => 'required|integer',
+                'nama_pemilik_rekening' => 'required|string',
+                'nama_bank' => 'required|string',
+                'no_rekening' => 'required|string'
             ]);
 
             // user harus login
@@ -53,16 +56,16 @@ class BalanceWithdrawController extends Controller
             }
             
             // cek poin user dengan poin yang reward butuhkan.
-            if($user_available_balance < 300000){
-                return response()->json(['message' => "Saldo Kurang dari 300.000"], 401);
+            if($user_available_balance < 500000){
+                return response()->json(['message' => "Saldo Kurang dari 500.000"], 401);
             }
 
             else if($user_available_balance < $request->balance_withdrawed){
                 return response()->json(['message' => "Saldo Tidak Mencukupi"], 401);
             }
 
-            else if($request->balance_withdrawed < 300000){
-                return response()->json(['message' => "Miniwal Withdraw adalah 300.000"], 401);
+            else if($request->balance_withdrawed < 500000){
+                return response()->json(['message' => "Miniwal Withdraw adalah 500.000"], 401);
             }
 
             else{
@@ -71,6 +74,9 @@ class BalanceWithdrawController extends Controller
                     'user_id' => $user_id,
                     'status_withdraw'=>"Pending",
                     'amount_withdraw'=>$request->balance_withdrawed,
+                    'nama_pemilik_rekening'=>$request->nama_pemilik_rekening,
+                    'nama_bank'=>$request->nama_bank,
+                    'no_rekening'=>$request->no_rekening
                 ]);
 
                 // $user_data->update([

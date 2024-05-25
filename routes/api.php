@@ -123,6 +123,7 @@ Route::group([
         // HISTORI BALANCE DAN POIN
         Route::get('/user-komisi-history',[UserKomisiHistoryController::class, 'getKomisiHistory']);
         Route::get('/user-poin-history', [UserPoinHistoryController::class, 'getPointHistory']);
+        Route::get('/user-komisi-data', [UserKomisiHistoryController::class, 'getKomisiData']);
 
         // Get Wallet Information
         Route::get('/user-wallet', [UserWalletController::class, 'getUserWallet']);
