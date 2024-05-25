@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\PointWithdrawController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProvinsiController;
 use App\Http\Controllers\Api\RajaOngkirController;
+use App\Http\Controllers\Api\RewardController;
 use App\Http\Controllers\Api\UserDetailController;
 use App\Http\Controllers\Api\UserWalletController;
 use App\Http\Controllers\Authentication\AuthController;
@@ -95,6 +96,7 @@ Route::group([
 
         //Use Referral By User
         Route::get('/use-referral/byuser', [UserDetailController::class, 'getUseReferralByUser']);
+        Route::get('/count-use-referral/byuser', [UserDetailController::class, 'getCountUseReferralByUser']);
 
         //Change Password
         Route::post('/update-password', [UserDetailController::class, 'updatepassword']);
@@ -177,6 +179,7 @@ Route::get('/cities/by-province-id/{provinsi_id}', [CitiesController::class, 'ge
 
 //Get Courier
 Route::get('/courier', [CourierController::class, 'getAllCourier']);
+Route::get('/reward', [RewardController::class, 'getReward']);
 
 
 // Get Provinsi
