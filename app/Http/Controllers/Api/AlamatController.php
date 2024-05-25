@@ -54,27 +54,37 @@ class AlamatController extends Controller
                 'kecamatan' => 'required',
                 'kelurahan' => 'required',
                 'kode_pos' => 'required',
-                'nama' => 'required',
-                'no_wa' => 'required',
             ]);
+
+            $user_id = Auth::user()->id;
+
+            if ($request->alamat_utama == 1) {
+                $previous_alamat_utama = UserAlamat::where('user_id', $user_id)->where('alamat_utama', true)->first();
+                $previous_alamat_utama->update([
+                    'alamat_utama' => false
+                ]);
+            }
 
             $alamat = UserAlamat::create([
                 'user_id' => Auth::user()->id,
                 'alamat_lengkap' => $request->alamat_lengkap,
-                'nama' => $request->nama,
-                'no_wa' => $request->no_wa,
                 'provinsi_id' => $request->provinsi_id,
                 'kota_id' => $request->kota_id,
                 'kecamatan' => $request->kecamatan,
                 'kelurahan' => $request->kelurahan,
                 'kode_pos' => $request->kode_pos,
-                'alamat_utama' => 0,
+                'alamat_utama' => $request->alamat_utama,
+                'nama' => $request->nama,
+                'no_wa' => $request->no_wa,
+
             ]);
+
+
 
             return response()->json(['data' => $alamat, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['message' => 'Internal Server Error'], 500);
+            return response()->json(['message' => $th->getMessage()], 500);
         }
     }
     public function updateAlamat(Request $request, $id)
@@ -101,25 +111,26 @@ class AlamatController extends Controller
 
 
             if ($request->alamat_utama == 1) {
-                $previous_alamat_utama = UserAlamat::find(Auth::user()->id)->where('alamat_utama', true)->first();
+                $previous_alamat_utama = UserAlamat::find($id)->where('user_id', $user_id)->where('alamat_utama', true)->first();
                 $previous_alamat_utama->update([
                     'alamat_utama' => false
                 ]);
 
                 $data->update([
-                    'nama' => $request->nama,
-                    'no_wa' => $request->no_wa,
                     'alamat_lengkap' => $request->alamat_lengkap,
                     'provinsi_id' => $request->provinsi_id,
                     'kota_id' => $request->kota_id,
                     'kecamatan' => $request->kecamatan,
                     'kelurahan' => $request->kelurahan,
                     'kode_pos' => $request->kode_pos,
+                    'nama' => $request->nama,
+                    'no_wa' => $request->no_wa,
                     'alamat_utama' => true
                 ]);
 
                 return response()->json(['data' => $data, 'message' => 'Success'], 200);
             }
+
 
             $data->update([
                 'alamat_lengkap' => $request->alamat_lengkap,
@@ -128,6 +139,8 @@ class AlamatController extends Controller
                 'kecamatan' => $request->kecamatan,
                 'kelurahan' => $request->kelurahan,
                 'kode_pos' => $request->kode_pos,
+                'nama' => $request->nama,
+                'no_wa' => $request->no_wa,
             ]);
 
             return response()->json(['data' => $data, 'message' => 'Success'], 200);
