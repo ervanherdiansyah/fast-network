@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\CitiesController;
 use App\Http\Controllers\Api\CourierController;
 use App\Http\Controllers\Api\GambarBannerController;
 use App\Http\Controllers\Api\GambarInformasiBannerController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaketController;
 use App\Http\Controllers\Api\PilihanPencairanController;
@@ -127,6 +128,12 @@ Route::group([
 
         // Get Wallet Information
         Route::get('/user-wallet', [UserWalletController::class, 'getUserWallet']);
+
+        // GET User Notification
+        Route::get('/user-notification', [NotificationController::class, 'getUserNotification']);
+
+        // CREATE Notification
+        Route::post('/notification-create', [NotificationController::class, 'createNotification']);
     });
 
     Route::middleware(['checkTokenExpiration'])->get('/check-token-expiration', function (Request $request) {
