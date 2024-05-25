@@ -57,6 +57,7 @@ Route::group([
 
         //Order
         Route::get('/get-order', [OrderController::class, 'getOrderByUserIdOnOrder']);
+        Route::get('/get-order/by-user-id', [OrderController::class, 'getOrderByUserID']);
         Route::get('/get-allorder', [OrderController::class, 'getAllOrderByUser']);
         Route::post('/order', [OrderController::class, 'addToOrder']);
         Route::get('/get-order-byuseronafiliasi', [OrderController::class, 'getOrderByUserOnAfiliasi']);
