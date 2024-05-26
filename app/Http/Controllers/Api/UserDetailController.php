@@ -130,16 +130,21 @@ class UserDetailController extends Controller
         try {
             //code...
             $request->validate([
-                'current_password' => ['required'],
                 'password' => ['required', 'confirmed'],
             ]);
-            if (Hash::check($request->current_password, auth()->user()->password)) {
-                auth()->user()->update(['password' => Hash::make($request->password)]);
-                return response()->json(['message' => 'Success Change Password'], 200);
-            }
-            throw ValidationException::withMessages([
-                'current_password' => 'your current password does not mact with our record',
+            $user =  User::where('id', Auth::user()->id)->first();
+            $user->update([
+                'password' =>  bcrypt($request->password),
             ]);
+
+            return response()->json(['message' => 'berhasil ubah password'], 400);
+            // if (Hash::check($request->current_password, auth()->user()->password)) {
+            //     auth()->user()->update(['password' => Hash::make($request->password)]);
+            //     return response()->json(['message' => 'Success Change Password'], 200);
+            // }
+            // throw ValidationException::withMessages([
+            //     'current_password' => 'your current password does not mact with our record',
+            // ]);
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json(['message' => $th->getMessage()], 500);
@@ -150,17 +155,19 @@ class UserDetailController extends Controller
     {
         try {
             //code...
+
             $request->validate([
                 'password_confirmation' => ['required'],
             ]);
+
             if (Hash::check($request->password_confirmation, auth()->user()->password)) {
                 return response()->json(['message' => 'your Password Confirmation is correct.'], 200);
             } else {
                 return response()->json(['message' => 'your Password Confirmation does not mact with our record'], 400);
             }
-            // throw ValidationException::withMessages([
-            //     'current_password' => 'your current password does not mact with our record',
-            // ]);
+            throw ValidationException::withMessages([
+                'current_password' => 'your current password does not mact with our record',
+            ]);
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json(['message' => $th->getMessage()], 500);
