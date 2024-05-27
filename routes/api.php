@@ -100,6 +100,7 @@ Route::group([
         // Route::post('/user-detail/create', [UserDetailController::class, 'createUserDetail']);
 
         Route::post('/user-detail/update', [UserDetailController::class, 'updateUserDetail']);
+        Route::post('/user-detail/delete-profile-picture', [UserDetailController::class, 'deleteProfilePic']);
 
         //Use Referral By User
         Route::get('/use-referral/byuser', [UserDetailController::class, 'getUseReferralByUser']);

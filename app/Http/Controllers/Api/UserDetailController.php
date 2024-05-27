@@ -97,21 +97,30 @@ class UserDetailController extends Controller
 
             $file_name = null;
             if (Request()->hasFile('foto_profil') && Request()->file('foto_profil')->isValid()) {
-                if (!empty($user->foto_profil) && Storage::exists($user->foto_profil)) {
-                    Storage::delete($user->foto_profil);
+                if (!empty($data->foto_profil) && Storage::exists($data->foto_profil)) {
+                    Storage::delete($data->foto_profil);
                 }
                 $file_name = $request->foto_profil->getClientOriginalName();
-                $namaGambar = str_replace(' ', '_', $file_name);
+                $namaGambar = str_replace(' ', '_', $data->user_id . $file_name);
                 $image = $request->foto_profil->storeAs('public/foto_profil', $namaGambar);
-            };
+                $data->update([
+                    'nik' => $request->nik,
+                    'nomor_wa' => $request->nomor_wa,
+                    'nama_kontak' => $request->nama_kontak,
+                    'no_kontak' => $request->no_kontak,
+                    'foto_profil' => $file_name ? "foto_profil/" . $namaGambar : null
+                ]);
+    
+            }else{
+                $data->update([
+                    'nik' => $request->nik,
+                    'nomor_wa' => $request->nomor_wa,
+                    'nama_kontak' => $request->nama_kontak,
+                    'no_kontak' => $request->no_kontak,
+                ]);
+            }
 
-            $data->update([
-                'nik' => $request->nik,
-                'nomor_wa' => $request->nomor_wa,
-                'nama_kontak' => $request->nama_kontak,
-                'no_kontak' => $request->no_kontak,
-                'foto_profil' => $file_name ? "foto_profil/" . $namaGambar : null
-            ]);
+            
 
             $user->update([
                 'name' => $request->name,
@@ -127,6 +136,27 @@ class UserDetailController extends Controller
             DB::rollback();
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
+    }
+
+    public function deleteProfilePic(){
+        $user_id = Auth::user()->id;  
+        $data = UserDetails::where('user_id', $user_id)->first();
+
+        try{
+
+            if (!empty($data->foto_profil) && Storage::exists($data->foto_profil)) {
+                Storage::delete($data->foto_profil);
+            }
+    
+            $data->update([
+                'foto_profil' => null
+            ]);
+            return response()->json(['message' => 'Foto Profil Successfully Deleted'], 200);
+        }
+        catch(\Throwable $th){
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
+        
     }
 
     public function updatepassword(Request $request)
