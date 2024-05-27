@@ -97,9 +97,11 @@ class UserDetailController extends Controller
 
             $file_name = null;
             if (Request()->hasFile('foto_profil') && Request()->file('foto_profil')->isValid()) {
-                if (!empty($data->foto_profil) && Storage::exists($data->foto_profil)) {
-                    Storage::delete($data->foto_profil);
+
+                if (!empty($data->foto_profil) && Storage::disk('public')->exists($data->foto_profil)) {
+                Storage::disk('public')->delete($data->foto_profil);
                 }
+
                 $file_name = $request->foto_profil->getClientOriginalName();
                 $namaGambar = str_replace(' ', '_', $data->user_id . $file_name);
                 $image = $request->foto_profil->storeAs('public/foto_profil', $namaGambar);
@@ -138,25 +140,25 @@ class UserDetailController extends Controller
         }
     }
 
-    public function deleteProfilePic(){
+    public function deleteProfilePic()
+    {
         $user_id = Auth::user()->id;  
         $data = UserDetails::where('user_id', $user_id)->first();
-
-        try{
-
-            if (!empty($data->foto_profil) && Storage::exists($data->foto_profil)) {
-                Storage::delete($data->foto_profil);
+    
+        try {
+            if (!empty($data->foto_profil) && Storage::disk('public')->exists($data->foto_profil)) {
+                Storage::disk('public')->delete($data->foto_profil);
             }
     
             $data->update([
                 'foto_profil' => null
             ]);
+    
             return response()->json(['message' => 'Foto Profil Successfully Deleted'], 200);
-        }
-        catch(\Throwable $th){
+        } catch (\Throwable $th) {
+            // Log the error for debugging
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
-        
     }
 
     public function updatepassword(Request $request)
