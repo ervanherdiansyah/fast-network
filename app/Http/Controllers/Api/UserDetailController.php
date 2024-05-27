@@ -93,12 +93,7 @@ class UserDetailController extends Controller
             $user = User::where('id', $user_id)->first();
             $data = UserDetails::where('user_id', $user_id)->first();
 
-            $data->update([
-                'nik' => $request->nik,
-                'nomor_wa' => $request->nomor_wa,
-                'nama_kontak' => $request->nama_kontak,
-                'no_kontak' => $request->no_kontak,
-            ]);
+
 
             $file_name = null;
             if (Request()->hasFile('foto_profil') && Request()->file('foto_profil')->isValid()) {
@@ -110,11 +105,20 @@ class UserDetailController extends Controller
                 $image = $request->foto_profil->storeAs('public/foto_profil', $namaGambar);
             };
 
+            $data->update([
+                'nik' => $request->nik,
+                'nomor_wa' => $request->nomor_wa,
+                'nama_kontak' => $request->nama_kontak,
+                'no_kontak' => $request->no_kontak,
+                'foto_profil' => $file_name ? "foto_profil/" . $namaGambar : null
+            ]);
+
             $user->update([
                 'name' => $request->name,
-                'foto_profil' => $file_name ? "foto_profil/" . $namaGambar : null,
                 'email' => $request->email
             ]);
+
+            
 
             DB::commit();
             return response()->json(['data' => $data, 'message' => 'Success'], 200);
@@ -166,7 +170,7 @@ class UserDetailController extends Controller
                 return response()->json(['message' => 'your Password Confirmation does not mact with our record'], 400);
             }
             throw ValidationException::withMessages([
-                'current_password' => 'your current password does not mact with our record',
+                'current_password' => 'your current password does not match with our record',
             ]);
         } catch (\Throwable $th) {
             //throw $th;
