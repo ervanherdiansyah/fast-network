@@ -26,7 +26,6 @@ class User extends Authenticatable implements JWTSubject
         'referral',
         'first_buy_success',
         'first_order',
-        'foto_profil',
     ];
 
     /**

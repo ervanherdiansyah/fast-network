@@ -64,6 +64,9 @@ Route::group([
         Route::get('/get-sumorder-onafiliasi', [OrderController::class, 'getSumOrderOnAfiliasiByUser']);
         Route::get('/get-sumorder-allafliasi', [OrderController::class, 'getSumAOrderOnAfiliasiAllUser']);
 
+        //Get Info Target Progress
+        Route::get('/get-info-progress-target', [OrderController::class, 'getSumAOrderOnAfiliasiAllUser']);
+
         //Ongkir
         Route::post('/rajaongkir', [RajaOngkirController::class, 'getOngkir']);
 
@@ -124,7 +127,7 @@ Route::group([
         Route::post('/user-withdrawpoint/new', [PointWithdrawController::class, 'createPointWithdrawRequest']);
 
         // HISTORI BALANCE DAN POIN
-        Route::get('/user-komisi-history',[UserKomisiHistoryController::class, 'getKomisiHistory']);
+        Route::get('/user-komisi-history', [UserKomisiHistoryController::class, 'getKomisiHistory']);
         Route::get('/user-poin-history', [UserPoinHistoryController::class, 'getPointHistory']);
         Route::get('/user-komisi-data', [UserKomisiHistoryController::class, 'getKomisiData']);
 
@@ -205,6 +208,9 @@ Route::get('/reward', [RewardController::class, 'getReward']);
 Route::get('/info-bonus', [InfoBonusController::class, 'getInfoBonus']);
 
 //Target Bonus
+Route::get('/target-bonus', [TargetBonusController::class, 'getTargetBonus']);
+
+//Get Info Target Progress
 Route::get('/target-bonus', [TargetBonusController::class, 'getTargetBonus']);
 
 

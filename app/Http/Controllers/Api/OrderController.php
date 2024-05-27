@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\InfoBonus;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Paket;
 use App\Models\Product;
+use App\Models\TargetBonus;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\Request;
@@ -247,24 +249,25 @@ class OrderController extends Controller
                 ->with('users.userDetail')
                 ->get();
 
+            $info = InfoBonus::first();
+            $target = TargetBonus::first();
             $overallSum = $subTotals->sum('subtotal');
-            return response()->json(['data' => $overallSum, 'message' => 'success'], 200);
+            return response()->json(['data' => ['progress' => $overallSum, 'target' => $target, 'info' => $info], 'message' => 'success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
-    public function getOrderByUserID(){
-        try{
+    public function getOrderByUserID()
+    {
+        try {
             $user_id = Auth::user()->id;
             $user_orders = Order::with('paket', 'orderDetail', 'users')->where('user_id', $user_id)->get();
             $total_user_order = $user_orders->count();
             return response()->json(['data' => ['Total Orders' => $total_user_order, 'Detail Order' => $user_orders]], 200);
-        }
-        catch(\Throwable $th){
+        } catch (\Throwable $th) {
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
-        
     }
 }
