@@ -73,8 +73,8 @@ class GambarInformasiBannerController extends Controller
 
             $data = GambarInformasiBanner::find($id);
             if (Request()->hasFile('file_path') && Request()->file('file_path')->isValid()) {
-                if (!empty($data->file_path) && Storage::exists($data->file_path)) {
-                    Storage::delete($data->file_path);
+                if (!empty($data->file_path) && Storage::disk('public')->exists($data->file_path)) {
+                    Storage::disk('public')->delete($data->file_path);
                 }
                 $file_name = $request->file_path->getClientOriginalName();
                 $namaGambar = str_replace(' ', '_', $file_name);
@@ -102,6 +102,10 @@ class GambarInformasiBannerController extends Controller
     {
         try {
             //code...
+            $data = GambarInformasiBanner::where('id', $id)->first();
+            if (!empty($data->file_path) && Storage::disk('public')->exists($data->file_path)) {
+                Storage::disk('public')->delete($data->file_path);
+                }
             $deleteGambar = GambarInformasiBanner::where('id', $id)->first()->delete();
             return response()->json(['message' => 'Success'], 200);
         } catch (\Throwable $th) {
