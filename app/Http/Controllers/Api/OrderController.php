@@ -123,6 +123,15 @@ class OrderController extends Controller
 
         try {
             // Ambil paket
+            $statusPending = Order::where('user_id', Auth::user()->id)
+                ->where('status', 'Pending')
+                ->first();
+
+            // Periksa apakah pesanan ditemukan dan hapus jika statusnya "Pending"
+            if ($statusPending) {
+                $statusPending->delete();
+            }
+
             $paketId = $request->input('paketId');
             $paket = Paket::findOrFail($paketId);
             $maxQuantity = $paket->max_quantity;
@@ -224,7 +233,7 @@ class OrderController extends Controller
             $orders = Order::join('users', 'orders.user_id', '=', 'users.id')
                 ->join('user_details', 'users.id', '=', 'user_details.user_id')
                 ->where('user_details.referral_use', $referralCode->referral)
-                ->select('orders.user_id', DB::raw('SUM(orders.total_harga) as total_harga'))
+                ->select('orders.user_id', DB::raw('SUM(orders.total_harga) as total_harga'), DB::raw('MAX(orders.order_date) as latest_order_date'))
                 ->groupBy('orders.user_id')
                 ->with('users.userDetail')
                 ->get();
