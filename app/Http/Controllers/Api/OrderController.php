@@ -267,4 +267,16 @@ class OrderController extends Controller
         }
         
     }
+
+    public function getOrderByUserID2(){
+        try{
+            $user_id = Auth::user()->id;
+            $user_orders = Order::where('user_id', $user_id);
+            $total_user_order = $user_orders->count();
+            return response()->json(['data' => $user_orders, 'Total_order' => $total_user_order]);
+        }
+        catch(\Throwable $th){
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
+    }
 }

@@ -63,6 +63,7 @@ Route::group([
         Route::get('/get-order-byuseronafiliasi', [OrderController::class, 'getOrderByUserOnAfiliasi']);
         Route::get('/get-sumorder-onafiliasi', [OrderController::class, 'getSumOrderOnAfiliasiByUser']);
         Route::get('/get-sumorder-allafliasi', [OrderController::class, 'getSumAOrderOnAfiliasiAllUser']);
+        Route::get('/get-userorders', [OrderController::class, 'getOrderByUserID2']);
 
         //Ongkir
         Route::post('/rajaongkir', [RajaOngkirController::class, 'getOngkir']);
