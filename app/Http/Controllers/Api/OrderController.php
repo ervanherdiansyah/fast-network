@@ -271,9 +271,39 @@ class OrderController extends Controller
     public function getOrderByUserID2(){
         try{
             $user_id = Auth::user()->id;
-            $user_orders = Order::where('user_id', $user_id);
-            $total_user_order = $user_orders->count();
-            return response()->json(['data' => $user_orders, 'Total_order' => $total_user_order]);
+            $user = User::where('id', $user_id)->first();
+            // order diri sendiri
+
+            $user_orders = Order::where('user_id', $user_id)->get(); 
+            $data_order_user = [];
+            foreach($user_orders as $order){
+                $keterangan = [
+                    'nama_user'=>$order->users->name,
+                    'nama_paket'=>$order->paket->paket_nama,
+                    'tanggal'=> $order->order_date,
+                    'keterangan'=>'Repeat Order Afiliasi'
+                ];
+                $data_order_user[] = $keterangan;
+            }
+
+            // order afiliasi
+            // JOIN table user dengan table order
+            $order_afiliasi = Order::join('users', 'orders.user_id','=', 'users.id')->join('user_details', 'users.id', '=', 'user_details.id')->join('pakets', 'orders.paket_id', '=', 'pakets.id')->where('user_details.referral_use', $user->referral)->select('users.name', 'pakets.paket_nama', 'orders.order_date')->get();
+
+            $data_order_afiliasi = [];
+            foreach($order_afiliasi as $order){
+                $keterangan = [
+                    'nama_afiliasi'=>$order->nama,
+                    'nama_paket'=>$order->paket_nama,
+                    'tanggal'=> $order->order_date,
+                    'keterangan'=>'Repeat Order Afiliasi'
+                ];
+                $data_order_afiliasi[] = $keterangan;
+            }
+            
+            // get table order by user affiliate code.
+            $total_user_order = $user_orders->count() + $order_afiliasi->count();
+            return response()->json(['user_order' => $data_order_user, 'order_afilliate'=>$data_order_afiliasi, 'Total_order' => $total_user_order], 200);
         }
         catch(\Throwable $th){
             return response()->json(['message' => 'Internal Server Error'], 500);
