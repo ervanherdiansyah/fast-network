@@ -281,7 +281,7 @@ class OrderController extends Controller
                     'nama_user'=>$order->users->name,
                     'nama_paket'=>$order->paket->paket_nama,
                     'tanggal'=> $order->order_date,
-                    'keterangan'=>'Repeat Order Afiliasi'
+                    'keterangan'=>'Transaksi Produk'
                 ];
                 $data_order_user[] = $keterangan;
             }
