@@ -63,6 +63,7 @@ Route::group([
         Route::get('/get-order-byuseronafiliasi', [OrderController::class, 'getOrderByUserOnAfiliasi']);
         Route::get('/get-sumorder-onafiliasi', [OrderController::class, 'getSumOrderOnAfiliasiByUser']);
         Route::get('/get-sumorder-allafliasi', [OrderController::class, 'getSumAOrderOnAfiliasiAllUser']);
+        Route::get('/get-userorders', [OrderController::class, 'getOrderByUserID2']);
 
         //Get Info Target Progress
         Route::get('/get-info-progress-target', [OrderController::class, 'getSumAOrderOnAfiliasiAllUser']);
@@ -103,6 +104,7 @@ Route::group([
         // Route::post('/user-detail/create', [UserDetailController::class, 'createUserDetail']);
 
         Route::post('/user-detail/update', [UserDetailController::class, 'updateUserDetail']);
+        Route::post('/user-detail/delete-profile-picture', [UserDetailController::class, 'deleteProfilePic']);
 
         //Use Referral By User
         Route::get('/use-referral/byuser', [UserDetailController::class, 'getUseReferralByUser']);
@@ -237,7 +239,7 @@ Route::delete('/pilihancepat/delete/{id}', [PilihanPencairanController::class, '
 
 
 // Paket
-// Route::get('/paket', [PaketController::class, 'getPaket']);
+Route::get('/get-paket-no-authentication', [PaketController::class, 'getPaket']);
 // Route::post('/paket/create', [PaketController::class, 'createPaket']);
 // Route::get('/paket-byid/{id}', [PaketController::class, 'getPaketById']);
 // Route::post('/paket/update/{id}', [PaketController::class, 'updatePaket']);

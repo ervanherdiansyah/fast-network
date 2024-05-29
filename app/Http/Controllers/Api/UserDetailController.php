@@ -93,34 +93,70 @@ class UserDetailController extends Controller
             $user = User::where('id', $user_id)->first();
             $data = UserDetails::where('user_id', $user_id)->first();
 
-            $data->update([
-                'nik' => $request->nik,
-                'nomor_wa' => $request->nomor_wa,
-                'nama_kontak' => $request->nama_kontak,
-                'no_kontak' => $request->no_kontak,
-            ]);
+
 
             $file_name = null;
             if (Request()->hasFile('foto_profil') && Request()->file('foto_profil')->isValid()) {
-                if (!empty($user->foto_profil) && Storage::exists($user->foto_profil)) {
-                    Storage::delete($user->foto_profil);
+
+                if (!empty($data->foto_profil) && Storage::disk('public')->exists($data->foto_profil)) {
+                Storage::disk('public')->delete($data->foto_profil);
                 }
+
                 $file_name = $request->foto_profil->getClientOriginalName();
-                $namaGambar = str_replace(' ', '_', $file_name);
+                $namaGambar = str_replace(' ', '_', $data->user_id . $file_name);
                 $image = $request->foto_profil->storeAs('public/foto_profil', $namaGambar);
-            };
+                $data->update([
+                    'nik' => $request->nik,
+                    'nomor_wa' => $request->nomor_wa,
+                    'nama_kontak' => $request->nama_kontak,
+                    'no_kontak' => $request->no_kontak,
+                    'foto_profil' => $file_name ? "foto_profil/" . $namaGambar : null
+                ]);
+    
+            }else{
+                $data->update([
+                    'nik' => $request->nik,
+                    'nomor_wa' => $request->nomor_wa,
+                    'nama_kontak' => $request->nama_kontak,
+                    'no_kontak' => $request->no_kontak,
+                ]);
+            }
+
+            
 
             $user->update([
                 'name' => $request->name,
-                'foto_profil' => $file_name ? "foto_profil/" . $namaGambar : null,
                 'email' => $request->email
             ]);
+
+            
 
             DB::commit();
             return response()->json(['data' => $data, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
             DB::rollback();
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
+    }
+
+    public function deleteProfilePic()
+    {
+        $user_id = Auth::user()->id;  
+        $data = UserDetails::where('user_id', $user_id)->first();
+    
+        try {
+            if (!empty($data->foto_profil) && Storage::disk('public')->exists($data->foto_profil)) {
+                Storage::disk('public')->delete($data->foto_profil);
+            }
+    
+            $data->update([
+                'foto_profil' => null
+            ]);
+    
+            return response()->json(['message' => 'Foto Profil Successfully Deleted'], 200);
+        } catch (\Throwable $th) {
+            // Log the error for debugging
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
@@ -166,7 +202,7 @@ class UserDetailController extends Controller
                 return response()->json(['message' => 'your Password Confirmation does not mact with our record'], 400);
             }
             throw ValidationException::withMessages([
-                'current_password' => 'your current password does not mact with our record',
+                'current_password' => 'your current password does not match with our record',
             ]);
         } catch (\Throwable $th) {
             //throw $th;

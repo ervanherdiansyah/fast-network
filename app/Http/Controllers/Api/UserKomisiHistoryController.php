@@ -30,7 +30,7 @@ class UserKomisiHistoryController extends Controller
             $total_komisi_repeat_order = $komisi_repeat_order->sum('jumlah_komisi');
             $total_komisi_referal = $komisi_referal->sum('jumlah_komisi');
             $total_komisi = $total_komisi_referal + $total_komisi_repeat_order;
-            return response()->json(['data' => ["Total Komisi"=>$total_komisi, "Total Komisi Referal"=>$total_komisi_referal, 'Total Komisi Repeat Order'=>$total_komisi_repeat_order]], 200);
+            return response()->json(['data' => ["Total_komisi"=>$total_komisi, "Total_komisi_referal"=>$total_komisi_referal, 'Total_komisi_repeat_order'=>$total_komisi_repeat_order]], 200);
         }
         
         catch(\Throwable $th){
