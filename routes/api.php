@@ -172,6 +172,7 @@ Route::post('/package/create', [PaketController::class, 'createPaket']);
 Route::get('/package-byid/{id}', [PaketController::class, 'getPaketById']);
 Route::post('/package/update/{id}', [PaketController::class, 'updatePaket']);
 Route::delete('/package/delete/{id}', [PaketController::class, 'deletePaket']);
+Route::post('/package/set-discount/{id}', [PaketController::class, 'setDiscount']);
 
 // Gambar Banner
 Route::get('/gambar-banner', [GambarBannerController::class, 'getAllBannerImages']);
