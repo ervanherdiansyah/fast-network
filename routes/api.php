@@ -232,7 +232,7 @@ Route::delete('/pilihancepat/delete/{id}', [PilihanPencairanController::class, '
 
 
 // Paket
-// Route::get('/paket', [PaketController::class, 'getPaket']);
+Route::get('/get-paket-no-authentication', [PaketController::class, 'getPaket']);
 // Route::post('/paket/create', [PaketController::class, 'createPaket']);
 // Route::get('/paket-byid/{id}', [PaketController::class, 'getPaketById']);
 // Route::post('/paket/update/{id}', [PaketController::class, 'updatePaket']);
