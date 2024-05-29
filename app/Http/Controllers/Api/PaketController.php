@@ -74,7 +74,9 @@ class PaketController extends Controller
                 'paket_nama' => 'required|string',
                 'max_quantity' => 'required|integer',
                 'price' => 'required|integer',
+                'discount_price' => 'nullable|integer',
                 'weight' => 'required|integer',
+                'is_discount' => 'nullable',
                 'description' => 'required|string',
                 'image' => 'nullable',
                 'point' => 'required|integer',
@@ -89,10 +91,13 @@ class PaketController extends Controller
                 $image = $request->image->storeAs('public/paket', $namaGambar);
             }
 
+
             $data = Paket::create([
                 'paket_nama' => $request->paket_nama,
                 'max_quantity' => $request->max_quantity,
                 'price' => $request->price,
+                'is_discount' => null,
+                'discount_price' => null,
                 'weight' => $request->weight,
                 'description' => $request->description,
                 'image' => $file_name ? "paket/" . $namaGambar : null,
@@ -179,4 +184,18 @@ class PaketController extends Controller
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
+
+    public function setDiscount (Request $request, $id){
+        Request()->validate([
+            'discount_price' => 'required|integer',
+            'is_discount' => 'required|integer'
+        ]);
+
+        $paket = Paket::where('id', $id)->first();
+        $paket->update([
+            'discount_price'=>$request->discount_price,
+            'is_discount' => $request->is_discount
+        ]);
+    }
+
 }

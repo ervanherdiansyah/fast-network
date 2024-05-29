@@ -29,7 +29,15 @@ class CheckoutContoller extends Controller
                     'estimasi_tiba'=>$request->estimasi,
                     'alamat_id'=>$request->alamat_id
                 ]);
-                $totalHarga = $orders->paket->price + $request->harga_ongkir;
+
+                // JIKA Diskon paket aktif maka pake harga diskon
+                if($orders->paket->is_discount == true){
+                    $totalHarga = $orders->paket->discount_price + $request->harga_ongkir;
+                }else{
+                    $totalHarga = $orders->paket->price + $request->harga_ongkir;
+                }
+            
+
                 // return response()->json($totalHarga);
                 $item_details[] = [
                     'id' => $orders->order_code,
