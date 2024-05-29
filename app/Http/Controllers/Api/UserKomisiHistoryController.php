@@ -13,7 +13,19 @@ class UserKomisiHistoryController extends Controller
     public function getKomisiHistory(Request $request){
         try{
             $user_id = Auth::user()->id;
-            $userKomisiHistory = UserKomisiHistory::where('affiliator_id', $user_id)->get();
+            $userKomisiHistoryRaw = UserKomisiHistory::where('affiliator_id', $user_id)->get();
+            $userKomisiHistory = [];
+            foreach($userKomisiHistoryRaw as $data){
+                $komisi = [
+                    'keterangan'=>$data->keterangan,
+                    // info transaksi diganti yang dari table tapi nama dari si affiliate, dari affiliate_id
+                    'info_transaksi'=>$data->komisi_affiliate_id->name,
+                    'jumlah_komisi'=>$data->jumlah_komisi,
+                    'created_at'=>$data->created_at,
+                    'updated_at'=>$data->updated_at
+                ];
+                $userKomisiHistory[] = $komisi;
+            }
             return response()->json(['data' => $userKomisiHistory, 'message' => 'Success'], 200); 
         }
         catch(\Throwable $th){

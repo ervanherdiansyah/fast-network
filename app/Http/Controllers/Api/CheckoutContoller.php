@@ -259,8 +259,9 @@ class CheckoutContoller extends Controller
                         // GET History Komisi Menggunakan affiliator_id !!!
                         $komisi_history_affiliator = UserKomisiHistory::create([
                             'affiliator_id' => $userReferal->id,
+                            'affiliate_id' => $user->id,
                             'keterangan' => 'Kode Referal',
-                            'info_transaksi' => $user->name,
+                            'info_transaksi' => 'Komisi Kode Referal Afiliasi',
                             'jumlah_komisi' => 300000
                         ]);
 
@@ -300,8 +301,9 @@ class CheckoutContoller extends Controller
                         // GET History Komisi Menggunakan affiliator_id !!!
                         $komisi_history = UserKomisiHistory::create([
                             'affiliator_id' => $userReferal->id,
+                            'affiliate_id' => $user->id,
                             'keterangan' => 'Repeat Order',
-                            'info_transaksi' => $user->name,
+                            'info_transaksi' => 'Komisi Repeat Order',
                             'jumlah_komisi' => 100000 * $orders->paket->value
                         ]);
 
@@ -319,8 +321,9 @@ class CheckoutContoller extends Controller
                         // Poin yang Didapat Affiliator Ketika User Repeat Order
                         $affiliator_poin_history = AffiliatorPoinHistory::create([
                             'affiliator_id' => $userReferal->id,
+                            'affiliate_id' =>$user->id,
                             'keterangan' => 'Repeat Order Afiliasi',
-                            'info_transaksi' => $user->name,
+                            'info_transaksi' => 'Komisi Poin Repeat Order',
                             'jumlah_poin' => 5 * $orders->paket->value
                         ]);
 
