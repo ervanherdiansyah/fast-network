@@ -72,6 +72,7 @@ class PointWithdrawController extends Controller
                     'status_withdraw'=>"Pending",
                     'reward_id'=>$request->reward_id,
                     'amount'=>$reward->point,
+                    'nama_reward'=>$reward->reward_name,
                     'nama_pemilik_rekening'=>$request->nama_pemilik_rekening,
                     'nama_bank'=>$request->nama_bank,
                     'no_rekening'=>$request->no_rekening,
