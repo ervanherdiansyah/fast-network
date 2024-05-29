@@ -39,6 +39,7 @@ class PointWithdrawController extends Controller
                 'nama_pemilik_rekening' => 'required|string',
                 'nama_bank' => 'required|string',
                 'no_rekening' => 'required|string',
+                'id_alamat' => 'required|integer',
             ]);
 
 
