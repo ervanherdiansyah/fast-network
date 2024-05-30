@@ -42,15 +42,22 @@ class UserPoinHistoryController extends Controller
                 ];
                 $userPoinHistoryAsUser[] = $bonuspoin;
             }
+            
 
             if(!$userPoinHistoryAsAffiliator){
                 $mergedUserPoinHistory = array_merge($userPoinHistoryAsUser, $userPoinHistoryAsAffiliator);
+                usort($mergedUserPoinHistory, function ($a, $b) {
+                    return strtotime($b['created_at']) - strtotime($a['created_at']);
+                });
                 return response()->json(['data' => $mergedUserPoinHistory, 'message' => 'Success'], 200); 
                 // return response()->json(['data' => $userPoinHistoryAsUser, 'message' => 'Success'], 200); 
             }
             else{
                 // $mergedUserPoinHistory = $userPoinHistoryAsUser->getCollection()->merge($userPoinHistoryAsAffiliator->getCollection());
                 $mergedUserPoinHistory = array_merge($userPoinHistoryAsUser, $userPoinHistoryAsAffiliator);
+                usort($mergedUserPoinHistory, function ($a, $b) {
+                    return strtotime($b['created_at']) - strtotime($a['created_at']);
+                });
                 return response()->json(['data' => $mergedUserPoinHistory, 'message' => 'Success'], 200); 
             }
             
