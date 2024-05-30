@@ -82,7 +82,7 @@ Route::group([
         Route::delete('/useralamat/delete/{id}', [AlamatController::class, 'deleteAlamat']);
 
         //Alamat Penjual
-        Route::get('/alamat-penjual', [AlamatController::class, 'getAlamatPenjual']);
+        // Route::get('/alamat-penjual', [AlamatController::class, 'getAlamatPenjual']);
 
         // User Bank Detail API
         Route::get('userbanks', [BankController::class, 'getBankByUserID']);
