@@ -342,6 +342,15 @@ class OrderController extends Controller
                 $data_order_afiliasi[] = $keterangan;
             }
 
+            // Define a comparison function for sorting by 'tanggal' in descending order
+            usort($data_order_user, function ($a, $b) {
+             return strtotime($b['tanggal']) - strtotime($a['tanggal']);
+            });
+
+            usort($data_order_afiliasi, function ($a, $b) {
+                return strtotime($b['tanggal']) - strtotime($a['tanggal']);
+            });
+
             // get table order by user affiliate code.
             $total_user_order = $user_orders->count() + $order_afiliasi->count();
             return response()->json(['user_order' => $data_order_user, 'order_afilliate' => $data_order_afiliasi, 'Total_order' => $total_user_order], 200);
