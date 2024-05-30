@@ -25,18 +25,18 @@ class CheckoutContoller extends Controller
             if ($request->jenis_order == 'dikirim') {
                 $orders = Order::with('orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Pending')->latest()->first();
                 $orders->update([
-                    'shipping_courier'=>$request->courier_name,
-                    'estimasi_tiba'=>$request->estimasi,
-                    'alamat_id'=>$request->alamat_id
+                    'shipping_courier' => $request->courier_name,
+                    'estimasi_tiba' => $request->estimasi,
+                    'alamat_id' => $request->alamat_id
                 ]);
 
                 // JIKA Diskon paket aktif maka pake harga diskon
-                if($orders->paket->is_discount == true){
+                if ($orders->paket->is_discount == true) {
                     $totalHarga = $orders->paket->discount_price + $request->harga_ongkir;
-                }else{
+                } else {
                     $totalHarga = $orders->paket->price + $request->harga_ongkir;
                 }
-            
+
 
                 // return response()->json($totalHarga);
                 $item_details[] = [
@@ -127,13 +127,13 @@ class CheckoutContoller extends Controller
             } elseif ($request->jenis_order == 'diambil') {
                 $orders = Order::with('orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Pending')->latest()->first();
                 $orders->update([
-                    'alamat_id'=>$request->alamat_id
+                    'alamat_id' => $request->alamat_id
                 ]);
 
                 // JIKA Diskon paket aktif maka pake harga diskon
-                if($orders->paket->is_discount == true){
+                if ($orders->paket->is_discount == true) {
                     $totalHarga = $orders->paket->discount_price;
-                }else{
+                } else {
                     $totalHarga = $orders->paket->price;
                 }
 
@@ -242,7 +242,7 @@ class CheckoutContoller extends Controller
                 if ($order->status = 'Paid') {
                     $orders = Order::with('orderDetail.product', 'users', 'paket')->where('order_id', $request->order_id)->where('status', 'Pending')->latest()->first();
 
-                    $user = User::with('userDetail')->where('id', Auth::user()->id)->first();
+                    $user = User::with('userDetail')->where('id', $orders->user_id)->first();
                     $userReferal = User::where('referral', $user->userDetail->referral_use)->first();
 
                     $paket_terjual = Paket::where('id', $orders->paket_id)->first();
@@ -278,7 +278,7 @@ class CheckoutContoller extends Controller
                         $affliator->current_balance += 300000;
                         $affliator->save();
 
-                        $affliasi = UserWallet::where('user_id', Auth::user()->id)->first();
+                        $affliasi = UserWallet::where('user_id', $user->id)->first();
                         $affliasi->total_point += 15;
                         $affliasi->current_point += 15;
                         $affliasi->save();
@@ -296,7 +296,7 @@ class CheckoutContoller extends Controller
                         $affliator->save();
 
                         // History Uang Yang Didapat via Komisi Referral.
-                        
+
                         // GET History Komisi Menggunakan affiliator_id !!!
                         $komisi_history = UserKomisiHistory::create([
                             'affiliator_id' => $userReferal->id,
@@ -310,7 +310,7 @@ class CheckoutContoller extends Controller
 
                         // Poin Yang Didapat User Ketika Repeat Order
                         $user_poin_history = UserPoinHistory::create([
-                            'user_id' => Auth::user()->id,
+                            'user_id' => $user->id,
                             'keterangan' => 'Transaksi Produk',
                             'info_transaksi' => 'Transaksi',
                             'jumlah_poin' => $orders->paket->point
@@ -324,7 +324,7 @@ class CheckoutContoller extends Controller
                             'jumlah_poin' => 5 * $orders->paket->value
                         ]);
 
-                        $affliasi = UserWallet::where('user_id', Auth::user()->id)->first();
+                        $affliasi = UserWallet::where('user_id', $user->id)->first();
                         $affliasi->total_point += $orders->paket->point;
                         $affliasi->current_point += $orders->paket->point;
                         $affliasi->save();
