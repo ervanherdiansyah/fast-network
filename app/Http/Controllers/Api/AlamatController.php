@@ -43,6 +43,17 @@ class AlamatController extends Controller
         }
     }
 
+    public function getAlamatPenjual($id)
+    {
+        try {
+            $alamat = UserAlamat::where('id', $id)->first();
+            return response()->json(['data' => $alamat, 'message' => 'Success'], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['message' => 'Internal Server Error'], 500);
+        }
+    }
+
     public function createAlamat(Request $request)
     {
         try {
