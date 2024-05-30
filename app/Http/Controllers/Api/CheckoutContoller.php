@@ -121,7 +121,7 @@ class CheckoutContoller extends Controller
                 $params = array(
                     'transaction_details' => array(
                         'order_id' => $orders->id,
-                        'gross_amount' => 2000000,
+                        'gross_amount' => $totalHarga,
                     ),
                     'customer_details' => array(
                         'first_name' => Auth::user()->name,
@@ -228,7 +228,7 @@ class CheckoutContoller extends Controller
                 $params = array(
                     'transaction_details' => array(
                         'order_id' => $orders->id,
-                        'gross_amount' => $orders->paket->price,
+                        'gross_amount' => $totalHarga,
                     ),
                     'customer_details' => array(
                         'first_name' => Auth::user()->name,

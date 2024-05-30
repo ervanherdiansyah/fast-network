@@ -19,7 +19,7 @@ class PointWithdrawController extends Controller
     {
         try {
             $user_id = Auth::user()->id;
-            $point_withdraw_request = WithdrawPoint::where('user_id', $user_id)->get();
+            $point_withdraw_request = WithdrawPoint::where('user_id', $user_id)->latest()->get();
             return response()->json(['data' => $point_withdraw_request, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
