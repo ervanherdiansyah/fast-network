@@ -31,6 +31,7 @@ class CheckoutContoller extends Controller
                     $totalHarga = $orders->paket->discount_price + $request->shipping_price;
                     $orders->update([
                         'shipping_courier' => $request->shipping_courier,
+                        'shipping_status' => "Diproses",
                         'estimasi_tiba' => $request->estimasi,
                         'alamat_id' => $request->alamat_id,
                         'total_belanja' => $totalHarga,
@@ -41,6 +42,7 @@ class CheckoutContoller extends Controller
                     $totalHarga = $orders->paket->price + $request->shipping_price;
                     $orders->update([
                         'shipping_courier' => $request->shipping_courier,
+                        'shipping_status' => "Diproses",
                         'estimasi_tiba' => $request->estimasi,
                         'alamat_id' => $request->alamat_id,
                         'total_belanja' => $totalHarga,
@@ -143,6 +145,7 @@ class CheckoutContoller extends Controller
                     $totalHarga = $orders->paket->discount_price;
                     $orders->update([
                         'alamat_id' => $request->alamat_id,
+                        'shipping_status' => "Diproses",
                         'total_belanja' => $totalHarga,
                         'jenis_order' => $request->jenis_order,
                     ]);
@@ -150,6 +153,7 @@ class CheckoutContoller extends Controller
                     $totalHarga = $orders->paket->price;
                     $orders->update([
                         'alamat_id' => $request->alamat_id,
+                        'shipping_status' => "Diproses",
                         'total_belanja' => $totalHarga,
                         'jenis_order' => $request->jenis_order,
                     ]);
@@ -257,111 +261,109 @@ class CheckoutContoller extends Controller
                 $order = Order::find($request->order_id);
                 $order->update(['status' => 'Paid']);
 
-                    $user = User::with('userDetail')->where('id', $order->user_id)->first();
-                    $userReferal = User::where('referral', $user->userDetail->referral_use)->first();
+                $user = User::with('userDetail')->where('id', $order->user_id)->first();
+                $userReferal = User::where('referral', $user->userDetail->referral_use)->first();
 
-                    $paket_terjual = Paket::where('id', $order->paket_id)->first();
-                    $paket_terjual->update([
-                        'jumlah_terjual' => $paket_terjual->jumlah_terjual + 1,
+                $paket_terjual = Paket::where('id', $order->paket_id)->first();
+                $paket_terjual->update([
+                    'jumlah_terjual' => $paket_terjual->jumlah_terjual + 1,
+                ]);
+
+                if ($user->first_order == true) {
+                    $affliator = UserWallet::where('user_id', $userReferal->id)->first();
+
+                    // IF Transaksi Pertama = Paid generate kode referal
+                    $user_name_character = str_split($user->name);
+                    $first_user_character_name = $user_name_character[0];
+                    $user_id_as_string = (string)$user->id;
+                    $random_string = Str::random(6);
+                    $referal_token = $first_user_character_name . $user_id_as_string . $random_string;
+
+                    $user->update([
+                        'referral' => $referal_token
                     ]);
 
-                    if ($user->first_order == true) {
-                        $affliator = UserWallet::where('user_id', $userReferal->id)->first();
-                        
-                        // IF Transaksi Pertama = Paid generate kode referal
-                        $user_name_character = str_split($user->name);
-                        $first_user_character_name = $user_name_character[0];
-                        $user_id_as_string = (string)$user->id;
-                        $random_string = Str::random(6);
-                        $referal_token = $first_user_character_name . $user_id_as_string . $random_string;
+                    // IF TRANSAKSI PERTAMA TRUE
+                    // History Uang Yang Didapat via Komisi Referral.
 
-                        $user->update([
-                            'referral'=>$referal_token
-                        ]); 
+                    // GET History Komisi Menggunakan affiliator_id !!!
+                    $komisi_history_affiliator = UserKomisiHistory::create([
+                        'affiliator_id' => $userReferal->id,
+                        'affiliate_id' => $user->id,
+                        'keterangan' => 'Kode Referal',
+                        'info_transaksi' => 'Komisi Kode Referal Afiliasi',
+                        'jumlah_komisi' => 300000
+                    ]);
 
-                        // IF TRANSAKSI PERTAMA TRUE
-                        // History Uang Yang Didapat via Komisi Referral.
-
-                        // GET History Komisi Menggunakan affiliator_id !!!
-                        $komisi_history_affiliator = UserKomisiHistory::create([
-                            'affiliator_id' => $userReferal->id,
-                            'affiliate_id' => $user->id,
-                            'keterangan' => 'Kode Referal',
-                            'info_transaksi' => 'Komisi Kode Referal Afiliasi',
-                            'jumlah_komisi' => 300000
-                        ]);
-
-                        // Komisi Poin Si Pembeli
-                        // GET History Poin ada dua, satu userPoinHistory satu AffiliatorPoinHistory
-                        $komisi_poin_user = UserPoinHistory::create([
-                            'user_id' => $user->id,
-                            'keterangan' => 'Transaksi Produk',
-                            'info_transaksi' => 'Transaksi',
-                            'jumlah_poin' => 15
-                        ]);
+                    // Komisi Poin Si Pembeli
+                    // GET History Poin ada dua, satu userPoinHistory satu AffiliatorPoinHistory
+                    $komisi_poin_user = UserPoinHistory::create([
+                        'user_id' => $user->id,
+                        'keterangan' => 'Transaksi Produk',
+                        'info_transaksi' => 'Transaksi',
+                        'jumlah_poin' => 15
+                    ]);
 
 
-                        $affliator->total_balance += 300000;
-                        $affliator->current_balance += 300000;
-                        $affliator->save();
+                    $affliator->total_balance += 300000;
+                    $affliator->current_balance += 300000;
+                    $affliator->save();
 
-                        $affliasi = UserWallet::where('user_id', $user->id)->first();
-                        $affliasi->total_point += 15;
-                        $affliasi->current_point += 15;
-                        $affliasi->save();
+                    $affliasi = UserWallet::where('user_id', $user->id)->first();
+                    $affliasi->total_point += 15;
+                    $affliasi->current_point += 15;
+                    $affliasi->save();
 
-                        $user->update([
-                            'first_order' => 0,
-                            'first_buy_success' => 1
-                        ]);
-                        
-                    } else {
-                        $affliator = UserWallet::where('user_id', $userReferal->id)->first();
-                        $affliator->total_balance += 100000 * $order->paket->value;
-                        $affliator->current_balance += 100000 * $order->paket->value;
-                        $affliator->total_point += 5 * $order->paket->value;
-                        $affliator->current_point += 5 * $order->paket->value;
-                        $affliator->save();
+                    $user->update([
+                        'first_order' => 0,
+                        'first_buy_success' => 1
+                    ]);
+                } else {
+                    $affliator = UserWallet::where('user_id', $userReferal->id)->first();
+                    $affliator->total_balance += 100000 * $order->paket->value;
+                    $affliator->current_balance += 100000 * $order->paket->value;
+                    $affliator->total_point += 5 * $order->paket->value;
+                    $affliator->current_point += 5 * $order->paket->value;
+                    $affliator->save();
 
-                        // History Uang Yang Didapat via Komisi Repeat Order.
+                    // History Uang Yang Didapat via Komisi Repeat Order.
 
-                        // GET History Komisi Menggunakan affiliator_id !!!
-                        // Komisi Affiliator Repeat Order
-                         $komisi_history = UserKomisiHistory::create([
-                            'affiliator_id' => $userReferal->id,
-                            'affiliate_id' => $user->id,
-                            'keterangan' => 'Repeat Order',
-                            'info_transaksi' => 'Komisi Repeat Order',
-                            'jumlah_komisi' => 100000 * $order->paket->value
-                        ]);
+                    // GET History Komisi Menggunakan affiliator_id !!!
+                    // Komisi Affiliator Repeat Order
+                    $komisi_history = UserKomisiHistory::create([
+                        'affiliator_id' => $userReferal->id,
+                        'affiliate_id' => $user->id,
+                        'keterangan' => 'Repeat Order',
+                        'info_transaksi' => 'Komisi Repeat Order',
+                        'jumlah_komisi' => 100000 * $order->paket->value
+                    ]);
 
-                        // History Poin Yang Didapat 
-                        // GET History Poin ada dua, satu Get By user_id dan kedua get by affiliate_id kemudian disatukan\
+                    // History Poin Yang Didapat 
+                    // GET History Poin ada dua, satu Get By user_id dan kedua get by affiliate_id kemudian disatukan\
 
-                        // Poin Yang Didapat User Ketika Repeat Order
-                        $user_poin_history = UserPoinHistory::create([
-                            'user_id' => $user->id,
-                            'keterangan' => 'Transaksi Produk',
-                            'info_transaksi' => 'Transaksi',
-                            'jumlah_poin' => $order->paket->point
-                        ]);
+                    // Poin Yang Didapat User Ketika Repeat Order
+                    $user_poin_history = UserPoinHistory::create([
+                        'user_id' => $user->id,
+                        'keterangan' => 'Transaksi Produk',
+                        'info_transaksi' => 'Transaksi',
+                        'jumlah_poin' => $order->paket->point
+                    ]);
 
-                        // Poin yang Didapat Affiliator Ketika User Repeat Order
-                        $affiliator_poin_history = AffiliatorPoinHistory::create([
-                            'affiliator_id' => $userReferal->id,
-                            'affiliate_id' =>$user->id,
-                            'keterangan' => 'Repeat Order Afiliasi',
-                            'info_transaksi' => 'Komisi Poin Repeat Order',
-                            'jumlah_poin' => 5 * $order->paket->value
-                        ]);
+                    // Poin yang Didapat Affiliator Ketika User Repeat Order
+                    $affiliator_poin_history = AffiliatorPoinHistory::create([
+                        'affiliator_id' => $userReferal->id,
+                        'affiliate_id' => $user->id,
+                        'keterangan' => 'Repeat Order Afiliasi',
+                        'info_transaksi' => 'Komisi Poin Repeat Order',
+                        'jumlah_poin' => 5 * $order->paket->value
+                    ]);
 
-                        $affliasi = UserWallet::where('user_id', $user->id)->first();
-                        $affliasi->total_point += $order->paket->point;
-                        $affliasi->current_point += $order->paket->point;
-                        $affliasi->save();
-                    }
+                    $affliasi = UserWallet::where('user_id', $user->id)->first();
+                    $affliasi->total_point += $order->paket->point;
+                    $affliasi->current_point += $order->paket->point;
+                    $affliasi->save();
                 }
-            
+            }
         }
     }
 }

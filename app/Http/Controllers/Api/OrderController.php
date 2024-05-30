@@ -42,15 +42,15 @@ class OrderController extends Controller
     public function getAllOrderByUser()
     {
         try {
-            $orders = Order::with('userAlamat','orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->latest()->paginate(10);
+            $orders = Order::with('userAlamat', 'orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->latest()->paginate(10);
 
             // Format ulang data pesanan
-        $formattedOrders = $orders->map(function ($order) {
-            $products = $order->orderDetail->map(function ($detail) {
-                return $detail->product->product_name . ' ' . $detail->quantity;
-            })->implode(', ');
+            $formattedOrders = $orders->map(function ($order) {
+                $products = $order->orderDetail->map(function ($detail) {
+                    return $detail->product->product_name . ' ' . $detail->quantity;
+                })->implode(', ');
 
-            return [
+                return [
                     'id' => $order->id,
                     'created_at' => $order->created_at,
                     'updated_at' => $order->updated_at,
@@ -75,9 +75,9 @@ class OrderController extends Controller
                     'paket' => $order->paket,
                     'user_alamat' => $order->userAlamat,
                 ];
-        });
+            });
 
-        return response()->json(['data' => $formattedOrders, 'status' => 'Success'], 200);
+            return response()->json(['data' => $formattedOrders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 500);
         }
@@ -105,6 +105,7 @@ class OrderController extends Controller
                     'shipping_status' => $order->shipping_status,
                     'shipping_courier' => $order->shipping_courier,
                     'total_harga' => $order->total_harga,
+                    'total_belanja' => $order->total_belanja,
                     'alamat_id' => $order->alamat_id,
                     'no_resi' => $order->no_resi,
                     'estimasi_tiba' => $order->estimasi_tiba,
@@ -156,7 +157,7 @@ class OrderController extends Controller
             }
 
             // Buat order baru
-            if($paket->is_discount = true){
+            if ($paket->is_discount = true) {
                 $order = new Order();
                 $order->user_id = Auth::user()->id;
                 $order->paket_id = $request->paketId;
@@ -165,8 +166,7 @@ class OrderController extends Controller
                 $order->status = 'Pending';
                 $order->total_harga = $paket->discount_price;
                 $order->save();
-            }
-            else{
+            } else {
                 $order = new Order();
                 $order->user_id = Auth::user()->id;
                 $order->paket_id = $request->paketId;
@@ -174,9 +174,9 @@ class OrderController extends Controller
                 $order->order_date = now();
                 $order->status = 'Pending';
                 $order->total_harga = $paket->price;
-                $order->save(); 
+                $order->save();
             }
-            
+
 
             // Buat detail order untuk setiap produk
             foreach ($request->input('products') as $product) {
