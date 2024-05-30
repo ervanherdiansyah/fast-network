@@ -27,11 +27,8 @@ class CheckoutContoller extends Controller
                 $orders = Order::with('orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Pending')->latest()->first();
 
                 // JIKA Diskon paket aktif maka pake harga diskon
-
-                // inisialiasi total_harga
-                $totalHarga = null;
                 if ($orders->paket->is_discount == true) {
-                    $totalHarga = $orders->paket->discount_price + $request->harga_ongkir;
+                    $totalHarga = $orders->paket->discount_price + $request->shipping_price;
                     $orders->update([
                         'shipping_courier' => $request->shipping_courier,
                         'estimasi_tiba' => $request->estimasi,
@@ -41,7 +38,7 @@ class CheckoutContoller extends Controller
                         'jenis_order' => $request->jenis_order,
                     ]);
                 } else {
-                    $totalHarga = $orders->paket->price + $request->harga_ongkir;
+                    $totalHarga = $orders->paket->price + $request->shipping_price;
                     $orders->update([
                         'shipping_courier' => $request->shipping_courier,
                         'estimasi_tiba' => $request->estimasi,
@@ -122,7 +119,7 @@ class CheckoutContoller extends Controller
                 $params = array(
                     'transaction_details' => array(
                         'order_id' => $orders->id,
-                        'gross_amount' => $totalHarga,
+                        'gross_amount' => 2000000,
                     ),
                     'customer_details' => array(
                         'first_name' => Auth::user()->name,
@@ -135,7 +132,7 @@ class CheckoutContoller extends Controller
                 $snapToken = \Midtrans\Snap::getSnapToken($params);
                 return response()->json(['data' => [
                     'snapToken' => $snapToken,
-                    'total_harga' => $totalHarga,
+                    'total_belanja' => $totalHarga,
                     'order' => $orders,
                 ], 'status' => 'Success'], 200);
             } elseif ($request->jenis_order == 'diambil') {
@@ -240,7 +237,7 @@ class CheckoutContoller extends Controller
                 $snapToken = \Midtrans\Snap::getSnapToken($params);
                 return response()->json(['data' => [
                     'snapToken' => $snapToken,
-                    'total_harga' => $totalHarga,
+                    'total_belanja' => $totalHarga,
                     'order' => $orders,
                 ], 'status' => 'Success'], 200);
             }
@@ -260,20 +257,17 @@ class CheckoutContoller extends Controller
                 $order = Order::find($request->order_id);
                 $order->update(['status' => 'Paid']);
 
-                
-                    $orders = Order::with('orderDetail.product', 'users', 'paket')->where('id', $request->order_id)->latest()->first();
-
-                    $user = User::with('userDetail')->where('id', $orders->user_id)->first();
+                    $user = User::with('userDetail')->where('id', $order->user_id)->first();
                     $userReferal = User::where('referral', $user->userDetail->referral_use)->first();
 
-                    $paket_terjual = Paket::where('id', $orders->paket_id)->first();
+                    $paket_terjual = Paket::where('id', $order->paket_id)->first();
                     $paket_terjual->update([
                         'jumlah_terjual' => $paket_terjual->jumlah_terjual + 1,
                     ]);
 
                     if ($user->first_order == true) {
                         $affliator = UserWallet::where('user_id', $userReferal->id)->first();
-
+                        
                         // IF Transaksi Pertama = Paid generate kode referal
                         $user_name_character = str_split($user->name);
                         $first_user_character_name = $user_name_character[0];
@@ -300,7 +294,7 @@ class CheckoutContoller extends Controller
                         // Komisi Poin Si Pembeli
                         // GET History Poin ada dua, satu userPoinHistory satu AffiliatorPoinHistory
                         $komisi_poin_user = UserPoinHistory::create([
-                            'user_id' => Auth::user()->id,
+                            'user_id' => $user->id,
                             'keterangan' => 'Transaksi Produk',
                             'info_transaksi' => 'Transaksi',
                             'jumlah_poin' => 15
@@ -320,23 +314,25 @@ class CheckoutContoller extends Controller
                             'first_order' => 0,
                             'first_buy_success' => 1
                         ]);
+                        
                     } else {
                         $affliator = UserWallet::where('user_id', $userReferal->id)->first();
-                        $affliator->total_balance += 100000 * $orders->paket->value;
-                        $affliator->current_balance += 100000 * $orders->paket->value;
-                        $affliator->total_point += 5 * $orders->paket->value;
-                        $affliator->current_point += 5 * $orders->paket->value;
+                        $affliator->total_balance += 100000 * $order->paket->value;
+                        $affliator->current_balance += 100000 * $order->paket->value;
+                        $affliator->total_point += 5 * $order->paket->value;
+                        $affliator->current_point += 5 * $order->paket->value;
                         $affliator->save();
 
-                        // History Uang Yang Didapat via Komisi Referral.
+                        // History Uang Yang Didapat via Komisi Repeat Order.
 
                         // GET History Komisi Menggunakan affiliator_id !!!
-                        $komisi_history = UserKomisiHistory::create([
+                        // Komisi Affiliator Repeat Order
+                         $komisi_history = UserKomisiHistory::create([
                             'affiliator_id' => $userReferal->id,
                             'affiliate_id' => $user->id,
                             'keterangan' => 'Repeat Order',
                             'info_transaksi' => 'Komisi Repeat Order',
-                            'jumlah_komisi' => 100000 * $orders->paket->value
+                            'jumlah_komisi' => 100000 * $order->paket->value
                         ]);
 
                         // History Poin Yang Didapat 
@@ -347,7 +343,7 @@ class CheckoutContoller extends Controller
                             'user_id' => $user->id,
                             'keterangan' => 'Transaksi Produk',
                             'info_transaksi' => 'Transaksi',
-                            'jumlah_poin' => $orders->paket->point
+                            'jumlah_poin' => $order->paket->point
                         ]);
 
                         // Poin yang Didapat Affiliator Ketika User Repeat Order
@@ -356,16 +352,16 @@ class CheckoutContoller extends Controller
                             'affiliate_id' =>$user->id,
                             'keterangan' => 'Repeat Order Afiliasi',
                             'info_transaksi' => 'Komisi Poin Repeat Order',
-                            'jumlah_poin' => 5 * $orders->paket->value
+                            'jumlah_poin' => 5 * $order->paket->value
                         ]);
 
                         $affliasi = UserWallet::where('user_id', $user->id)->first();
-                        $affliasi->total_point += $orders->paket->point;
-                        $affliasi->current_point += $orders->paket->point;
+                        $affliasi->total_point += $order->paket->point;
+                        $affliasi->current_point += $order->paket->point;
                         $affliasi->save();
                     }
-
-            }
+                }
+            
         }
     }
 }
