@@ -24,19 +24,29 @@ class CheckoutContoller extends Controller
             // $item_details = [];
             if ($request->jenis_order == 'dikirim') {
                 $orders = Order::with('orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Pending')->latest()->first();
-                $orders->update([
-                    'shipping_courier'=>$request->courier_name,
-                    'estimasi_tiba'=>$request->estimasi,
-                    'alamat_id'=>$request->alamat_id
-                ]);
 
                 // JIKA Diskon paket aktif maka pake harga diskon
-                if($orders->paket->is_discount == true){
+                if ($orders->paket->is_discount == true) {
                     $totalHarga = $orders->paket->discount_price + $request->harga_ongkir;
-                }else{
+                    $orders->update([
+                        'shipping_courier' => $request->courier_name,
+                        'estimasi_tiba' => $request->estimasi,
+                        'alamat_id' => $request->alamat_id,
+                        'total_belanja' => $totalHarga,
+                        'shipping_price' => $request->shipping_price,
+                        'jenis_order' => $request->jenis_order,
+                    ]);
+                } else {
                     $totalHarga = $orders->paket->price + $request->harga_ongkir;
+                    $orders->update([
+                        'shipping_courier' => $request->courier_name,
+                        'estimasi_tiba' => $request->estimasi,
+                        'alamat_id' => $request->alamat_id,
+                        'total_belanja' => $totalHarga,
+                        'shipping_price' => $request->shipping_price,
+                        'jenis_order' => $request->jenis_order,
+                    ]);
                 }
-            
 
                 // return response()->json($totalHarga);
                 $item_details[] = [
@@ -103,7 +113,7 @@ class CheckoutContoller extends Controller
                 \Midtrans\Config::$is3ds = true;
 
                 // \Midtrans\Config::$overrideNotifUrl = config('app.url') . '/api/callback';
-                // \Midtrans\Config::$overrideNotifUrl = 'https://3b59-114-79-55-197.ngrok-free.app/api/callback';
+                \Midtrans\Config::$overrideNotifUrl = 'https://backend.fastnetwork.id/api/callback';
 
                 $params = array(
                     'transaction_details' => array(
@@ -126,15 +136,22 @@ class CheckoutContoller extends Controller
                 ], 'status' => 'Success'], 200);
             } elseif ($request->jenis_order == 'diambil') {
                 $orders = Order::with('orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Pending')->latest()->first();
-                $orders->update([
-                    'alamat_id'=>$request->alamat_id
-                ]);
 
                 // JIKA Diskon paket aktif maka pake harga diskon
-                if($orders->paket->is_discount == true){
+                if ($orders->paket->is_discount == true) {
                     $totalHarga = $orders->paket->discount_price;
-                }else{
+                    $orders->update([
+                        'alamat_id' => $request->alamat_id,
+                        'total_belanja' => $totalHarga,
+                        'jenis_order' => $request->jenis_order,
+                    ]);
+                } else {
                     $totalHarga = $orders->paket->price;
+                    $orders->update([
+                        'alamat_id' => $request->alamat_id,
+                        'total_belanja' => $totalHarga,
+                        'jenis_order' => $request->jenis_order,
+                    ]);
                 }
 
                 $item_details[] = [
@@ -201,7 +218,7 @@ class CheckoutContoller extends Controller
                 \Midtrans\Config::$is3ds = true;
 
                 // \Midtrans\Config::$overrideNotifUrl = config('app.url') . '/api/callback';
-                // \Midtrans\Config::$overrideNotifUrl = 'https://3b59-114-79-55-197.ngrok-free.app/api/callback';
+                \Midtrans\Config::$overrideNotifUrl = 'https://backend.fastnetwork.id/api/callback';
 
                 $params = array(
                     'transaction_details' => array(
@@ -242,7 +259,7 @@ class CheckoutContoller extends Controller
                 if ($order->status = 'Paid') {
                     $orders = Order::with('orderDetail.product', 'users', 'paket')->where('order_id', $request->order_id)->where('status', 'Pending')->latest()->first();
 
-                    $user = User::with('userDetail')->where('id', Auth::user()->id)->first();
+                    $user = User::with('userDetail')->where('id', $orders->user_id)->first();
                     $userReferal = User::where('referral', $user->userDetail->referral_use)->first();
 
                     $paket_terjual = Paket::where('id', $orders->paket_id)->first();
@@ -279,7 +296,7 @@ class CheckoutContoller extends Controller
                         $affliator->current_balance += 300000;
                         $affliator->save();
 
-                        $affliasi = UserWallet::where('user_id', Auth::user()->id)->first();
+                        $affliasi = UserWallet::where('user_id', $user->id)->first();
                         $affliasi->total_point += 15;
                         $affliasi->current_point += 15;
                         $affliasi->save();
@@ -297,7 +314,7 @@ class CheckoutContoller extends Controller
                         $affliator->save();
 
                         // History Uang Yang Didapat via Komisi Referral.
-                        
+
                         // GET History Komisi Menggunakan affiliator_id !!!
                         $komisi_history = UserKomisiHistory::create([
                             'affiliator_id' => $userReferal->id,
@@ -312,7 +329,7 @@ class CheckoutContoller extends Controller
 
                         // Poin Yang Didapat User Ketika Repeat Order
                         $user_poin_history = UserPoinHistory::create([
-                            'user_id' => Auth::user()->id,
+                            'user_id' => $user->id,
                             'keterangan' => 'Transaksi Produk',
                             'info_transaksi' => 'Transaksi',
                             'jumlah_poin' => $orders->paket->point
@@ -327,7 +344,7 @@ class CheckoutContoller extends Controller
                             'jumlah_poin' => 5 * $orders->paket->value
                         ]);
 
-                        $affliasi = UserWallet::where('user_id', Auth::user()->id)->first();
+                        $affliasi = UserWallet::where('user_id', $user->id)->first();
                         $affliasi->total_point += $orders->paket->point;
                         $affliasi->current_point += $orders->paket->point;
                         $affliasi->save();

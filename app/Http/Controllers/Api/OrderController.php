@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\InfoBonus;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Paket;
 use App\Models\Product;
+use App\Models\TargetBonus;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\Request;
@@ -121,6 +123,15 @@ class OrderController extends Controller
 
         try {
             // Ambil paket
+            $statusPending = Order::where('user_id', Auth::user()->id)
+                ->where('status', 'Pending')
+                ->first();
+
+            // Periksa apakah pesanan ditemukan dan hapus jika statusnya "Pending"
+            if ($statusPending) {
+                $statusPending->delete();
+            }
+
             $paketId = $request->input('paketId');
             $paket = Paket::findOrFail($paketId);
             $maxQuantity = $paket->max_quantity;
@@ -222,7 +233,7 @@ class OrderController extends Controller
             $orders = Order::join('users', 'orders.user_id', '=', 'users.id')
                 ->join('user_details', 'users.id', '=', 'user_details.user_id')
                 ->where('user_details.referral_use', $referralCode->referral)
-                ->select('orders.user_id', DB::raw('SUM(orders.total_harga) as total_harga'))
+                ->select('orders.user_id', DB::raw('SUM(orders.total_harga) as total_harga'), DB::raw('MAX(orders.order_date) as latest_order_date'))
                 ->groupBy('orders.user_id')
                 ->with('users.userDetail')
                 ->get();
@@ -247,65 +258,73 @@ class OrderController extends Controller
                 ->with('users.userDetail')
                 ->get();
 
+            $info = InfoBonus::first();
+            $target = TargetBonus::first();
             $overallSum = $subTotals->sum('subtotal');
-            return response()->json(['data' => $overallSum, 'message' => 'success'], 200);
+            return response()->json(['data' => ['progress' => $overallSum, 'target' => $target, 'info' => $info], 'message' => 'success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }
 
-    public function getOrderByUserID(){
-        try{
+    public function getOrderByUserID()
+    {
+        try {
             $user_id = Auth::user()->id;
             $user_orders = Order::with('paket', 'orderDetail', 'users')->where('user_id', $user_id)->get();
             $total_user_order = $user_orders->count();
             return response()->json(['data' => ['Total Orders' => $total_user_order, 'Detail Order' => $user_orders]], 200);
-        }
-        catch(\Throwable $th){
+        } catch (\Throwable $th) {
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
-        
     }
 
-    public function getOrderByUserID2(){
-        try{
+    public function getOrderByUserID2()
+    {
+        try {
             $user_id = Auth::user()->id;
             $user = User::where('id', $user_id)->first();
             // order diri sendiri
 
-            $user_orders = Order::where('user_id', $user_id)->get(); 
+            $user_orders = Order::where('user_id', $user_id)->get();
             $data_order_user = [];
-            foreach($user_orders as $order){
+            foreach ($user_orders as $order) {
                 $keterangan = [
-                    'nama_user'=>$order->users->name,
-                    'nama_paket'=>$order->paket->paket_nama,
-                    'tanggal'=> $order->order_date,
-                    'keterangan'=>'Transaksi Produk'
+                    'nama_user' => $order->users->name,
+                    'nama_paket' => $order->paket->paket_nama,
+                    'tanggal' => $order->order_date,
+                    'keterangan' => 'Transaksi Produk'
                 ];
                 $data_order_user[] = $keterangan;
             }
 
             // order afiliasi
             // JOIN table user dengan table order
-            $order_afiliasi = Order::join('users', 'orders.user_id','=', 'users.id')->join('user_details', 'users.id', '=', 'user_details.id')->join('pakets', 'orders.paket_id', '=', 'pakets.id')->where('user_details.referral_use', $user->referral)->select('users.name', 'pakets.paket_nama', 'orders.order_date')->get();
+            $order_afiliasi = Order::join('users', 'orders.user_id', '=', 'users.id')
+                ->join('user_details', 'users.id', '=', 'user_details.user_id')
+                ->join('pakets', 'orders.paket_id', '=', 'pakets.id')
+                ->where('user_details.referral_use', $user->referral)
+                ->where('orders.status', 'Paid')
+                ->get();
+
+            // return response()->json(['user_order' => $order_afiliasi], 200);
 
             $data_order_afiliasi = [];
-            foreach($order_afiliasi as $order){
+            foreach ($order_afiliasi as $order) {
                 $keterangan = [
-                    'nama_afiliasi'=>$order->nama,
-                    'nama_paket'=>$order->paket_nama,
-                    'tanggal'=> $order->order_date,
-                    'keterangan'=>'Repeat Order Afiliasi'
+                    'nama_afiliasi' => $order->users->name,
+                    'nama_paket' => $order->paket->paket_nama,
+                    'tanggal' => $order->order_date,
+                    'keterangan' => 'Repeat Order Afiliasi'
                 ];
                 $data_order_afiliasi[] = $keterangan;
             }
-            
+
             // get table order by user affiliate code.
             $total_user_order = $user_orders->count() + $order_afiliasi->count();
-            return response()->json(['user_order' => $data_order_user, 'order_afilliate'=>$data_order_afiliasi, 'Total_order' => $total_user_order], 200);
-        }
-        catch(\Throwable $th){
+            return response()->json(['user_order' => $data_order_user, 'order_afilliate' => $data_order_afiliasi, 'Total_order' => $total_user_order], 200);
+        } catch (\Throwable $th) {
             return response()->json(['message' => 'Internal Server Error'], 500);
         }
     }

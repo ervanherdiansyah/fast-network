@@ -65,6 +65,9 @@ Route::group([
         Route::get('/get-sumorder-allafliasi', [OrderController::class, 'getSumAOrderOnAfiliasiAllUser']);
         Route::get('/get-userorders', [OrderController::class, 'getOrderByUserID2']);
 
+        //Get Info Target Progress
+        Route::get('/get-info-progress-target', [OrderController::class, 'getSumAOrderOnAfiliasiAllUser']);
+
         //Ongkir
         Route::post('/rajaongkir', [RajaOngkirController::class, 'getOngkir']);
 
@@ -126,7 +129,7 @@ Route::group([
         Route::post('/user-withdrawpoint/new', [PointWithdrawController::class, 'createPointWithdrawRequest']);
 
         // HISTORI BALANCE DAN POIN
-        Route::get('/user-komisi-history',[UserKomisiHistoryController::class, 'getKomisiHistory']);
+        Route::get('/user-komisi-history', [UserKomisiHistoryController::class, 'getKomisiHistory']);
         Route::get('/user-poin-history', [UserPoinHistoryController::class, 'getPointHistory']);
         Route::get('/user-komisi-data', [UserKomisiHistoryController::class, 'getKomisiData']);
 
@@ -169,6 +172,7 @@ Route::post('/package/create', [PaketController::class, 'createPaket']);
 Route::get('/package-byid/{id}', [PaketController::class, 'getPaketById']);
 Route::post('/package/update/{id}', [PaketController::class, 'updatePaket']);
 Route::delete('/package/delete/{id}', [PaketController::class, 'deletePaket']);
+Route::post('/package/set-discount/{id}', [PaketController::class, 'setDiscount']);
 
 // Gambar Banner
 Route::get('/gambar-banner', [GambarBannerController::class, 'getAllBannerImages']);
@@ -207,6 +211,9 @@ Route::get('/reward', [RewardController::class, 'getReward']);
 Route::get('/info-bonus', [InfoBonusController::class, 'getInfoBonus']);
 
 //Target Bonus
+Route::get('/target-bonus', [TargetBonusController::class, 'getTargetBonus']);
+
+//Get Info Target Progress
 Route::get('/target-bonus', [TargetBonusController::class, 'getTargetBonus']);
 
 
