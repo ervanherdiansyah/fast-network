@@ -12,6 +12,7 @@ use App\Models\UserKomisiHistory;
 use App\Models\UserPoinHistory;
 use App\Models\UserWallet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
 class CheckoutContoller extends Controller
@@ -26,10 +27,13 @@ class CheckoutContoller extends Controller
                 $orders = Order::with('orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Pending')->latest()->first();
 
                 // JIKA Diskon paket aktif maka pake harga diskon
+
+                // inisialiasi total_harga
+                $totalHarga = null;
                 if ($orders->paket->is_discount == true) {
                     $totalHarga = $orders->paket->discount_price + $request->harga_ongkir;
                     $orders->update([
-                        'shipping_courier' => $request->courier_name,
+                        'shipping_courier' => $request->shipping_courier,
                         'estimasi_tiba' => $request->estimasi,
                         'alamat_id' => $request->alamat_id,
                         'total_belanja' => $totalHarga,
@@ -39,7 +43,7 @@ class CheckoutContoller extends Controller
                 } else {
                     $totalHarga = $orders->paket->price + $request->harga_ongkir;
                     $orders->update([
-                        'shipping_courier' => $request->courier_name,
+                        'shipping_courier' => $request->shipping_courier,
                         'estimasi_tiba' => $request->estimasi,
                         'alamat_id' => $request->alamat_id,
                         'total_belanja' => $totalHarga,
@@ -256,8 +260,8 @@ class CheckoutContoller extends Controller
                 $order = Order::find($request->order_id);
                 $order->update(['status' => 'Paid']);
 
-                if ($order->status = 'Paid') {
-                    $orders = Order::with('orderDetail.product', 'users', 'paket')->where('order_id', $request->order_id)->where('status', 'Pending')->latest()->first();
+                
+                    $orders = Order::with('orderDetail.product', 'users', 'paket')->where('id', $request->order_id)->latest()->first();
 
                     $user = User::with('userDetail')->where('id', $orders->user_id)->first();
                     $userReferal = User::where('referral', $user->userDetail->referral_use)->first();
@@ -269,6 +273,17 @@ class CheckoutContoller extends Controller
 
                     if ($user->first_order == true) {
                         $affliator = UserWallet::where('user_id', $userReferal->id)->first();
+
+                        // IF Transaksi Pertama = Paid generate kode referal
+                        $user_name_character = str_split($user->name);
+                        $first_user_character_name = $user_name_character[0];
+                        $user_id_as_string = (string)$user->id;
+                        $random_string = Str::random(6);
+                        $referal_token = $first_user_character_name . $user_id_as_string . $random_string;
+
+                        $user->update([
+                            'referral'=>$referal_token
+                        ]); 
 
                         // IF TRANSAKSI PERTAMA TRUE
                         // History Uang Yang Didapat via Komisi Referral.
@@ -349,7 +364,7 @@ class CheckoutContoller extends Controller
                         $affliasi->current_point += $orders->paket->point;
                         $affliasi->save();
                     }
-                }
+
             }
         }
     }

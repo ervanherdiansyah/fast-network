@@ -44,13 +44,13 @@ class UserPoinHistoryController extends Controller
             }
 
             if(!$userPoinHistoryAsAffiliator){
-                $mergedUserPoinHistory = $userPoinHistoryAsUser->merge($userPoinHistoryAsAffiliator);
+                $mergedUserPoinHistory = array_merge($userPoinHistoryAsUser, $userPoinHistoryAsAffiliator);
                 return response()->json(['data' => $mergedUserPoinHistory, 'message' => 'Success'], 200); 
                 // return response()->json(['data' => $userPoinHistoryAsUser, 'message' => 'Success'], 200); 
             }
             else{
                 // $mergedUserPoinHistory = $userPoinHistoryAsUser->getCollection()->merge($userPoinHistoryAsAffiliator->getCollection());
-                $mergedUserPoinHistory = $userPoinHistoryAsUser->merge($userPoinHistoryAsAffiliator);
+                $mergedUserPoinHistory = array_merge($userPoinHistoryAsUser, $userPoinHistoryAsAffiliator);
                 return response()->json(['data' => $mergedUserPoinHistory, 'message' => 'Success'], 200); 
             }
             

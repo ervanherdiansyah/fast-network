@@ -42,15 +42,15 @@ class OrderController extends Controller
     public function getAllOrderByUser()
     {
         try {
-            $orders = Order::with('orderDetail.product', 'users', 'paket', 'userAlamat')->where('user_id', Auth::user()->id)->where('status', 'Paid')->latest()->paginate(10);
+            $orders = Order::with('userAlamat','orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->latest()->paginate(10);
 
             // Format ulang data pesanan
-            $formattedOrders = $orders->map(function ($order) {
-                $products = $order->orderDetail->map(function ($detail) {
-                    return $detail->product->product_name . ' ' . $detail->quantity;
-                })->implode(', ');
+        $formattedOrders = $orders->map(function ($order) {
+            $products = $order->orderDetail->map(function ($detail) {
+                return $detail->product->product_name . ' ' . $detail->quantity;
+            })->implode(', ');
 
-                return [
+            return [
                     'id' => $order->id,
                     'created_at' => $order->created_at,
                     'updated_at' => $order->updated_at,
@@ -66,15 +66,20 @@ class OrderController extends Controller
                     'no_resi' => $order->no_resi,
                     'estimasi_tiba' => $order->estimasi_tiba,
                     'product' => $products,
+                    'provinsi' => $order->userAlamat->provinsi->name,
+                    'kota' => $order->userAlamat->kota->name,
+                    'shipping_price' => $order->shipping_price,
+                    'metode_pembayaran' => $order->metode_pembayaran,
+                    'jenis_order' => $order->jenis_order,
                     'users' => $order->users,
                     'paket' => $order->paket,
-                    'userAlamat' => $order->userAlamat
+                    'user_alamat' => $order->userAlamat,
                 ];
-            });
+        });
 
-            return response()->json(['data' => $formattedOrders, 'status' => 'Success'], 200);
+        return response()->json(['data' => $formattedOrders, 'status' => 'Success'], 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Internal Server Error'], 500);
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
 
@@ -151,14 +156,27 @@ class OrderController extends Controller
             }
 
             // Buat order baru
-            $order = new Order();
-            $order->user_id = Auth::user()->id;
-            $order->paket_id = $request->paketId;
-            $order->order_code = $paketCode . now()->format('Ymd') . rand(10, 99);
-            $order->order_date = now();
-            $order->status = 'Pending';
-            $order->total_harga = $hargaPaket;
-            $order->save();
+            if($paket->is_discount = true){
+                $order = new Order();
+                $order->user_id = Auth::user()->id;
+                $order->paket_id = $request->paketId;
+                $order->order_code = $paketCode . now()->format('Ymd') . rand(10, 99);
+                $order->order_date = now();
+                $order->status = 'Pending';
+                $order->total_harga = $paket->discount_price;
+                $order->save();
+            }
+            else{
+                $order = new Order();
+                $order->user_id = Auth::user()->id;
+                $order->paket_id = $request->paketId;
+                $order->order_code = $paketCode . now()->format('Ymd') . rand(10, 99);
+                $order->order_date = now();
+                $order->status = 'Pending';
+                $order->total_harga = $paket->price;
+                $order->save(); 
+            }
+            
 
             // Buat detail order untuk setiap produk
             foreach ($request->input('products') as $product) {
