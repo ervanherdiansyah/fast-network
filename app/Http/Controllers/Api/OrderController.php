@@ -233,6 +233,7 @@ class OrderController extends Controller
                 ->where('user_details.referral_use', $referralCode->referral)
                 ->select('orders.*', 'users.name as user_name', 'user_details.referral_use')
                 ->with('users.userDetail', 'orderDetail.product')
+                ->latest()
                 ->get();
 
             return response()->json(['data' => $orders, 'message' => 'success'], 200);
@@ -254,6 +255,7 @@ class OrderController extends Controller
                 ->select('orders.user_id', DB::raw('SUM(orders.total_harga) as total_harga'), DB::raw('MAX(orders.order_date) as latest_order_date'))
                 ->groupBy('orders.user_id')
                 ->with('users.userDetail')
+                ->latest()
                 ->get();
             return response()->json(['data' => $orders, 'message' => 'success'], 200);
         } catch (\Throwable $th) {
@@ -324,6 +326,7 @@ class OrderController extends Controller
                 ->join('pakets', 'orders.paket_id', '=', 'pakets.id')
                 ->where('user_details.referral_use', $user->referral)
                 ->where('orders.status', 'Paid')
+                ->latest()
                 ->get();
 
             // return response()->json(['user_order' => $order_afiliasi], 200);

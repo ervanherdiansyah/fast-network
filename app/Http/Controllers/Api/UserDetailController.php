@@ -47,7 +47,7 @@ class UserDetailController extends Controller
         try {
             //code...
             $user_id = User::where('id', Auth::user()->id)->first();
-            $useReferralByUser = UserDetails::with('users')->where('referral_use', $user_id->referral)->get();
+            $useReferralByUser = UserDetails::with('users')->where('referral_use', $user_id->referral)->latest()->get();
             return response()->json(['data' => $useReferralByUser, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
@@ -99,7 +99,7 @@ class UserDetailController extends Controller
             if (Request()->hasFile('foto_profil') && Request()->file('foto_profil')->isValid()) {
 
                 if (!empty($data->foto_profil) && Storage::disk('public')->exists($data->foto_profil)) {
-                Storage::disk('public')->delete($data->foto_profil);
+                    Storage::disk('public')->delete($data->foto_profil);
                 }
 
                 $file_name = $request->foto_profil->getClientOriginalName();
@@ -112,8 +112,7 @@ class UserDetailController extends Controller
                     'no_kontak' => $request->no_kontak,
                     'foto_profil' => $file_name ? "foto_profil/" . $namaGambar : null
                 ]);
-    
-            }else{
+            } else {
                 $data->update([
                     'nik' => $request->nik,
                     'nomor_wa' => $request->nomor_wa,
@@ -122,14 +121,14 @@ class UserDetailController extends Controller
                 ]);
             }
 
-            
+
 
             $user->update([
                 'name' => $request->name,
                 'email' => $request->email
             ]);
 
-            
+
 
             DB::commit();
             return response()->json(['data' => $data, 'message' => 'Success'], 200);
@@ -142,18 +141,18 @@ class UserDetailController extends Controller
 
     public function deleteProfilePic()
     {
-        $user_id = Auth::user()->id;  
+        $user_id = Auth::user()->id;
         $data = UserDetails::where('user_id', $user_id)->first();
-    
+
         try {
             if (!empty($data->foto_profil) && Storage::disk('public')->exists($data->foto_profil)) {
                 Storage::disk('public')->delete($data->foto_profil);
             }
-    
+
             $data->update([
                 'foto_profil' => null
             ]);
-    
+
             return response()->json(['message' => 'Foto Profil Successfully Deleted'], 200);
         } catch (\Throwable $th) {
             // Log the error for debugging
