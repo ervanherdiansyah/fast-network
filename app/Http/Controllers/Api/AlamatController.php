@@ -43,10 +43,10 @@ class AlamatController extends Controller
         }
     }
 
-    public function getAlamatPenjual($id)
+    public function getAlamatPenjual()
     {
         try {
-            $alamat = UserAlamat::where('id', $id)->first();
+            $alamat = UserAlamat::where('id', 3)->first();
             return response()->json(['data' => $alamat, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
