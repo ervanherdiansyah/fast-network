@@ -24,19 +24,29 @@ class CheckoutContoller extends Controller
             // $item_details = [];
             if ($request->jenis_order == 'dikirim') {
                 $orders = Order::with('orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Pending')->latest()->first();
-                $orders->update([
-                    'shipping_courier' => $request->courier_name,
-                    'estimasi_tiba' => $request->estimasi,
-                    'alamat_id' => $request->alamat_id
-                ]);
 
                 // JIKA Diskon paket aktif maka pake harga diskon
                 if ($orders->paket->is_discount == true) {
                     $totalHarga = $orders->paket->discount_price + $request->harga_ongkir;
+                    $orders->update([
+                        'shipping_courier' => $request->courier_name,
+                        'estimasi_tiba' => $request->estimasi,
+                        'alamat_id' => $request->alamat_id,
+                        'total_belanja' => $totalHarga,
+                        'shipping_price' => $request->shipping_price,
+                        'jenis_order' => $request->jenis_order,
+                    ]);
                 } else {
                     $totalHarga = $orders->paket->price + $request->harga_ongkir;
+                    $orders->update([
+                        'shipping_courier' => $request->courier_name,
+                        'estimasi_tiba' => $request->estimasi,
+                        'alamat_id' => $request->alamat_id,
+                        'total_belanja' => $totalHarga,
+                        'shipping_price' => $request->shipping_price,
+                        'jenis_order' => $request->jenis_order,
+                    ]);
                 }
-
 
                 // return response()->json($totalHarga);
                 $item_details[] = [
@@ -103,7 +113,7 @@ class CheckoutContoller extends Controller
                 \Midtrans\Config::$is3ds = true;
 
                 // \Midtrans\Config::$overrideNotifUrl = config('app.url') . '/api/callback';
-                // \Midtrans\Config::$overrideNotifUrl = 'https://3b59-114-79-55-197.ngrok-free.app/api/callback';
+                \Midtrans\Config::$overrideNotifUrl = 'https://backend.fastnetwork.id/api/callback';
 
                 $params = array(
                     'transaction_details' => array(
@@ -126,15 +136,22 @@ class CheckoutContoller extends Controller
                 ], 'status' => 'Success'], 200);
             } elseif ($request->jenis_order == 'diambil') {
                 $orders = Order::with('orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Pending')->latest()->first();
-                $orders->update([
-                    'alamat_id' => $request->alamat_id
-                ]);
 
                 // JIKA Diskon paket aktif maka pake harga diskon
                 if ($orders->paket->is_discount == true) {
                     $totalHarga = $orders->paket->discount_price;
+                    $orders->update([
+                        'alamat_id' => $request->alamat_id,
+                        'total_belanja' => $totalHarga,
+                        'jenis_order' => $request->jenis_order,
+                    ]);
                 } else {
                     $totalHarga = $orders->paket->price;
+                    $orders->update([
+                        'alamat_id' => $request->alamat_id,
+                        'total_belanja' => $totalHarga,
+                        'jenis_order' => $request->jenis_order,
+                    ]);
                 }
 
                 $item_details[] = [
@@ -201,7 +218,7 @@ class CheckoutContoller extends Controller
                 \Midtrans\Config::$is3ds = true;
 
                 // \Midtrans\Config::$overrideNotifUrl = config('app.url') . '/api/callback';
-                // \Midtrans\Config::$overrideNotifUrl = 'https://3b59-114-79-55-197.ngrok-free.app/api/callback';
+                \Midtrans\Config::$overrideNotifUrl = 'https://backend.fastnetwork.id/api/callback';
 
                 $params = array(
                     'transaction_details' => array(
