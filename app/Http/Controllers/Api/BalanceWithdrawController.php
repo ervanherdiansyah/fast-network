@@ -18,8 +18,8 @@ class BalanceWithdrawController extends Controller
         // ambil permintaan withdraw balance yang pernah user
         try {
             $user_id = Auth::user()->id;
-            $point_withdraw_request = WithdrawBalance::where('user_id', $user_id)->get();
-            return response()->json(['data' => $point_withdraw_request, 'message' => 'Success'], 200);
+            $balance_withdraw_request = WithdrawBalance::where('user_id', $user_id)->latest()->get();
+            return response()->json(['data' => $balance_withdraw_request, 'message' => 'Success'], 200);
         } catch (\Throwable $th) {
             //throw $th;
             return response()->json(['message' => 'Internal Server Error'], 500);
