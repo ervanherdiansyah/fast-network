@@ -317,7 +317,7 @@ class OrderController extends Controller
                 $keterangan = [
                     'nama_user' => $order->users->name,
                     'nama_paket' => $order->paket->paket_nama,
-                    'tanggal' => $order->order_date,
+                    'tanggal' => $order->created_at,
                     'keterangan' => 'Transaksi Produk'
                 ];
                 $data_order_user[] = $keterangan;
@@ -325,13 +325,23 @@ class OrderController extends Controller
 
             // order afiliasi
             // JOIN table user dengan table order
+
+            // $order_afiliasi = Order::join('users', 'orders.user_id', '=', 'users.id')
+            //     ->join('user_details', 'users.id', '=', 'user_details.user_id')
+            //     ->join('pakets', 'orders.paket_id', '=', 'pakets.id')
+            //     ->where('user_details.referral_use', $user->referral)
+            //     ->where('orders.status', 'Paid')
+            //     ->latest()
+            //     ->get();
+
             $order_afiliasi = Order::join('users', 'orders.user_id', '=', 'users.id')
-                ->join('user_details', 'users.id', '=', 'user_details.user_id')
-                ->join('pakets', 'orders.paket_id', '=', 'pakets.id')
-                ->where('user_details.referral_use', $user->referral)
-                ->where('orders.status', 'Paid')
-                ->latest()
-                ->get();
+            ->join('user_details', 'users.id', '=', 'user_details.user_id')
+            ->join('pakets', 'orders.paket_id', '=', 'pakets.id')
+            ->where('user_details.referral_use', $user->referral)
+            ->where('orders.status', 'Paid')
+            ->latest()
+            ->select('orders.*', 'users.name as user_name', 'pakets.paket_nama as paket_name')
+            ->get();
 
             // return response()->json(['user_order' => $order_afiliasi], 200);
 
@@ -340,7 +350,7 @@ class OrderController extends Controller
                 $keterangan = [
                     'nama_afiliasi' => $order->users->name,
                     'nama_paket' => $order->paket->paket_nama,
-                    'tanggal' => $order->order_date,
+                    'tanggal' => $order->created_at,
                     'keterangan' => 'Repeat Order Afiliasi'
                 ];
                 $data_order_afiliasi[] = $keterangan;
