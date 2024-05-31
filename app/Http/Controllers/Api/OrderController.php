@@ -42,7 +42,7 @@ class OrderController extends Controller
     public function getAllOrderByUser()
     {
         try {
-            $orders = Order::with('userAlamat', 'orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->latest()->paginate(10);
+            $orders = Order::with('userAlamat', 'orderDetail.product', 'users', 'paket')->where('user_id', Auth::user()->id)->where('status', 'Paid')->latest()->paginate(10);
 
             // Format ulang data pesanan
             $formattedOrders = $orders->map(function ($order) {
