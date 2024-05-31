@@ -26,4 +26,8 @@ class Order extends Model
     {
         return $this->belongsTo(UserAlamat::class,  "alamat_id");
     }
+    public function alamatPengiriman()
+    {
+        return $this->belongsTo(UserAlamat::class,  "alamat_pengambilan_paket_id");
+    }
 }

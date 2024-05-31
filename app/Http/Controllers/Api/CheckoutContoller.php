@@ -34,6 +34,7 @@ class CheckoutContoller extends Controller
                         'shipping_status' => "Diproses",
                         'estimasi_tiba' => $request->estimasi,
                         'alamat_id' => $request->alamat_id,
+                        'alamat_pengambilan_paket_id' => $request->alamat_pengambilan_paket_id,
                         'total_belanja' => $totalHarga,
                         'shipping_price' => $request->shipping_price,
                         'jenis_order' => $request->jenis_order,
@@ -45,6 +46,7 @@ class CheckoutContoller extends Controller
                         'shipping_status' => "Diproses",
                         'estimasi_tiba' => $request->estimasi,
                         'alamat_id' => $request->alamat_id,
+                        'alamat_pengambilan_paket_id' => $request->alamat_pengambilan_paket_id,
                         'total_belanja' => $totalHarga,
                         'shipping_price' => $request->shipping_price,
                         'jenis_order' => $request->jenis_order,
@@ -145,6 +147,7 @@ class CheckoutContoller extends Controller
                     $totalHarga = $orders->paket->discount_price;
                     $orders->update([
                         'alamat_id' => $request->alamat_id,
+                        'alamat_pengambilan_paket_id' => $request->alamat_pengambilan_paket_id,
                         'shipping_status' => "Diproses",
                         'total_belanja' => $totalHarga,
                         'jenis_order' => $request->jenis_order,
@@ -153,6 +156,7 @@ class CheckoutContoller extends Controller
                     $totalHarga = $orders->paket->price;
                     $orders->update([
                         'alamat_id' => $request->alamat_id,
+                        'alamat_pengambilan_paket_id' => $request->alamat_pengambilan_paket_id,
                         'shipping_status' => "Diproses",
                         'total_belanja' => $totalHarga,
                         'jenis_order' => $request->jenis_order,

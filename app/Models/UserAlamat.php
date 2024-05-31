@@ -21,6 +21,10 @@ class UserAlamat extends Model
     {
         return $this->hasMany(Order::class, "alamat_id");
     }
+    public function orderAlamatPengambilan()
+    {
+        return $this->hasMany(Order::class, "alamat_pengambilan_paket_id");
+    }
 
     public function provinsi()
     {
