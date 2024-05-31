@@ -73,6 +73,7 @@ class OrderController extends Controller
                     'product' => $products,
                     'shipping_price' => $order->shipping_price,
                     'metode_pembayaran' => $order->metode_pembayaran,
+                    'total_belanja' => $order->total_belanja,
                     'jenis_order' => $order->jenis_order,
                     'users' => $order->users,
                     'paket' => $order->paket,
