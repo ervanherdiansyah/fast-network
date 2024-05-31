@@ -194,10 +194,14 @@ class OrderController extends Controller
                 if (!$requestedProduct || $requestedQuantity > $requestedProduct->stock) {
                     DB::rollback();
                     return response()->json(['message' => 'Requested quantity exceeds available stock'], 400);
-                } elseif ($requestedQuantity > 5) {
-                    DB::rollback();
-                    return response()->json(['message' => 'Request quantity does not exceed 5'], 400);
                 }
+                
+                
+                //  elseif ($requestedQuantity > 5) {
+                //     DB::rollback();
+
+                //     return response()->json(['message' => 'Request quantity does not exceed 5'], 400);
+                // }
 
                 // Cek apakah jumlah produk yang diminta lebih dari max quantity
                 if ($totalQuantity > $maxQuantity) {
