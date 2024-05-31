@@ -1,0 +1,2 @@
+Timezone di atur sendiri ku laravel
+Database UTC -> Laravel Get Jadi Asia/Jakarta UTC+7
