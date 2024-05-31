@@ -255,7 +255,7 @@ class OrderController extends Controller
                 ->select('orders.user_id', DB::raw('SUM(orders.total_harga) as total_harga'), DB::raw('MAX(orders.order_date) as latest_order_date'))
                 ->groupBy('orders.user_id')
                 ->with('users.userDetail')
-                ->latest()
+                ->orderBy('orders.created_at', 'desc')
                 ->get();
             return response()->json(['data' => $orders, 'message' => 'success'], 200);
         } catch (\Throwable $th) {
