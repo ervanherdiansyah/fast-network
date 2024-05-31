@@ -256,7 +256,7 @@ class OrderController extends Controller
             $orders = Order::join('users', 'orders.user_id', '=', 'users.id')
                 ->join('user_details', 'users.id', '=', 'user_details.user_id')
                 ->where('user_details.referral_use', $referralCode->referral)
-                ->select('orders.user_id', DB::raw('SUM(orders.total_harga) as total_harga'), DB::raw('MAX(orders.order_date) as latest_order_date'))
+                ->select('orders.user_id', DB::raw('SUM(orders.total_harga) as total_harga'), DB::raw('MAX(orders.created_at) as latest_order_date'))
                 ->groupBy('orders.user_id')
                 ->with('users.userDetail')
                 ->orderBy('orders.created_at', 'desc')
@@ -335,13 +335,13 @@ class OrderController extends Controller
             //     ->get();
 
             $order_afiliasi = Order::join('users', 'orders.user_id', '=', 'users.id')
-            ->join('user_details', 'users.id', '=', 'user_details.user_id')
-            ->join('pakets', 'orders.paket_id', '=', 'pakets.id')
-            ->where('user_details.referral_use', $user->referral)
-            ->where('orders.status', 'Paid')
-            ->latest()
-            ->select('orders.*', 'users.name as user_name', 'pakets.paket_nama as paket_name')
-            ->get();
+                ->join('user_details', 'users.id', '=', 'user_details.user_id')
+                ->join('pakets', 'orders.paket_id', '=', 'pakets.id')
+                ->where('user_details.referral_use', $user->referral)
+                ->where('orders.status', 'Paid')
+                ->latest()
+                ->select('orders.*', 'users.name as user_name', 'pakets.paket_nama as paket_name')
+                ->get();
 
             // return response()->json(['user_order' => $order_afiliasi], 200);
 
@@ -358,7 +358,7 @@ class OrderController extends Controller
 
             // Define a comparison function for sorting by 'tanggal' in descending order
             usort($data_order_user, function ($a, $b) {
-             return strtotime($b['tanggal']) - strtotime($a['tanggal']);
+                return strtotime($b['tanggal']) - strtotime($a['tanggal']);
             });
 
             usort($data_order_afiliasi, function ($a, $b) {
