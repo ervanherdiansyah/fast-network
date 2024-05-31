@@ -259,7 +259,7 @@ class OrderController extends Controller
                 ->select('orders.user_id', DB::raw('SUM(orders.total_harga) as total_harga'), DB::raw('MAX(orders.order_date) as latest_order_date'))
                 ->groupBy('orders.user_id')
                 ->with('users.userDetail')
-                ->latest()
+                ->orderBy('orders.created_at', 'desc')
                 ->get();
             return response()->json(['data' => $orders, 'message' => 'success'], 200);
         } catch (\Throwable $th) {
@@ -317,7 +317,7 @@ class OrderController extends Controller
                 $keterangan = [
                     'nama_user' => $order->users->name,
                     'nama_paket' => $order->paket->paket_nama,
-                    'tanggal' => $order->order_date,
+                    'tanggal' => $order->created_at,
                     'keterangan' => 'Transaksi Produk'
                 ];
                 $data_order_user[] = $keterangan;
@@ -325,13 +325,23 @@ class OrderController extends Controller
 
             // order afiliasi
             // JOIN table user dengan table order
+
+            // $order_afiliasi = Order::join('users', 'orders.user_id', '=', 'users.id')
+            //     ->join('user_details', 'users.id', '=', 'user_details.user_id')
+            //     ->join('pakets', 'orders.paket_id', '=', 'pakets.id')
+            //     ->where('user_details.referral_use', $user->referral)
+            //     ->where('orders.status', 'Paid')
+            //     ->latest()
+            //     ->get();
+
             $order_afiliasi = Order::join('users', 'orders.user_id', '=', 'users.id')
-                ->join('user_details', 'users.id', '=', 'user_details.user_id')
-                ->join('pakets', 'orders.paket_id', '=', 'pakets.id')
-                ->where('user_details.referral_use', $user->referral)
-                ->where('orders.status', 'Paid')
-                ->latest()
-                ->get();
+            ->join('user_details', 'users.id', '=', 'user_details.user_id')
+            ->join('pakets', 'orders.paket_id', '=', 'pakets.id')
+            ->where('user_details.referral_use', $user->referral)
+            ->where('orders.status', 'Paid')
+            ->latest()
+            ->select('orders.*', 'users.name as user_name', 'pakets.paket_nama as paket_name')
+            ->get();
 
             // return response()->json(['user_order' => $order_afiliasi], 200);
 
@@ -340,11 +350,20 @@ class OrderController extends Controller
                 $keterangan = [
                     'nama_afiliasi' => $order->users->name,
                     'nama_paket' => $order->paket->paket_nama,
-                    'tanggal' => $order->order_date,
+                    'tanggal' => $order->created_at,
                     'keterangan' => 'Repeat Order Afiliasi'
                 ];
                 $data_order_afiliasi[] = $keterangan;
             }
+
+            // Define a comparison function for sorting by 'tanggal' in descending order
+            usort($data_order_user, function ($a, $b) {
+             return strtotime($b['tanggal']) - strtotime($a['tanggal']);
+            });
+
+            usort($data_order_afiliasi, function ($a, $b) {
+                return strtotime($b['tanggal']) - strtotime($a['tanggal']);
+            });
 
             // get table order by user affiliate code.
             $total_user_order = $user_orders->count() + $order_afiliasi->count();

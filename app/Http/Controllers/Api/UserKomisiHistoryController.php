@@ -26,6 +26,9 @@ class UserKomisiHistoryController extends Controller
                 ];
                 $userKomisiHistory[] = $komisi;
             }
+            usort($userKomisiHistory, function ($a, $b) {
+                return strtotime($b['created_at']) - strtotime($a['created_at']);
+            });
             return response()->json(['data' => $userKomisiHistory, 'message' => 'Success'], 200); 
         }
         catch(\Throwable $th){
