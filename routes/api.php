@@ -81,6 +81,9 @@ Route::group([
         Route::post('/useralamat/update/{id}', [AlamatController::class, 'updateAlamat']);
         Route::delete('/useralamat/delete/{id}', [AlamatController::class, 'deleteAlamat']);
 
+        //Alamat Penjual
+        // Route::get('/alamat-penjual', [AlamatController::class, 'getAlamatPenjual']);
+
         // User Bank Detail API
         Route::get('userbanks', [BankController::class, 'getBankByUserID']);
         Route::get('userbankutama', [BankController::class, 'getBankUtamaByUserID']);
@@ -230,6 +233,8 @@ Route::post('/pilihancepat/create', [PilihanPencairanController::class, 'createP
 Route::post('/pilihancepat/update/{id}', [PilihanPencairanController::class, 'updatePilihanCepatPencairan']);
 Route::delete('/pilihancepat/delete/{id}', [PilihanPencairanController::class, 'deletePilihanCepatPencairan']);
 
+//Alamat Penjual
+Route::get('/alamat-penjual', [AlamatController::class, 'getAlamatPenjual']);
 
 // Produk
 // Route::get('/produk', [ProductController::class, 'getProduct']);

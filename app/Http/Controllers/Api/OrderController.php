@@ -63,17 +63,21 @@ class OrderController extends Controller
                     'shipping_courier' => $order->shipping_courier,
                     'total_harga' => $order->total_harga,
                     'alamat_id' => $order->alamat_id,
+                    'provinsi' => $order->userAlamat->provinsi->name,
+                    'kota' => $order->userAlamat->kota->name,
+                    'alamat_pengambilan_paket_id' => $order->alamat_pengambilan_paket_id,
+                    'provinsi_alamat_pengambilan' => $order->alamatPengiriman->provinsi->name,
+                    'kota_alamat_pengambilan' => $order->alamatPengiriman->kota->name,
                     'no_resi' => $order->no_resi,
                     'estimasi_tiba' => $order->estimasi_tiba,
                     'product' => $products,
-                    'provinsi' => $order->userAlamat->provinsi->name,
-                    'kota' => $order->userAlamat->kota->name,
                     'shipping_price' => $order->shipping_price,
                     'metode_pembayaran' => $order->metode_pembayaran,
                     'jenis_order' => $order->jenis_order,
                     'users' => $order->users,
                     'paket' => $order->paket,
                     'user_alamat' => $order->userAlamat,
+                    'alamat_pengiriman_paket' => $order->alamatPengiriman,
                 ];
             });
 
