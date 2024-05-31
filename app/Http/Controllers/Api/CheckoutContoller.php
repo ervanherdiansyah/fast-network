@@ -52,7 +52,7 @@ class CheckoutContoller extends Controller
                         'jenis_order' => $request->jenis_order,
                     ]);
                 }
-
+                $item_details = [];
                 // return response()->json($totalHarga);
                 $item_details[] = [
                     'id' => $orders->order_code,
@@ -60,51 +60,12 @@ class CheckoutContoller extends Controller
                     'quantity' => 1,
                     'name' => $orders->paket->paket_nama,
                 ];
-
-                // foreach ($orders->orderDetail as $orderDetail) {
-                //     $item_details[] = [
-                //         'id' => $orderDetail->product->id,
-                //         'price' => 1000,
-                //         'quantity' => $orderDetail->quantity,
-                //         'name' => $orderDetail->product->product_name,
-                //     ];
-                // }
-
-                // Sistem point
-                // $user = User::with('userDetail')->where('id', Auth::user()->id)->first();
-                // $userReferal = User::where('referral', $user->userDetail->referral_use)->first();
-
-                // if ($user->first_order == true) {
-
-                //     $affliator = UserWallet::where('user_id', $userReferal->id)->first();
-                //     $affliator->total_balance += 300000;
-                //     $affliator->current_balance += 300000;
-                //     $affliator->save();
-
-                //     $affliasi = UserWallet::where('user_id', Auth::user()->id)->first();
-                //     $affliasi->total_point += 15;
-                //     $affliasi->current_point += 15;
-                //     $affliasi->save();
-
-                //     $user->update([
-                //         'first_order' => 0,
-                //         'first_buy_success' => 1
-                //     ]);
-                // } else {
-                //     $affliator = UserWallet::where('user_id', $userReferal->id)->first();
-                //     $affliator->total_balance += 100000 * $orders->paket->value;
-                //     $affliator->current_balance += 100000 * $orders->paket->value;
-                //     $affliator->total_point += 5 * $orders->paket->value;
-                //     $affliator->current_point += 5 * $orders->paket->value;
-                //     $affliator->save();
-
-                //     $affliasi = UserWallet::where('user_id', Auth::user()->id)->first();
-                //     $affliasi->total_point += $orders->paket->point;
-                //     $affliasi->current_point += $orders->paket->point;
-                //     $affliasi->save();
-                // }
-
-                // return response()->json(['affliasi' => $affliasi, 'affliator' => $affliator]);
+                $item_details[] = [
+                    'id' => rand(),
+                    'price' => $request->shipping_price,
+                    'quantity' => 1,
+                    'name' => $request->shipping_courier,
+                ];
 
                 // Payment gateway Midtrans
 
@@ -170,51 +131,6 @@ class CheckoutContoller extends Controller
                     'name' => $orders->paket->paket_nama,
                 ];
 
-                // foreach ($orders->orderDetail as $orderDetail) {
-                //     $item_details[] = [
-                //         'id' => $orderDetail->product->id,
-                //         'price' => 1000,
-                //         'quantity' => $orderDetail->quantity,
-                //         'name' => $orderDetail->product->product_name,
-                //     ];
-                // }
-
-                // Sistem point
-                // $user = User::with('userDetail')->where('id', Auth::user()->id)->first();
-                // $userReferal = User::where('referral', $user->userDetail->referral_use)->first();
-
-                // if ($user->first_order == true) {
-
-                //     $affliator = UserWallet::where('user_id', $userReferal->id)->first();
-                //     $affliator->total_balance += 300000;
-                //     $affliator->current_balance += 300000;
-                //     $affliator->save();
-
-                //     $affliasi = UserWallet::where('user_id', Auth::user()->id)->first();
-                //     $affliasi->total_point += 15;
-                //     $affliasi->current_point += 15;
-                //     $affliasi->save();
-
-                //     $user->update([
-                //         'first_order' => 0,
-                //         'first_buy_success' => 1
-                //     ]);
-                // } else {
-                //     $affliator = UserWallet::where('user_id', $userReferal->id)->first();
-                //     $affliator->total_balance += 100000 * $orders->paket->value;
-                //     $affliator->current_balance += 100000 * $orders->paket->value;
-                //     $affliator->total_point += 5 * $orders->paket->value;
-                //     $affliator->current_point += 5 * $orders->paket->value;
-                //     $affliator->save();
-
-                //     $affliasi = UserWallet::where('user_id', Auth::user()->id)->first();
-                //     $affliasi->total_point += $orders->paket->point;
-                //     $affliasi->current_point += $orders->paket->point;
-                //     $affliasi->save();
-                // }
-
-                // return response()->json(['affliasi' => $affliasi, 'affliator' => $affliator]);
-
                 // Payment gateway Midtrans
 
                 // Set your Merchant Server Key
@@ -263,7 +179,73 @@ class CheckoutContoller extends Controller
         if ($hashed == $request->signature_key) {
             if (($request->transaction_status == 'capture' && $request->payment_type == 'credit_card' && $request->fraud_status == 'accept') or $request->transaction_status == 'settlement') {
                 $order = Order::find($request->order_id);
-                $order->update(['status' => 'Paid']);
+
+                $metode_pembayaran = '';
+                switch ($request->payment_type) {
+                    case 'bank_transfer':
+                        $metode_pembayaran = isset($request->va_numbers[0]->bank) ? $request->va_numbers[0]->bank : 'bank_transfer';
+                        break;
+                    case 'echannel':
+                        $metode_pembayaran = 'Mandiri Bill Payment';
+                        break;
+                    case 'cstore':
+                        $metode_pembayaran = isset($request->store) ? $request->store : 'cstore';
+                        break;
+                    case 'gopay':
+                        $metode_pembayaran = 'GoPay';
+                        break;
+                    case 'shopeepay':
+                        $metode_pembayaran = 'ShopeePay';
+                        break;
+                    case 'qris':
+                        $metode_pembayaran = 'QRIS';
+                        break;
+                    case 'bca_klikpay':
+                        $metode_pembayaran = 'BCA KlikPay';
+                        break;
+                    case 'bca_klikbca':
+                        $metode_pembayaran = 'BCA KlikBCA';
+                        break;
+                    case 'bri_epay':
+                        $metode_pembayaran = 'BRI Epay';
+                        break;
+                    case 'cimb_clicks':
+                        $metode_pembayaran = 'CIMB Clicks';
+                        break;
+                    case 'danamon_online':
+                        $metode_pembayaran = 'Danamon Online';
+                        break;
+                    case 'akulaku':
+                        $metode_pembayaran = 'Akulaku';
+                        break;
+                    case 'echannel':
+                        $metode_pembayaran = 'Mandiri Bill Payment';
+                        break;
+                    case 'permata_va':
+                        $metode_pembayaran = 'Permata VA';
+                        break;
+                    case 'bni_va':
+                        $metode_pembayaran = 'BNI VA';
+                        break;
+                    case 'other_va':
+                        $metode_pembayaran = 'Other VA';
+                        break;
+                    case 'alfamart':
+                        $metode_pembayaran = 'Alfamart';
+                        break;
+                    case 'indomaret':
+                        $metode_pembayaran = 'Indomaret';
+                        break;
+                        // Tambahkan case lain sesuai dengan jenis payment_type yang diterima dari Midtrans
+                    default:
+                        $metode_pembayaran = $request->payment_type;
+                        break;
+                }
+                $order->update([
+                    'status' => 'Paid',
+                    'metode_pembayaran' => $metode_pembayaran
+
+                ]);
 
                 $user = User::with('userDetail')->where('id', $order->user_id)->first();
                 $userReferal = User::where('referral', $user->userDetail->referral_use)->first();
