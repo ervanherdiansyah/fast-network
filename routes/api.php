@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\UserKomisiHistoryController;
 use App\Http\Controllers\Api\UserPoinHistoryController;
 use App\Http\Controllers\Api\UserWalletController;
 use App\Http\Controllers\Authentication\AuthController;
+use App\Http\Controllers\Authentication\ForgotPasswordController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -235,6 +236,10 @@ Route::delete('/pilihancepat/delete/{id}', [PilihanPencairanController::class, '
 
 //Alamat Penjual
 Route::get('/alamat-penjual', [AlamatController::class, 'getAlamatPenjual']);
+
+//Reset Password
+Route::post('/forgot-password', [ForgotPasswordController::class, 'PostForgotPassword']);
+Route::post('/reset-password', [ForgotPasswordController::class, 'PostResetPassword']);
 
 // Produk
 // Route::get('/produk', [ProductController::class, 'getProduct']);
