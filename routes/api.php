@@ -240,6 +240,7 @@ Route::get('/alamat-penjual', [AlamatController::class, 'getAlamatPenjual']);
 //Reset Password
 Route::post('/forgot-password', [ForgotPasswordController::class, 'PostForgotPassword']);
 Route::post('/reset-password', [ForgotPasswordController::class, 'PostResetPassword']);
+Route::post('/check-token', [ForgotPasswordController::class, 'checkToken']);
 
 // Produk
 // Route::get('/produk', [ProductController::class, 'getProduct']);

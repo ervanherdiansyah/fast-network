@@ -49,12 +49,10 @@ class ForgotPasswordController extends Controller
     {
         try {
             $request->validate([
-                'email' => 'required|email|exists:users',
                 'password' => 'required|string|min:8|confirmed', // Pastikan ada konfirmasi password
             ]);
 
             $updatePassword = DB::table('password_reset_tokens')
-                ->where('email', $request->email)
                 ->where('token', $request->token)
                 ->first();
 
@@ -68,15 +66,37 @@ class ForgotPasswordController extends Controller
             }
 
             // Perbarui password jika token valid dan masih berlaku
-            User::where('email', $request->email)->update([
+            User::where('email', $updatePassword->email)->update([
                 'password' => Hash::make($request->password),
             ]);
 
             // Hapus token reset password dari database agar tidak bisa digunakan lagi
-            DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+            DB::table('password_reset_tokens')->where('email', $updatePassword->email)->delete();
 
             return response()->json(['message' => 'Password berhasil direset'], 200);
         } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function checkToken(Request $request)
+    {
+        try {
+            $updatePassword = DB::table('password_reset_tokens')
+                ->where('token', $request->token)
+                ->first();
+
+            if (!$updatePassword) {
+                return response()->json(['message' => 'Invalid token. Silahkan Forgot Password Kembali'], 422);
+            }
+            // Periksa apakah token masih berlaku
+            if ($updatePassword->expiry < Carbon::now()) {
+                return response()->json(['message' => 'Token expired. Silahkan Forgot Password Kembali'], 422);
+            }
+
+            return response()->json(['message' => 'Token Valid.'], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
