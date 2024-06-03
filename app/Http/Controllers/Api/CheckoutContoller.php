@@ -277,6 +277,7 @@ class CheckoutContoller extends Controller
                         'affiliator_id' => $userReferal->id,
                         'affiliate_id' => $user->id,
                         'keterangan' => 'Kode Referal',
+                        'order_id' => $request->order_id,
                         'info_transaksi' => 'Komisi Kode Referal Afiliasi',
                         'jumlah_komisi' => 300000
                     ]);
@@ -287,6 +288,7 @@ class CheckoutContoller extends Controller
                         'user_id' => $user->id,
                         'keterangan' => 'Transaksi Produk',
                         'info_transaksi' => 'Transaksi',
+                        'order_id' => $request->order_id,
                         'jumlah_poin' => 15
                     ]);
 
@@ -321,6 +323,7 @@ class CheckoutContoller extends Controller
                         'affiliate_id' => $user->id,
                         'keterangan' => 'Repeat Order',
                         'info_transaksi' => 'Komisi Repeat Order',
+                        'order_id' => $request->order_id,
                         'jumlah_komisi' => 100000 * $order->paket->value
                     ]);
 
@@ -332,6 +335,7 @@ class CheckoutContoller extends Controller
                         'user_id' => $user->id,
                         'keterangan' => 'Transaksi Produk',
                         'info_transaksi' => 'Transaksi',
+                        'order_id' => $request->order_id,
                         'jumlah_poin' => $order->paket->point
                     ]);
 
@@ -341,6 +345,7 @@ class CheckoutContoller extends Controller
                         'affiliate_id' => $user->id,
                         'keterangan' => 'Repeat Order Afiliasi',
                         'info_transaksi' => 'Komisi Poin Repeat Order',
+                        'order_id' => $request->order_id,
                         'jumlah_poin' => 5 * $order->paket->value
                     ]);
 
