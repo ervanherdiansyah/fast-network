@@ -17,9 +17,9 @@ class ForgotPasswordController extends Controller
     {
         try {
             //code...
-            $request->validate([
-                'email' => 'required|email|exists:users',
-            ]);
+            // $request->validate([
+            //     'email' => 'required|email|exists:users',
+            // ]);
             DB::table('password_reset_tokens')->where('email', $request->email)->delete();
             $expiry = Carbon::now()->addHours(1);
             $token = Str::random(64);
