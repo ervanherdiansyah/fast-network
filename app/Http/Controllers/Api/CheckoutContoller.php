@@ -29,6 +29,7 @@ class CheckoutContoller extends Controller
                 // JIKA Diskon paket aktif maka pake harga diskon
                 if ($orders->paket->is_discount == true) {
                     $totalHarga = $orders->paket->discount_price + $request->shipping_price;
+                    $price = $orders->paket->discount_price;
                     $orders->update([
                         'shipping_courier' => $request->shipping_courier,
                         'shipping_status' => "Diproses",
@@ -41,6 +42,7 @@ class CheckoutContoller extends Controller
                     ]);
                 } else {
                     $totalHarga = $orders->paket->price + $request->shipping_price;
+                    $price = $orders->paket->price;
                     $orders->update([
                         'shipping_courier' => $request->shipping_courier,
                         'shipping_status' => "Diproses",
@@ -52,11 +54,12 @@ class CheckoutContoller extends Controller
                         'jenis_order' => $request->jenis_order,
                     ]);
                 }
+
                 $item_details = [];
-                // return response()->json($totalHarga);
+
                 $item_details[] = [
                     'id' => $orders->order_code,
-                    'price' => $orders->paket->price,
+                    'price' => $price,
                     'quantity' => 1,
                     'name' => $orders->paket->paket_nama,
                 ];
@@ -90,7 +93,17 @@ class CheckoutContoller extends Controller
                         'first_name' => Auth::user()->name,
                         'email' => Auth::user()->email,
                     ),
+                    'enabled_payments' => array(
+                        "permata_va",
+                        "bca_va",
+                        "bni_va",
+                        "bri_va",
+                        "cimb_va",
+                        "other_va",
+                        "echannel",
+                    ),
                     'item_details' => $item_details,
+
 
                 );
                 // return response()->json($params['transaction_details']['gross_amount']);
@@ -126,7 +139,7 @@ class CheckoutContoller extends Controller
 
                 $item_details[] = [
                     'id' => $orders->order_code,
-                    'price' => $orders->paket->price,
+                    'price' => $totalHarga,
                     'quantity' => 1,
                     'name' => $orders->paket->paket_nama,
                 ];
@@ -167,7 +180,7 @@ class CheckoutContoller extends Controller
             }
         } catch (\Throwable $th) {
             //throw $th;
-            return response()->json(['message' => 'Internal Server Error'], 500);
+            return response()->json(['message' => $th->getMessage()], 500);
         }
     }
 
@@ -179,67 +192,43 @@ class CheckoutContoller extends Controller
         if ($hashed == $request->signature_key) {
             if (($request->transaction_status == 'capture' && $request->payment_type == 'credit_card' && $request->fraud_status == 'accept') or $request->transaction_status == 'settlement') {
                 $order = Order::find($request->order_id);
-
                 $metode_pembayaran = '';
-                switch ($request->payment_type) {
-                    case 'bank_transfer':
-                        $metode_pembayaran = isset($request->va_numbers[0]->bank) ? $request->va_numbers[0]->bank : 'bank_transfer';
-                        break;
-                    case 'echannel':
-                        $metode_pembayaran = 'Mandiri Bill Payment';
-                        break;
-                    case 'cstore':
-                        $metode_pembayaran = isset($request->store) ? $request->store : 'cstore';
-                        break;
-                    case 'gopay':
-                        $metode_pembayaran = 'GoPay';
-                        break;
-                    case 'shopeepay':
-                        $metode_pembayaran = 'ShopeePay';
-                        break;
-                    case 'qris':
-                        $metode_pembayaran = 'QRIS';
-                        break;
-                    case 'bca_klikpay':
-                        $metode_pembayaran = 'BCA KlikPay';
-                        break;
-                    case 'bca_klikbca':
-                        $metode_pembayaran = 'BCA KlikBCA';
-                        break;
-                    case 'bri_epay':
-                        $metode_pembayaran = 'BRI Epay';
-                        break;
-                    case 'cimb_clicks':
-                        $metode_pembayaran = 'CIMB Clicks';
-                        break;
-                    case 'danamon_online':
-                        $metode_pembayaran = 'Danamon Online';
-                        break;
-                    case 'akulaku':
-                        $metode_pembayaran = 'Akulaku';
-                        break;
-                    case 'echannel':
-                        $metode_pembayaran = 'Mandiri Bill Payment';
-                        break;
-                    case 'permata_va':
-                        $metode_pembayaran = 'Permata VA';
-                        break;
-                    case 'bni_va':
-                        $metode_pembayaran = 'BNI VA';
-                        break;
-                    case 'other_va':
-                        $metode_pembayaran = 'Other VA';
-                        break;
-                    case 'alfamart':
-                        $metode_pembayaran = 'Alfamart';
-                        break;
-                    case 'indomaret':
-                        $metode_pembayaran = 'Indomaret';
-                        break;
-                        // Tambahkan case lain sesuai dengan jenis payment_type yang diterima dari Midtrans
-                    default:
-                        $metode_pembayaran = $request->payment_type;
-                        break;
+                if ($request->payment_type === 'bank_transfer') {
+                    $metode_pembayaran = $request->va_numbers[0]['bank'];
+                } elseif ($request->payment_type === 'echannel') {
+                    $metode_pembayaran = 'Mandiri Bill Payment';
+                } elseif ($request->payment_type === 'cstore') {
+                    $metode_pembayaran = isset($request->store) ? $request->store : 'cstore';
+                } elseif ($request->payment_type === 'gopay') {
+                    $metode_pembayaran = 'GoPay';
+                } elseif ($request->payment_type === 'shopeepay') {
+                    $metode_pembayaran = 'ShopeePay';
+                } elseif ($request->payment_type === 'qris') {
+                    $metode_pembayaran = 'QRIS';
+                } elseif ($request->payment_type === 'bca_klikpay') {
+                    $metode_pembayaran = 'BCA KlikPay';
+                } elseif ($request->payment_type === 'bca_klikbca') {
+                    $metode_pembayaran = 'BCA KlikBCA';
+                } elseif ($request->payment_type === 'bri_epay') {
+                    $metode_pembayaran = 'BRI Epay';
+                } elseif ($request->payment_type === 'cimb_clicks') {
+                    $metode_pembayaran = 'CIMB Clicks';
+                } elseif ($request->payment_type === 'danamon_online') {
+                    $metode_pembayaran = 'Danamon Online';
+                } elseif ($request->payment_type === 'akulaku') {
+                    $metode_pembayaran = 'Akulaku';
+                } elseif ($request->payment_type === 'permata_va') {
+                    $metode_pembayaran = 'Permata VA';
+                } elseif ($request->payment_type === 'bni_va') {
+                    $metode_pembayaran = 'BNI VA';
+                } elseif ($request->payment_type === 'other_va') {
+                    $metode_pembayaran = 'Other VA';
+                } elseif ($request->payment_type === 'alfamart') {
+                    $metode_pembayaran = 'Alfamart';
+                } elseif ($request->payment_type === 'indomaret') {
+                    $metode_pembayaran = 'Indomaret';
+                } else {
+                    $metode_pembayaran = $request->payment_type;
                 }
                 $order->update([
                     'status' => 'Paid',
@@ -277,6 +266,7 @@ class CheckoutContoller extends Controller
                         'affiliator_id' => $userReferal->id,
                         'affiliate_id' => $user->id,
                         'keterangan' => 'Kode Referal',
+                        'order_id' => $request->order_id,
                         'info_transaksi' => 'Komisi Kode Referal Afiliasi',
                         'jumlah_komisi' => 300000
                     ]);
@@ -286,6 +276,7 @@ class CheckoutContoller extends Controller
                     $komisi_poin_user = UserPoinHistory::create([
                         'user_id' => $user->id,
                         'keterangan' => 'Transaksi Produk',
+                        'order_id' => $request->order_id,
                         'info_transaksi' => 'Transaksi',
                         'jumlah_poin' => 15
                     ]);
@@ -320,6 +311,7 @@ class CheckoutContoller extends Controller
                         'affiliator_id' => $userReferal->id,
                         'affiliate_id' => $user->id,
                         'keterangan' => 'Repeat Order',
+                        'order_id' => $request->order_id,
                         'info_transaksi' => 'Komisi Repeat Order',
                         'jumlah_komisi' => 100000 * $order->paket->value
                     ]);
@@ -331,6 +323,7 @@ class CheckoutContoller extends Controller
                     $user_poin_history = UserPoinHistory::create([
                         'user_id' => $user->id,
                         'keterangan' => 'Transaksi Produk',
+                        'order_id' => $request->order_id,
                         'info_transaksi' => 'Transaksi',
                         'jumlah_poin' => $order->paket->point
                     ]);
@@ -340,6 +333,7 @@ class CheckoutContoller extends Controller
                         'affiliator_id' => $userReferal->id,
                         'affiliate_id' => $user->id,
                         'keterangan' => 'Repeat Order Afiliasi',
+                        'order_id' => $request->order_id,
                         'info_transaksi' => 'Komisi Poin Repeat Order',
                         'jumlah_poin' => 5 * $order->paket->value
                     ]);
