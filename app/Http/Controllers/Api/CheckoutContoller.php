@@ -278,7 +278,6 @@ class CheckoutContoller extends Controller
                         'keterangan' => 'Transaksi Produk',
                         'order_id' => $request->order_id,
                         'info_transaksi' => 'Transaksi',
-                        'order_id' => $request->order_id,
                         'jumlah_poin' => 15
                     ]);
 
@@ -314,7 +313,6 @@ class CheckoutContoller extends Controller
                         'keterangan' => 'Repeat Order',
                         'order_id' => $request->order_id,
                         'info_transaksi' => 'Komisi Repeat Order',
-                        'order_id' => $request->order_id,
                         'jumlah_komisi' => 100000 * $order->paket->value
                     ]);
 
@@ -327,7 +325,6 @@ class CheckoutContoller extends Controller
                         'keterangan' => 'Transaksi Produk',
                         'order_id' => $request->order_id,
                         'info_transaksi' => 'Transaksi',
-                        'order_id' => $request->order_id,
                         'jumlah_poin' => $order->paket->point
                     ]);
 
@@ -338,7 +335,6 @@ class CheckoutContoller extends Controller
                         'keterangan' => 'Repeat Order Afiliasi',
                         'order_id' => $request->order_id,
                         'info_transaksi' => 'Komisi Poin Repeat Order',
-                        'order_id' => $request->order_id,
                         'jumlah_poin' => 5 * $order->paket->value
                     ]);
 
