@@ -162,7 +162,7 @@ class OrderController extends Controller
             }
 
             // Buat order baru
-            if ($paket->is_discount = true) {
+            if ($paket->is_discount == true) {
                 $order = new Order();
                 $order->user_id = Auth::user()->id;
                 $order->paket_id = $request->paketId;
