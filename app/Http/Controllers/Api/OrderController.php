@@ -62,6 +62,7 @@ class OrderController extends Controller
                     'shipping_status' => $order->shipping_status,
                     'shipping_courier' => $order->shipping_courier,
                     'total_harga' => $order->total_harga,
+                    'total_belanja' => $order->total_belanja,
                     'alamat_id' => $order->alamat_id,
                     'provinsi' => $order->userAlamat->provinsi->name,
                     'kota' => $order->userAlamat->kota->name,
@@ -195,8 +196,8 @@ class OrderController extends Controller
                     DB::rollback();
                     return response()->json(['message' => 'Requested quantity exceeds available stock'], 400);
                 }
-                
-                
+
+
                 //  elseif ($requestedQuantity > 5) {
                 //     DB::rollback();
 
