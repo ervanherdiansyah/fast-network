@@ -84,10 +84,14 @@ class CheckoutContoller extends Controller
                 // \Midtrans\Config::$overrideNotifUrl = config('app.url') . '/api/callback';
                 \Midtrans\Config::$overrideNotifUrl = 'https://backend.fastnetwork.id/api/callback';
 
+                $order_id = $orders->id;
+                $random_string = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, 6);
+                $order_id_with_random = $order_id . $random_string;
+
                 $params = array(
                     'transaction_details' => array(
-                        'order_id' => $orders->id,
-                        'gross_amount' => $totalHarga,
+                        'order_id' => $order_id_with_random,
+                        'gross_amount' => $price,
                     ),
                     'customer_details' => array(
                         'first_name' => Auth::user()->name,
@@ -158,6 +162,14 @@ class CheckoutContoller extends Controller
                 // \Midtrans\Config::$overrideNotifUrl = config('app.url') . '/api/callback';
                 \Midtrans\Config::$overrideNotifUrl = 'https://backend.fastnetwork.id/api/callback';
 
+                // Check transaction status
+                // $status = \Midtrans\Transaction::status($orders->id);
+
+                // If transaction is pending, cancel it
+                // if ($status->transaction_status == 'pending') {
+                //     \Midtrans\Transaction::cancel($orders->id);
+                // }
+
                 $params = array(
                     'transaction_details' => array(
                         'order_id' => $orders->id,
@@ -191,7 +203,8 @@ class CheckoutContoller extends Controller
         $hashed = hash("sha512", $request->order_id . $request->status_code . $request->gross_amount . $serverKey);
         if ($hashed == $request->signature_key) {
             if (($request->transaction_status == 'capture' && $request->payment_type == 'credit_card' && $request->fraud_status == 'accept') or $request->transaction_status == 'settlement') {
-                $order = Order::find($request->order_id);
+                $numeric_part = preg_replace('/\D/', '', $request->order_id);
+                $order = Order::find($numeric_part);
                 $metode_pembayaran = '';
                 if ($request->payment_type === 'bank_transfer') {
                     $metode_pembayaran = $request->va_numbers[0]['bank'];
@@ -266,7 +279,7 @@ class CheckoutContoller extends Controller
                         'affiliator_id' => $userReferal->id,
                         'affiliate_id' => $user->id,
                         'keterangan' => 'Kode Referal',
-                        'order_id' => $request->order_id,
+                        'order_id' => $order->id,
                         'info_transaksi' => 'Komisi Kode Referal Afiliasi',
                         'jumlah_komisi' => 300000
                     ]);
@@ -276,7 +289,7 @@ class CheckoutContoller extends Controller
                     $komisi_poin_user = UserPoinHistory::create([
                         'user_id' => $user->id,
                         'keterangan' => 'Transaksi Produk',
-                        'order_id' => $request->order_id,
+                        'order_id' => $order->id,
                         'info_transaksi' => 'Transaksi',
                         'jumlah_poin' => 15
                     ]);
@@ -311,7 +324,7 @@ class CheckoutContoller extends Controller
                         'affiliator_id' => $userReferal->id,
                         'affiliate_id' => $user->id,
                         'keterangan' => 'Repeat Order',
-                        'order_id' => $request->order_id,
+                        'order_id' => $order->id,
                         'info_transaksi' => 'Komisi Repeat Order',
                         'jumlah_komisi' => 100000 * $order->paket->value
                     ]);
@@ -323,7 +336,7 @@ class CheckoutContoller extends Controller
                     $user_poin_history = UserPoinHistory::create([
                         'user_id' => $user->id,
                         'keterangan' => 'Transaksi Produk',
-                        'order_id' => $request->order_id,
+                        'order_id' => $order->id,
                         'info_transaksi' => 'Transaksi',
                         'jumlah_poin' => $order->paket->point
                     ]);
@@ -333,7 +346,7 @@ class CheckoutContoller extends Controller
                         'affiliator_id' => $userReferal->id,
                         'affiliate_id' => $user->id,
                         'keterangan' => 'Repeat Order Afiliasi',
-                        'order_id' => $request->order_id,
+                        'order_id' => $order->id,
                         'info_transaksi' => 'Komisi Poin Repeat Order',
                         'jumlah_poin' => 5 * $order->paket->value
                     ]);
