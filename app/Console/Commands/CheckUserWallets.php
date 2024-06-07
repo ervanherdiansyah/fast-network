@@ -54,6 +54,9 @@ class CheckUserWallets extends Command
                 DB::table('order_total_enam_bulan')
                     ->where('user_id', $user->user_id)
                     ->update(['total_harga' => 0, 'updated_at' => now()]);
+                
+                // masukan ke history bonus user
+                
             }
 
             // Reset total_harga to 0 for users whose last update was more than 6 months ago
