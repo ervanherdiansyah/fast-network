@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class HistoryBonusUser extends Model
 {
     use HasFactory;
+    protected $table = 'user_bonus_history';
+    protected $guarded = [
+        'id',
+    ];
 }

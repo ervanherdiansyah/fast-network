@@ -6,6 +6,7 @@ use App\Models\Courier;
 use App\Models\Reward;
 use App\Models\User;
 use App\Models\UserKomisiHistory;
+use App\Models\HistoryBonusUser;
 use App\Models\UserWallet;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
@@ -56,7 +57,12 @@ class CheckUserWallets extends Command
                     ->update(['total_harga' => 0, 'updated_at' => now()]);
                 
                 // masukan ke history bonus user
-                
+                HistoryBonusUser::create([
+                    'user_id' => $userReferal->id,
+                    'keterangan' => 'Bonus Target',
+                    'info_transaksi' => 'Bonus Target Enam Bulan',
+                    'jumlah_komisi' => 2500000
+                ]);
             }
 
             // Reset total_harga to 0 for users whose last update was more than 6 months ago
