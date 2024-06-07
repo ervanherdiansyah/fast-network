@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\AffiliatorPoinHistory;
 use App\Models\Order;
+use App\Models\OrderTotalHargaPerEnamBulan;
 use App\Models\Paket;
 use App\Models\User;
 use App\Models\UserDetails;
@@ -12,6 +13,7 @@ use App\Models\UserKomisiHistory;
 use App\Models\UserPoinHistory;
 use App\Models\UserWallet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
@@ -257,6 +259,7 @@ class CheckoutContoller extends Controller
                     'jumlah_terjual' => $paket_terjual->jumlah_terjual + 1,
                 ]);
 
+
                 if ($user->first_order == true) {
                     $affliator = UserWallet::where('user_id', $userReferal->id)->first();
 
@@ -355,6 +358,18 @@ class CheckoutContoller extends Controller
                     $affliasi->total_point += $order->paket->point;
                     $affliasi->current_point += $order->paket->point;
                     $affliasi->save();
+                }
+
+                $totalHargaPerEnamBulan = OrderTotalHargaPerEnamBulan::where('user_id', $userReferal->id)->first();
+                if ($totalHargaPerEnamBulan) {
+                    $totalHargaPerEnamBulan->update([
+                        'total_harga' => $totalHargaPerEnamBulan->total_harga + $order->total_belanja,
+                    ]);
+                } else {
+                    $totalHargaPerEnamBulan = OrderTotalHargaPerEnamBulan::create([
+                        'user_id' => $userReferal->id,
+                        'total_harga' => $order->total_belanja
+                    ]);
                 }
             }
         }

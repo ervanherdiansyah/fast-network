@@ -97,22 +97,32 @@ class User extends Authenticatable implements JWTSubject
 
     // komisi history table!
     // affiliator_id -> user_id
-    public function komisi_affiliator_id(){
+    public function komisi_affiliator_id()
+    {
         return $this->hasMany(UserKomisiHistory::class, "affiliator_id");
     }
 
     // affiliate_id -> user_id
-    public function komisi_affiliate_id(){
+    public function komisi_affiliate_id()
+    {
         return $this->hasMany(UserKomisiHistory::class, "affiliate_id");
     }
 
     // affiliator komisi poin table! (Model AffiliatorPoinHistory, table AffiliatorPoinHistory)
-    public function komisipoin_affiliate_id(){
+    public function komisipoin_affiliate_id()
+    {
         // affiliator_id -> user_id
         return $this->hasMany(AffiliatorPoinHistory::class,  "affiliate_id");
     }
-    public function komisipoin_affiliator_id(){
+    public function komisipoin_affiliator_id()
+    {
         // affiliate_id -> user_id
         return $this->hasMany(AffiliatorPoinHistory::class, "affiliator_id");
+    }
+
+    public function totalHargaPerEnamBulan()
+    {
+        // affiliate_id -> user_id
+        return $this->hasOne(OrderTotalHargaPerEnamBulan::class, "user_id");
     }
 }
