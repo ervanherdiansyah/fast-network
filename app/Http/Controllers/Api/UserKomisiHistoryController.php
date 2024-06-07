@@ -59,9 +59,11 @@ class UserKomisiHistoryController extends Controller
             $user_id = Auth::user()->id;
             $komisi_repeat_order = UserKomisiHistory::where('affiliator_id', $user_id)->where('Keterangan', 'Repeat Order')->get();
             $komisi_referal = UserKomisiHistory::where('affiliator_id', $user_id)->where('Keterangan', 'Kode Referal')->get();
+            $komisi_bonus = HistoryBonusUser::where('user_id', $user_id)->get();
 
             $total_komisi_repeat_order = $komisi_repeat_order->sum('jumlah_komisi');
-            $total_komisi_referal = $komisi_referal->sum('jumlah_komisi');
+            $total_komisi_referal = $komisi_referal->sum('jumlah_komisi') + $komisi_bonus->sum('jumlah_komisi');
+
             $total_komisi = $total_komisi_referal + $total_komisi_repeat_order;
             return response()->json(['data' => ["Total_komisi"=>$total_komisi, "Total_komisi_referal"=>$total_komisi_referal, 'Total_komisi_repeat_order'=>$total_komisi_repeat_order]], 200);
         }
