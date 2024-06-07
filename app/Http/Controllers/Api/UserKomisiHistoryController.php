@@ -30,7 +30,7 @@ class UserKomisiHistoryController extends Controller
 
             $userBonusHistoryRaw = HistoryBonusUser::where('user_id', $user_id)->get();
             $userBonusHistory = [];
-            foreach($userKomisiHistoryRaw as $data){
+            foreach($userBonusHistoryRaw as $data){
                 $komisi = [
                     'keterangan'=>$data->keterangan,
                     // info transaksi diganti yang dari table tapi nama dari si affiliate, dari affiliate_id
