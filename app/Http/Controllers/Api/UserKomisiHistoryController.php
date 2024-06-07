@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\UserKomisiHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\HistoryBonusUser;
 
 class UserKomisiHistoryController extends Controller
 {
@@ -26,10 +27,27 @@ class UserKomisiHistoryController extends Controller
                 ];
                 $userKomisiHistory[] = $komisi;
             }
-            usort($userKomisiHistory, function ($a, $b) {
+
+            $userBonusHistoryRaw = HistoryBonusUser::where('user_id', $user_id)->get();
+            $userBonusHistory = [];
+            foreach($userKomisiHistoryRaw as $data){
+                $komisi = [
+                    'keterangan'=>$data->keterangan,
+                    // info transaksi diganti yang dari table tapi nama dari si affiliate, dari affiliate_id
+                    'info_transaksi'=>$data->info_transaksi,
+                    'jumlah_komisi'=>$data->jumlah_komisi,
+                    'created_at'=>$data->created_at,
+                    'updated_at'=>$data->updated_at
+                ];
+                $userBonusHistory[] = $komisi;
+            }
+
+            $mergedUserKomisidanBonusHistory = array_merge($userKomisiHistory, $userBonusHistory);
+
+            usort($mergedUserKomisidanBonusHistory, function ($a, $b) {
                 return strtotime($b['created_at']) - strtotime($a['created_at']);
             });
-            return response()->json(['data' => $userKomisiHistory, 'message' => 'Success'], 200); 
+            return response()->json(['data' => $mergedUserKomisidanBonusHistory, 'message' => 'Success'], 200); 
         }
         catch(\Throwable $th){
             return response()->json(['message' => 'Internal Server Error'], 500);

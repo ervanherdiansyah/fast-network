@@ -58,7 +58,7 @@ class CheckUserWallets extends Command
                 
                 // masukan ke history bonus user
                 HistoryBonusUser::create([
-                    'user_id' => $userReferal->id,
+                    'user_id' => $user->user_id,
                     'keterangan' => 'Bonus Target',
                     'info_transaksi' => 'Bonus Target Enam Bulan',
                     'jumlah_komisi' => 2500000
